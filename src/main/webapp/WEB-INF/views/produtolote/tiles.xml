@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <!-- lista-->
+    <definition name="produtolote_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_lista.jsp" />
+    </definition>
+
+    <!-- novo-->
+    <definition name="produtolote_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_novo.jsp" />
+    </definition>
+
+    <!-- editar-->
+    <definition name="produtolote_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_editar.jsp" />
+    </definition>
+</tiles-definitions>

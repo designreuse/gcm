@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <!-- lista-->
+    <definition name="planocontas_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_lista.jsp" />
+    </definition>
+
+    <!-- novo-->
+    <definition name="planocontas_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_novo.jsp" />
+    </definition>
+
+    <!-- editar-->
+    <definition name="planocontas_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_editar.jsp" />
+    </definition>
+</tiles-definitions>

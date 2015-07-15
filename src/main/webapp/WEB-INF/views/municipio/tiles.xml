@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+    <!-- municipio_lista.jsp-->
+    <definition name="municipio_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_lista.jsp" />
+    </definition>
+
+    <!-- municipio_novo.jsp-->
+    <definition name="municipio_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_novo.jsp" />
+    </definition>
+
+    <!-- municipio_editar.jsp-->
+    <definition name="municipio_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_editar.jsp" />
+    </definition>
+
+</tiles-definitions>

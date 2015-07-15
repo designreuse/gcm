@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+    <!-- lista-->
+    <definition name="ncm_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_lista.jsp" />
+    </definition>
+
+    <!-- novo-->
+    <definition name="ncm_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_novo.jsp" />
+    </definition>
+
+    <!-- editar-->
+    <definition name="ncm_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_editar.jsp" />
+    </definition>
+
+</tiles-definitions>

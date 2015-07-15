@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!-- Annotations -->
+    <context:annotation-config />
+
+    <!-- AOP -->
+    <aop:aspectj-autoproxy />
+    <aop:config proxy-target-class="true" />
+
+    <!-- Pacotes -->
+    <context:component-scan base-package="
+	    com.br.gcm.security,
+	    com.br.gcm.util,
+	    com.br.gcm.service,
+	    com.br.gcm.dao" />
+
+<!--
+    ARQUIVOS DE CONFIG
+-->
+
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+        <property name="basename" value="relatorios"/>
+    </bean>
+
+
+	<bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+            <list>
+                <value>/WEB-INF/db.properties</value>
+                <value>/WEB-INF/mail.properties</value>
+            </list>
+        </property>
+	</bean>
+
+    <!-- Mensagens -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>myprops</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Email -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${mail.host}" />
+        <property name="port" value="${mail.port}" />
+        <property name="username" value="${mail.username}" />
+        <property name="password" value="${mail.password}" />
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <!-- Freemarker (template de email) -->
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
+        <property name="defaultEncoding" value="UTF-8" />
+    </bean>
+
+
+    <!-- Connection Pool -->
+    <bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+        <property name="driverClass" value="${db.driver}" />
+        <property name="jdbcUrl" value="${db.url}" />
+        <property name="username" value="${db.user}" />
+        <property name="password" value="${db.password}" />
+        <property name="idleConnectionTestPeriodInMinutes" value="${db.idleConnectionTestPeriodInMinutes}" />
+        <property name="idleMaxAgeInMinutes" value="${db.idleMaxAgeInMinutes}" />
+        <property name="maxConnectionsPerPartition" value="${db.maxConnectionsPerPartition}" />
+        <property name="minConnectionsPerPartition" value="${db.minConnectionsPerPartition}" />
+        <property name="partitionCount" value="${db.partitionCount}" />
+        <property name="acquireIncrement" value="${db.acquireIncrement}" />
+        <property name="statementsCacheSize" value="${db.statementsCacheSize}" />
+        <property name="releaseHelperThreads" value="${db.releaseHelperThreads}" />
+    </bean>
+
+    <!-- Transaction -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+
+    <!-- Jdbc -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean id="namedParamJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg name="classicJdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+
+    <sec:global-method-security secured-annotations="enabled" />
+    <sec:http pattern="/static/**" security="none"/>
+	<sec:http auto-config="true" use-expressions="true">
+
+        <!-- Login -->
+        <sec:form-login login-page="/login/form"
+                        login-processing-url="/login"
+                        username-parameter="username"
+                        password-parameter="password"
+                        default-target-url="/"
+                        always-use-default-target="false"
+                        authentication-failure-url="/login/form?error"
+                        authentication-failure-handler-ref="customAuthenticationFailureHandler"
+                        authentication-success-handler-ref="customLoginSuccessHandler" />
+
+        <!-- Logout -->
+        <sec:logout logout-url="/logout"
+                    invalidate-session="true"
+                    delete-cookies="true"
+                    success-handler-ref="customLogoutSuccessHandler" />
+
+        <!--
+            Permissões
+            As mais restritas primeiro e as mais generalistas no final
+        -->
+        <sec:intercept-url pattern="/echo/**" access="permitAll" />
+        <sec:intercept-url pattern="/api/**" access="hasRole('ROLE_API') or hasRole('ROLE_ADM')" />
+        <sec:intercept-url pattern="/login*/**" access="permitAll" />
+        <sec:intercept-url pattern="/logout" access="permitAll" />
+        <sec:intercept-url pattern="/system*/**" access="permitAll" />
+        <sec:intercept-url pattern="/**" access="hasRole('ROLE_SUP') or hasRole('ROLE_ADM') or hasRole('ROLE_FIN')" />
+        <sec:intercept-url pattern="/menu/**" access="hasRole('ROLE_SUP') or hasRole('ROLE_ADM') or hasRole('ROLE_FIN')" />
+        <sec:http-basic />
+
+    </sec:http>
+
+    <!--
+        A ordem do sec:authentication-provider importa.
+    -->
+    <sec:authentication-manager>
+        <!-- Api -->
+        <sec:authentication-provider>
+            <sec:user-service>
+                <!-- Md5 gerado da senha 'admserver01' -->
+                <sec:user name="administrador" password="bf00a8ad27684b375d741f5448e99913" authorities="ROLE_ADM" />
+                <sec:user name="admin" password="bf00a8ad27684b375d741f5448e99913" authorities="ROLE_SYSTEM" />
+                <sec:user name="api" password="bf00a8ad27684b375d741f5448e99913" authorities="ROLE_API" />
+            </sec:user-service>
+        </sec:authentication-provider>
+
+        <!-- Demais usuários -->
+        <sec:authentication-provider>
+            <sec:password-encoder hash="md5" />
+            <sec:jdbc-user-service data-source-ref="dataSource"
+                                   users-by-username-query="SELECT login, senha, ativo FROM usuario WHERE UPPER(login)=upper(?) AND ativo = true"
+                                   authorities-by-username-query="SELECT login, 'ROLE_ADM' as acesso FROM usuario WHERE UPPER(login)=upper(?) AND ativo = true" />
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+
+</beans>
+

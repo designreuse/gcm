@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+
+    <!-- empresa_lista.jsp-->
+    <definition name="empresa_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_lista.jsp" />
+    </definition>
+
+    <!-- empresa_novo.jsp-->
+    <definition name="empresa_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_novo.jsp" />
+    </definition>
+
+    <!-- empresa_editar.jsp-->
+    <definition name="empresa_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_editar.jsp" />
+    </definition>
+
+</tiles-definitions>

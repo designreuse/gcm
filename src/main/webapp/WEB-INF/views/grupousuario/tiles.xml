@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+    <!-- grupousuario_lista.jsp-->
+    <definition name="grupousuario_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_lista.jsp" />
+    </definition>
+
+    <!-- grupousuario_novo.jsp-->
+    <definition name="grupousuario_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_novo.jsp" />
+    </definition>
+
+    <!-- grupousuario_editar.jsp-->
+    <definition name="grupousuario_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_editar.jsp" />
+    </definition>
+
+    <!-- usuariodogrupo_novo.jsp-->
+    <definition name="usuariodogrupo_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/usuariodogrupo_novo.jsp" />
+    </definition>
+
+    <!-- grupotransacao_novo.jsp-->
+    <definition name="grupotransacao_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupotransacao_novo.jsp" />
+    </definition>
+
+    <!-- empresagrupo_novo.jsp-->
+    <definition name="empresagrupo_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/empresagrupo_novo.jsp" />
+    </definition>
+
+</tiles-definitions>

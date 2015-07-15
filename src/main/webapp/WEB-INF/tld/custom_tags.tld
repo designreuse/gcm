@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<taglib>
+    <tlib-version>1.0</tlib-version>
+    <jsp-version>1.2</jsp-version>
+    <short-name>vls</short-name>
+
+    <description>Biblioteca de taglibs</description>
+
+    <!-- Paginador -->
+    <tag>
+        <name>paginador</name>
+        <tag-class>com.br.gcm.tag.PaginadorTag</tag-class>
+        <description>Paginador</description>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>pagina</name>
+            <required>true</required>
+            <type>com.br.gcm.tag.Pagina</type>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <!-- Formatar CNPJ e CPF -->
+    <tag>
+        <name>formatar</name>
+        <tag-class>com.br.gcm.tag.FormatarTag</tag-class>
+        <description>Formata CNPJ ou CPF</description>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>tipo</name>
+            <required>true</required>
+            <type>java.lang.String</type>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>cnpjcpf</name>
+            <required>true</required>
+            <type>java.lang.String</type>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <tag>
+        <name>recaptcha</name>
+        <tag-class>com.br.gcm.tag.RecaptchaTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>publicKey</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>privateKey</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>themeName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+</taglib>

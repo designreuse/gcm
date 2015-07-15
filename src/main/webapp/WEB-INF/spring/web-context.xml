@@ -1,0 +1,57 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:component-scan base-package="com.br.gcm.controller" />
+
+
+    <!-- MVC Annotations -->
+    <mvc:annotation-driven>
+        <mvc:argument-resolvers>
+            <bean class="org.springframework.data.web.PageableHandlerMethodArgumentResolver" />
+        </mvc:argument-resolvers>
+        <mvc:message-converters>
+            <bean class="com.br.gcm.converter.MappingJackson2JsonpHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/x-javascript</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+
+    <!-- Resources -->
+    <mvc:resources mapping="/static/**" location="/static/" />
+
+    <!-- Tiles -->
+    <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+    </bean>
+    <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+        <property name="definitions">
+            <list>
+                <value>/WEB-INF/templates/tiles.xml</value>
+                <value>/WEB-INF/views/**/tiles.xml</value>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.springframework.web.servlet.view.XmlViewResolver">
+        <property name="location" value="/WEB-INF/spring/jasper-view.xml" />
+        <property name="order" value="0" />
+    </bean>
+
+    <!-- FREEMARKER -->
+    <bean id="freemarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="cache" value="true" />
+        <property name="prefix" value="" />
+        <property name="suffix" value=".ftl" />
+    </bean>
+
+</beans>

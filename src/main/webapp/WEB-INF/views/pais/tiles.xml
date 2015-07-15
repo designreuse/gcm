@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+    <!-- pais_lista.jsp-->
+    <definition name="pais_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pais/pais_lista.jsp" />
+    </definition>
+
+    <!-- pais_novo.jsp-->
+    <definition name="pais_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pais/pais_novo.jsp" />
+    </definition>
+
+    <!-- pais_editar.jsp-->
+    <definition name="pais_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pais/pais_editar.jsp" />
+    </definition>
+
+</tiles-definitions>

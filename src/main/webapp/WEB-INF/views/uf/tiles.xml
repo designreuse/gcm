@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+    <!-- uf_lista.jsp-->
+    <definition name="uf_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/uf/uf_lista.jsp" />
+    </definition>
+
+    <!-- uf_novo.jsp-->
+    <definition name="uf_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/uf/uf_novo.jsp" />
+    </definition>
+
+    <!-- uf_editar.jsp-->
+    <definition name="uf_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/uf/uf_editar.jsp" />
+    </definition>
+
+</tiles-definitions>

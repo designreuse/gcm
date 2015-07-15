@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <!-- lista-->
+    <definition name="cfop_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_lista.jsp" />
+    </definition>
+
+    <!-- novo-->
+    <definition name="cfop_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_novo.jsp" />
+    </definition>
+
+    <!-- editar-->
+    <definition name="cfop_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_editar.jsp" />
+    </definition>
+
+    <!-- relacaocfop_lista-->
+    <definition name="relacaocfop_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/cfop/relacaocfop_lista.jsp" />
+    </definition>
+</tiles-definitions>

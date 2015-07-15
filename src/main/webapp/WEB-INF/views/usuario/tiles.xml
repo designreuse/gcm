@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+    <definition name="usuario_lista" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/usuario/usuario_lista.jsp" />
+    </definition>
+
+    <definition name="usuario_novo" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/usuario/usuario_novo.jsp" />
+    </definition>
+
+    <definition name="usuario_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/usuario/usuario_editar.jsp" />
+    </definition>
+
+</tiles-definitions>

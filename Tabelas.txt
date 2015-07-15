@@ -1,0 +1,859 @@
+--GCM - Gestão de Clínicas Médicas
+
+--Tabelas
+    /*000*/ Create Sequence Seq_LogAuditoria;
+	/*001 Pais*/ 
+	/*002 UF*/ 
+	/*003 Municipio*/ 
+	/*004 Empresa*/ 
+	/*005 GrupoProduto*/ 
+	/*006 SubGrupoProduto*/ 
+	/*007 MarcaProduto*/ 
+	/*008 NCM*/ 
+	/*009 Deposito*/ 
+	/*010 Unidade*/ 
+	/*011 Produto*/ 
+	/*012 ProdutoUnidade*/ 
+	/*013 ProdutoLote*/ 
+	/*014 ANS */ 
+	/*015 CID*/ 
+	/*016 Pessoa*/ 
+	/*017 TipoPessoa*/ 
+	/*018 SituacaoTributariaA*/ 
+	/*019 SituacaoTributariaB*/ 
+	/*020 CFOP*/ 
+	/*021*/ Create Sequence Seq_GrupoFiscal;
+	/*022 CentroCusto*/ 
+	/*023 PlanoContas*/ 
+	/*024 Banco*/ 
+	/*025 ContaCorrente*/ 
+	/*026 Usuario*/ 
+	/*027 Transação*/ 
+	/*028 GrupoUsuario */
+	/*029 GrupoTransacao */ 
+	/*030 UsuariodoGrupo*/ 
+	/*031 EmpresaGrupo*/ 
+	/*032 SituacaoTributariaPISCOFINS*/
+	/*033 EstoqueProduto*/
+	/*034 LancamentoEstoque*/
+	/*035 LancamentoEstoqueItem*/
+	/*038 MovimentoFinanceiro*/
+	/*039 ExtratoContaCorrente*/
+	/*040 SaldoContaCorrente*/
+	
+	
+--Tabelas
+    /*000*/  
+	Create Table LogAuditoria(
+		id_LogAuditoria integer not null default nextval('Seq_LogAuditoria'),
+		Usuario varchar(25) not null,
+		Tabela varchar(100) not null,
+		Operacao varchar(1) not null, -- I:Insert; U:UPDATE; D:DELETE
+		Comando text not null,
+		Valores text not null,
+		DadosAnteriores text,
+		DataHora timestamp);
+	Alter Table LogAuditoria add Constraint Pk_LogAuditoria Primary Key (id_LogAuditoria);
+
+	/*001*/ 
+	Create Sequence Seq_Pais;	
+	Create Table Pais(
+		id_Pais integer not null default nextval('Seq_Pais'),
+		siglaPais varchar(3) not null,
+		Descricao varchar(100) not null,
+		Ibge varchar(4) null -- Brasil 1058
+	);	
+	Alter Table Pais add Constraint Pk_Pais Primary Key (id_Pais);
+	Alter Table Pais ADD CONSTRAINT Dist_Pais UNIQUE (siglaPais);
+	
+	/*002*/ 
+	Create Sequence Seq_Uf;	
+	Create Table Uf(
+		id_Uf integer not null default nextval('Seq_Uf'),
+		id_Pais integer not null,
+		SiglaUf varchar(3) not null,
+		Descricao varchar(100),
+		Ibge varchar(2) null -- PE: 26
+	);
+	Alter Table Uf add Constraint Pk_Uf primary Key (id_Uf); 
+	Alter Table Uf add Constraint Fk_Uf_Pais Foreign Key (id_Pais) references Pais (id_Pais) MATCH FULL;
+	Alter Table Uf ADD CONSTRAINT Dist_Uf UNIQUE (id_Uf, Descricao);
+	
+	/*003*/ 
+	Create Sequence Seq_Municipio;	
+	Create Table Municipio(
+		id_Municipio integer not null default nextval('Seq_Municipio'),
+		id_Uf integer not null,	
+		Descricao varchar(100),
+		Ibge varchar(5) -- Recife 11606
+	);
+	Alter Table Municipio add Constraint Pk_Municipio primary key (id_Municipio);
+	Alter Table Municipio add Constraint Fk_Municipio_Uf Foreign Key (id_Uf) references Uf (id_Uf) MATCH FULL;
+	Alter Table Municipio ADD CONSTRAINT Dist_Municipio UNIQUE (id_Uf, Descricao);
+	
+	/*004*/
+	Create Sequence Seq_Empesa;	
+	Create Table Empresa(
+		id_Empresa integer not null default nextval('Seq_Empesa'),
+		Cnpj varchar(14) not null,
+		RazaoSocial varchar(150) not null,
+		NomeFantasia varchar(150),
+		InscricaoEstadual varchar(20),
+		InscricaoMunicipal varchar(20),
+		DataAbertura Timestamp,
+		Endereco varchar(150),
+		Numero varchar(10),
+		Bairro varchar(50),
+		Cep varchar(8),
+		id_Municipio integer,
+		Telefone1 varchar(15),
+		Telefone2 varchar(15),
+		Fax varchar(15),
+		Email varchar(200),
+		Url varchar(200)
+	);
+	Alter Table Empresa add Constraint Pk_Empresa primary key (id_Empresa);
+	Alter Table Empresa add Constraint Fk_Empresa_Municipio Foreign Key (id_Municipio) references Municipio (id_Municipio) MATCH FULL;
+	Alter Table Empresa ADD CONSTRAINT Dist_Empresa UNIQUE (Cnpj);	
+		
+	/*005*/
+	Create Sequence Seq_GrupoProduto;	
+	Create Table GrupoProduto(
+		id_GrupoProduto integer not null default nextval('Seq_GrupoProduto'),
+		Descricao Varchar(50) not null
+	);
+	Alter Table GrupoProduto add Constraint Pk_GrupoProduto primary key (id_GrupoProduto);
+	
+	/*006*/
+	Create Sequence Seq_SubGrupoProduto;	
+	Create Table SubGrupoProduto(
+		id_SubGrupoProduto integer not null default nextval('Seq_GrupoProduto'),
+		id_GrupoProduto integer not null,
+		Descricao Varchar(50) not null
+	);
+	Alter Table SubGrupoProduto add Constraint Pk_SubGrupoProduto primary key (id_SubGrupoProduto);
+	Alter Table SubGrupoProduto add Constraint Fk_SubGrupoProduto_Grupo Foreign Key (id_GrupoProduto) references GrupoProduto (id_GrupoProduto) MATCH FULL;	
+	Alter Table SubGrupoProduto ADD CONSTRAINT Dist_SubGrupoProduto UNIQUE (id_GrupoProduto, Descricao);	
+		
+	/*007*/	
+	Create Sequence Seq_MarcaProduto;	
+	Create table MarcaProduto(
+		id_MarcaProduto integer not null default nextval('Seq_MarcaProduto'),
+		Descricao varchar(50) not null
+	);		
+	Alter Table MarcaProduto add Constraint Pk_MarcaProduto primary key (id_MarcaProduto);	
+	
+	/*032*/
+	Create SEQUENCE Seq_SituacaoTributariaPISCOFINS;	
+	Create Table SituacaoTributariaPISCOFINS(
+		id_CSTPISCOFINS int not null default nextval('Seq_SituacaoTributariaPISCOFINS'),
+		CodigoSTPISCOFINS varchar(10) not null,
+		Descricao varchar(200) not null,
+		IsentoAliquotaZero boolean
+	);
+	Alter Table SituacaoTributariaPISCOFINS add CONSTRAINT Pk_SituacaoTributariaPISCOFINS primary key (id_CSTPISCOFINS);
+	Alter Table SituacaoTributariaPISCOFINS ADD CONSTRAINT Dist_SituacaoTributariaPISCOFINS UNIQUE (CodigoSTPISCOFINS);	
+	
+	/*008*/	
+	Create Sequence Seq_NCM;	
+	Create Table NCM(
+		id_NCM integer not null default nextval('Seq_NCM'),
+		CodigoNCM varchar(10) not null,
+		Descricao varchar(100),
+		AliquotaIPI numeric(9,2) default 0,
+		AliquotaII numeric(9,2) default 0,
+		id_CSTPIS int,
+		id_CSTCOFINS int		
+	);
+	Alter Table NCM add Constraint Pk_NCM primary key (id_NCM);
+    Alter Table NCM ADD CONSTRAINT Dist_NCM UNIQUE (CodigoNCM);	
+	Alter Table NCM add constraint FK_STPIS Foreign Key(id_CSTPIS) references SituacaoTributariaPISCOFINS (id_CSTPISCOFINS) MATCH FULL; 
+	Alter Table NCM add constraint FK_STCOFINS Foreign Key(id_CSTCOFINS) references SituacaoTributariaPISCOFINS (id_CSTPISCOFINS) MATCH FULL; 
+
+	/*009*/	
+	Create Sequence Seq_Deposito;	
+	Create Table Deposito(
+		id_Deposito integer not null default nextval('Seq_Deposito'),
+		id_Empresa int not null,
+		Descricao varchar(50) not null,
+		Endereco varchar(150) not null
+	);
+	Alter Table Deposito add Constraint Pk_Deposito primary key (id_Deposito);
+	Alter Table Deposito add constraint FK_Deposito_Empresa Foreign Key(id_Empresa) references Empresa (id_Empresa) MATCH FULL; 
+	
+	/*010*/	
+	Create Sequence Seq_Unidade;	
+	Create Table Unidade(
+		id_Unidade integer not null default nextval('Seq_Unidade'),
+		Sigla varchar(5) not null,
+		Descricao varchar(50) not null
+	);
+	Alter Table Unidade add Constraint Pk_Unidade primary key (id_Unidade);
+	
+	/*018*/
+	Create Sequence Seq_SituacaoTributariaA;
+	Create Table SituacaoTributariaA(
+		id_STA integer not null default nextval('Seq_SituacaoTributariaA'),
+		CodigoSTA varchar(1) not null,
+		Descricao varchar(50) not null
+	);
+	Alter Table SituacaoTributariaA add Constraint Pk_SituacaoTributariaA primary key (id_STA);
+	Alter Table SituacaoTributariaA ADD CONSTRAINT Dist_SituacaoTributariaA UNIQUE (CodigoSTA);
+		
+	/*019*/
+	Create Sequence Seq_SituacaoTributariaB;
+	Create Table SituacaoTributariaB(
+		id_STB integer not null default nextval('Seq_SituacaoTributariaB'),
+		CodigoSTB varchar(2) not null,
+		Descricao varchar(50) not null
+	);
+	Alter Table SituacaoTributariaB add Constraint Pk_SituacaoTributariaB primary key (id_STB);
+	Alter Table SituacaoTributariaB ADD CONSTRAINT Dist_SituacaoTributariaB UNIQUE (CodigoSTB);
+		
+	/*011*/	
+	Create Sequence Seq_Produto;
+	Create Table Produto(
+		id_Produto integer not null default nextval('Seq_Produto'),
+		Referencia varchar(50),
+		Descricao varchar(150) not null,
+		id_SubGrupoProduto integer,
+		id_MarcaProduto integer,
+		id_NCM integer,
+		id_STA integer,
+		id_STB integer,
+		id_UnidadePadrao integer,	un - cx
+		PesoBruto numeric(17,2),
+		PesoLiquido numeric(17,2),
+		NumeroAnvisa varchar(20),
+		ValidadeAnvisa timestamp,
+		ControlaLote boolean,
+		AtivoCompra boolean not null default true,
+		AtivoVenda boolean not null default true
+	);	
+	Alter Table Produto add Constraint Pk_Produto primary key (id_Produto);
+	Alter Table Produto add Constraint Fk_Produto_SubGrupoProduto Foreign Key (id_SubGrupoProduto) references SubGrupoProduto (id_SubGrupoProduto) MATCH FULL;
+	Alter Table Produto add Constraint Fk_Produto_MarcaProduto Foreign Key (id_MarcaProduto) references MarcaProduto (id_MarcaProduto) MATCH FULL;	
+	Alter Table Produto add Constraint Fk_Produto_NCM Foreign Key (id_NCM) references NCM (id_NCM) MATCH FULL;
+	Alter Table Produto add Constraint Fk_Produto_STA Foreign Key (id_STA) references SituacaoTributariaA (id_STA) MATCH FULL;
+	Alter Table Produto add Constraint Fk_Produto_STB Foreign Key (id_STB) references SituacaoTributariaB (id_STB) MATCH FULL;
+	Alter Table Produto add Constraint Fk_Produto_Unidade Foreign Key (id_UnidadePadrao) references Unidade (id_Unidade) MATCH FULL;
+	Alter Table Produto ADD CONSTRAINT Dist_Produto UNIQUE (Descricao);
+	Alter Table Produto ADD CONSTRAINT Dist_ProdutoRef UNIQUE (Referencia);
+		
+	/*012*/
+	Create Sequence Seq_ProdutoUnidade;
+	Create Table ProdutoUnidade(
+		id_ProdutoUnidade integer not null default nextval('Seq_ProdutoUnidade'),
+		id_Produto integer not null,
+		id_Unidade integer not null,
+		CodigoBarras varchar(50),
+		FatorConversao Numeric(9,4) not null default 1, 
+		PesoBruto numeric(17,2),
+		PesoLiquido numeric(17,2),
+		UnidadePrincipal boolean not null
+	);
+	Alter Table ProdutoUnidade add Constraint Pk_ProdutoUnidade primary key (id_ProdutoUnidade);
+	Alter Table ProdutoUnidade add Constraint Fk_ProdutoUnidade_Produto Foreign Key (id_Produto) references Produto (id_Produto) MATCH FULL;	
+	Alter Table ProdutoUnidade add Constraint Fk_ProdutoUnidade_Unidade Foreign Key (id_Unidade) references Unidade (id_Unidade) MATCH FULL;	
+	Alter Table ProdutoUnidade ADD CONSTRAINT Dist_ProdutoUnidade UNIQUE (id_Produto, id_Unidade);
+	
+	Create Function GravarUnidadePadrao() RETURNS trigger AS $Produto$
+	Begin
+	  if New.PesoBruto IS NULL THEN
+		New.PesoBruto = 0;
+	  End if;
+	  if New.PesoLiquido IS NULL THEN
+		New.PesoLiquido = 0;
+	  End if;
+
+	  Insert into ProdutoUnidade(
+		id_Produto,
+		id_Unidade,
+		CodigoBarras,
+		FatorConversao,
+		PesoBruto,
+		PesoLiquido,
+		UnidadePrincipal)
+	  Values(
+		New.id_Produto,
+		New.id_UnidadePadrao,
+		New.Referencia,
+		1,
+		New.PesoBruto,
+		New.PesoLiquido,
+		True);
+
+	  Return New;	
+	End;
+	$Produto$ LANGUAGE plpgsql;
+
+	CREATE TRIGGER tg_GravarUnidadePadrao After INSERT ON Produto
+		FOR EACH ROW EXECUTE PROCEDURE GravarUnidadePadrao();
+		
+    
+	/*013*/
+	Create Sequence Seq_ProdutoLote;
+	Create Table ProdutoLote(
+		id_ProdutoLote integer not null default nextval('Seq_ProdutoLote'),
+		id_Produto integer not null,
+		NumeroLote varchar(20) not null,
+		DataFabricacao Timestamp not null default Current_timestamp,
+		DataValidade Timestamp not null default current_timestamp + interval '20 year'
+	);	
+	Alter Table ProdutoLote add Constraint Pk_ProdutoLote primary key (id_ProdutoLote);
+	Alter Table ProdutoLote add Constraint Fk_ProdutoLote_Produto Foreign Key (id_Produto) references Produto (id_Produto) MATCH FULL;		
+	Alter Table ProdutoLote ADD CONSTRAINT Dist_ProdutoLote UNIQUE (id_Produto, NumeroLote);
+
+	Create Function GravarProdutoLote() RETURNS trigger AS $Produto$
+	Begin 
+	  Insert into ProdutoLote(
+		id_Produto,
+		NumeroLote)
+	  Values(
+		New.id_Produto,
+		'0');
+
+	  Return New;	
+	End;
+	$Produto$ LANGUAGE plpgsql;
+
+	CREATE TRIGGER tg_GravarProdutoLote After INSERT ON Produto
+		FOR EACH ROW EXECUTE PROCEDURE GravarProdutoLote();
+		
+	/*014*/
+	Create Sequence Seq_ANS;
+	Create Table ANS(
+		id_ANS integer not null default nextval('Seq_ANS'),
+		CodigoServico varchar(20) not null,
+		Descricao varchar(150) not null
+	);
+	Alter Table ANS add Constraint Pk_ANS primary key (id_ANS);
+	
+	/*015*/ -- Classificação Internacional de Doenças
+	Create Sequence Seq_CID;
+	Create Table CID(
+		id_Cid integer not null default nextval('Seq_CID'),
+		Codigo varchar(20) not null,
+		Descricao varchar(150) not null
+	);
+	Alter Table CID add Constraint Pk_CID primary key (id_CID);
+	
+	/*016*/
+	Create Sequence Seq_Pessoa;
+	Create Table Pessoa(
+		id_Pessoa integer not null default nextval('Seq_Pessoa'),
+		CpfCnpj varchar(14),
+		RazaoSocial Varchar(150) not null,
+		NomeFantasia Varchar(150) not null,
+		InscricaoEstadual varchar(20),
+		InscricaoMunicipal varchar(20),
+		Rg varchar(20),
+		DataNascimento Timestamp,
+		Endereco varchar(150),
+		Numero varchar(10),
+		Cep varchar(9),
+		Bairro varchar(50),
+		id_Municipio integer,
+		Telefone1 varchar(15),
+		Telefone2 varchar(15),
+		Fax varchar(15),
+		Email varchar(200),
+		Ativo boolean not null default true
+	);
+	Alter Table Pessoa add Constraint Pk_Pessoa primary key (id_Pessoa);	
+	Alter Table Pessoa add Constraint Fk_Pessoa_Municipio Foreign Key (id_Municipio) references Municipio (id_Municipio) MATCH FULL;	
+		
+	/*017*/
+	Create Sequence Seq_PessoaTipo;
+	Create Table PessoaTipo(
+		id_PessoaTipo integer not null default nextval('Seq_PessoaTipo'),
+		id_Pessoa integer not null,
+		TipoPessoa varchar(5) not null
+	);
+	Alter Table PessoaTipo add Constraint Pk_PessoaTipo primary key (id_PessoaTipo);	
+	Alter Table PessoaTipo add Constraint Fk_PessoaTipo_Pessoa Foreign Key (id_Pessoa) references Pessoa (id_Pessoa) MATCH FULL;
+	Alter Table PessoaTipo ADD CONSTRAINT Dist_PessoaTipo UNIQUE (id_Pessoa, TipoPessoa);
+	
+	
+	/*020*/
+	Create Sequence Seq_CFOP;	
+	Create Table CFOP(
+		id_CFOP integer not null default nextval('Seq_CFOP'),
+		CodigoCFOP varchar(4) not null,
+		Descricao varchar(100) not null,
+		Tipo Varchar(2) not null,
+		Ajuste Boolean not null default false,
+		ExigeRetorno Boolean default false,
+		DiasRetorno int not null default 0
+	);
+	Alter Table CFOP add Constraint Pk_CFOP primary key (id_CFOP);
+	
+	Create Sequence Seq_RelacaoCFOP;
+	Create Table RelacaoCFOP(
+		id_RelacaoCFOP integer not null default nextval('Seq_RelacaoCFOP'),
+		id_CFOP integer not null,
+		id_CFOPRelacao integer not null
+	);
+	Alter Table RelacaoCFOP add Constraint Pk_RelacaoCFOP primary key (id_RelacaoCFOP);
+	Alter Table RelacaoCFOP ADD CONSTRAINT Dist_RelacaoCFOP UNIQUE (id_CFOP, id_CFOPRelacao);
+	
+	/*021*/
+	Create Table GrupoFiscal(
+		id_GrupoFiscal integer not null default nextval('Seq_GrupoFiscal'),
+		id_UfOrigem integer not null,
+		id_UfDestino integer not null,
+		id_CFOP integer not null,
+		AliquotaICMS numeric(9,2) not null default 0,
+		AliquotaSubs numeric(9,2) not null default 0
+	);
+	Alter Table GrupoFiscal add Constraint Pk_GrupoFiscal primary key (id_GrupoFiscal);	
+	Alter Table GrupoFiscal add Constraint Fk_GrupoFiscal_UfOrigem Foreign Key (id_UfOrigem) references Uf (id_Uf) MATCH FULL;
+	Alter Table GrupoFiscal add Constraint Fk_GrupoFiscal_UfDestino Foreign Key (id_UfDestino) references Uf (id_Uf) MATCH FULL;	
+	Alter Table GrupoFiscal add Constraint Fk_GrupoFiscal_CFOP Foreign Key (id_CFOP) references CFOP (id_CFOP) MATCH FULL;
+	
+	/*022*/	
+	Create Sequence Seq_CentroCusto;
+	Create Table CentroCusto(
+		id_CentroCusto integer not null default nextval('Seq_CentroCusto'),
+		id_Empresa integer not null,
+		Sigla varchar(5) not null,
+		Descricao varchar(50) not null
+	);	
+	Alter Table CentroCusto add Constraint Pk_CentroCusto primary key (id_CentroCusto);
+	Alter Table CentroCusto add Constraint Fk_CentroCusto_Empresa Foreign Key (id_Empresa) references Empresa (id_Empresa) MATCH FULL;
+	Alter Table CentroCusto ADD CONSTRAINT Dist_CentroCusto UNIQUE (id_Empresa, Sigla);
+	 
+	/*023*/	
+	Create Sequence Seq_PlanoContas;
+	Create Table PlanoContas(
+		id_PlanoContas integer not null default nextval('Seq_PlanoContas'),
+		id_Empresa integer not null,
+		CodigoConta varchar(20) not null,
+		Descricao varchar(50) not null,
+		TipoConta varchar(1) not null, -- C ou D
+		Agrupamento varchar(1) not null -- A ou S
+	);	
+	 Alter Table PlanoContas add Constraint Pk_PlanoContas primary key (id_PlanoContas);
+	 Alter Table PlanoContas add Constraint Fk_PlanoContas_Empresa Foreign Key (id_Empresa) references Empresa (id_Empresa) MATCH FULL; 
+	 Alter Table PlanoContas ADD CONSTRAINT Dist_PlanoContas UNIQUE (id_Empresa, CodigoConta);
+	 
+	/*024*/	
+	Create Sequence Seq_Banco;
+	Create Table Banco(
+		id_Banco integer not null default nextval('Seq_Banco'),
+		NumeroBanco varchar(3) not null,
+		Descricao varchar(50) not null
+	);	
+	Alter Table Banco add Constraint Pk_Bancos primary key (id_Banco);
+	Alter Table Banco ADD CONSTRAINT Dist_Banco UNIQUE (NumeroBanco);
+	
+	/*025*/	
+	Create Sequence Seq_ContaCorrente;
+	Create Table ContaCorrente(
+		id_ContaCorrente integer not null default nextval('Seq_ContaCorrente'),
+		id_Empresa integer not null,
+		id_Banco integer not null,
+		NumeroAgencia varchar(10) not null,
+		NumeroContaCorrente varchar(20) not null,
+		LimiteCredito numeric(17,4) not null default 0,
+		SaldoConta numeric(17,4) not null default 0
+	);	
+	Alter Table ContaCorrente add Constraint Pk_ContaCorrente primary key (id_ContaCorrente);
+	Alter Table ContaCorrente add Constraint Fk_ContaCorrente_Empresa Foreign Key (id_Empresa) references Empresa (id_Empresa) MATCH FULL; 
+	Alter Table ContaCorrente add Constraint Fk_ContaCorrente_Banco Foreign Key (id_Banco) references Banco (id_Banco) MATCH FULL;
+	Alter Table ContaCorrente ADD CONSTRAINT Dist_ContaCorrente UNIQUE (id_Banco, NumeroAgencia, NumeroContaCorrente);
+	
+	/*026*/
+	Create Sequence Seq_Usuario;
+	Create Table Usuario(
+		id_Usuario integer not null default nextval('Seq_Usuario'),
+		Nome varchar(50) not null,
+		Login varchar(25) not null,
+		Senha varchar(50) not null,
+		email varchar(150) null,
+		Ativo boolean not null default true
+	);
+	Alter Table Usuario add Constraint Pk_Usuario primary key (id_Usuario);
+	Alter Table Usuario ADD CONSTRAINT Dist_Usuario UNIQUE (Login);	
+	
+	/*027*/ 
+	Create SEQUENCE Seq_Transacao;	
+	Create Table Transacao(
+		id_Transacao int not null default nextval('Seq_Transacao'),
+		CodigoTransacao int not null unique,
+		Descricao varchar(150) not null,
+		Ativo boolean not null default true
+	);
+	Alter Table Transacao add Constraint Pk_Transacao primary key (id_Transacao);
+	Alter Table Transacao ADD CONSTRAINT Dist_Transacao UNIQUE (CodigoTransacao);	
+	
+	/*028*/
+	Create SEQUENCE Seq_GrupoUsuario;	
+	Create Table GrupoUsuario(
+		id_GrupoUsuario int not null default NEXTVAL('Seq_GrupoUsuario'),
+		Descricao Varchar(100) not null
+	);
+	Alter Table GrupoUsuario add CONSTRAINT Pk_GrupoUsuario primary key (id_GrupoUsuario);
+	
+	/*029*/
+	Create SEQUENCE Seq_GrupoTransacao;	
+	Create Table GrupoTransacao(
+		id_GrupoTransacao int not null default nextval('Seq_GrupoTransacao'),
+		id_GrupoUsuario int not null,
+		id_Transacao int not null
+	);
+	Alter Table GrupoTransacao add CONSTRAINT Pk_GrupoTransacao primary key (id_GrupoTransacao);
+	Alter Table GrupoTransacao add Constraint Fk_GrupoTransacao_GrupoUsuario Foreign Key (id_GrupoUsuario) references GrupoUsuario (id_GrupoUsuario) MATCH FULL;
+	Alter Table GrupoTransacao add Constraint Fk_GrupoTransacao_Transacao Foreign Key (id_Transacao) references Transacao (id_Transacao) MATCH FULL;
+	Alter Table GrupoTransacao ADD CONSTRAINT Dist_GrupoTransacao UNIQUE (id_GrupoUsuario, id_Transacao);	
+		
+	/*030*/ 
+	Create SEQUENCE Seq_UsuariodoGrupo;	
+	Create Table UsuariodoGrupo(
+		id_UsuariodoGrupo int not null default nextval('Seq_UsuariodoGrupo'),
+		id_GrupoUsuario int not null,
+		id_Usuario int not null
+	);
+	Alter Table UsuariodoGrupo add CONSTRAINT Pk_UsuariodoGrupo primary key (id_UsuariodoGrupo);
+	Alter Table UsuariodoGrupo add Constraint Fk_UsuariodoGrupo_GrupoUsuario Foreign Key (id_GrupoUsuario) references GrupoUsuario (id_GrupoUsuario) MATCH FULL;
+	Alter Table UsuariodoGrupo add Constraint Fk_UsuariodoGrupo_Usuario Foreign Key (id_Usuario) references Usuario (id_Usuario) MATCH FULL;
+	Alter Table UsuariodoGrupo ADD CONSTRAINT Dist_UsuariodoGrupo UNIQUE (id_GrupoUsuario, id_Usuario);	
+	
+	/*031*/ 
+	Create SEQUENCE Seq_EmpresaGrupo;	
+	Create Table EmpresaGrupo(
+		id_EmpresaGrupo int not null default nextval('Seq_EmpresaGrupo'),
+		id_Empresa int not null,
+		id_GrupoUsuario int not null
+	);
+	Alter Table EmpresaGrupo add CONSTRAINT Pk_EmpresaGrupo primary key (id_EmpresaGrupo);
+	Alter Table EmpresaGrupo add Constraint Fk_EmpresaGrupo_Empresa Foreign Key (id_Empresa) references Empresa (id_Empresa) MATCH FULL;
+	Alter Table EmpresaGrupo add Constraint Fk_EmpresaGrupo_GrupoUsuario Foreign Key (id_GrupoUsuario) references GrupoUsuario (id_GrupoUsuario) MATCH FULL;
+	Alter Table EmpresaGrupo ADD CONSTRAINT Dist_EmpresaGrupo UNIQUE (id_Empresa, id_GrupoUsuario);	
+	
+	
+	/*033*/
+	Create SEQUENCE Seq_EstoqueProduto;	
+	Create Table EstoqueProduto (
+		id_EstoqueProduto int not null default nextval('Seq_EstoqueProduto'),
+		id_Empresa int not null,
+		id_Deposito int not null,
+		id_CFOP int not null, 
+		id_ProdutoLote int not null,
+		Quantidade numeric(17,4) not null default 0
+	);
+	Alter Table EstoqueProduto add CONSTRAINT Pk_EstoqueProduto primary key (id_EstoqueProduto);
+	Alter Table EstoqueProduto add Constraint Fk_EstoqueProduto_Empresa Foreign Key (id_Empresa) references Empresa (id_Empresa) MATCH FULL;
+	Alter Table EstoqueProduto add Constraint Fk_EstoqueProduto_Deposito Foreign Key (id_Deposito) references Deposito (id_Deposito) MATCH FULL;
+	Alter Table EstoqueProduto add Constraint Fk_EstoqueProduto_CFOP Foreign Key (id_CFOP) references CFOP (id_CFOP) MATCH FULL;
+	Alter Table EstoqueProduto add Constraint Fk_EstoqueProduto_ProdutoLote Foreign Key (id_ProdutoLote) references ProdutoLote (id_ProdutoLote) MATCH FULL;
+	Alter Table EstoqueProduto ADD CONSTRAINT Dist_EstoqueProduto UNIQUE (id_Empresa, id_Deposito, id_CFOP, id_ProdutoLote);	
+	
+	/*034 LancamentoEstoque*/
+	Create sequence Seq_LancamentoEstoque;
+	Create Table LancamentoEstoque(
+		id_LancamentoEstoque int not null default nextval('Seq_LancamentoEstoque'),
+		id_Empresa int not null,
+		id_CFOP int not null,
+		DataLancamento timestamp not null default Current_timestamp,
+		Observacoes text null,
+		Atualizado boolean not null default false  
+	);
+	Alter Table LancamentoEstoque add CONSTRAINT Pk_LancamentoEstoque primary key (id_LancamentoEstoque);
+	Alter Table LancamentoEstoque add Constraint Fk_LancamentoEstoque_Empresa Foreign Key (id_Empresa) references Empresa (id_Empresa) MATCH FULL;
+	Alter Table LancamentoEstoque add Constraint Fk_LancamentoEstoque_CFOP Foreign Key (id_CFOP) references CFOP (id_CFOP) MATCH FULL;
+	
+	/*035 LancamentoEstoqueItem*/
+	Create sequence Seq_LancamentoEstoqueItem;
+	Create Table LancamentoEstoqueItem(
+		id_LancamentoEstoqueItem int not null default nextval('Seq_LancamentoEstoqueItem'),
+		id_LancamentoEstoque int not null,
+		id_Deposito int not null,
+		id_ProdutoLote int not null,
+		id_ProdutoUnidade int not null,
+		Quantidade numeric(17,4) not null
+	);
+	Alter Table LancamentoEstoqueItem add CONSTRAINT Pk_LancamentoEstoqueItem primary key (id_LancamentoEstoqueItem);
+	Alter Table LancamentoEstoqueItem add Constraint Fk_LancamentoEstoqueItem_LancamentoEstoque Foreign Key (id_LancamentoEstoque) references LancamentoEstoque (id_LancamentoEstoque) MATCH FULL;
+	Alter Table LancamentoEstoqueItem add Constraint Fk_LancamentoEstoqueItem_Deposito Foreign Key (id_Deposito) references Deposito (id_Deposito) MATCH FULL;
+	Alter Table LancamentoEstoqueItem add Constraint Fk_LancamentoEstoqueItem_ProdutoLote Foreign Key (id_ProdutoLote) references ProdutoLote (id_ProdutoLote) MATCH FULL;
+	Alter Table LancamentoEstoqueItem add Constraint Fk_LancamentoEstoqueItem_ProdutoUnidade Foreign Key (id_ProdutoUnidade) references ProdutoUnidade (id_ProdutoUnidade) MATCH FULL;
+	
+	
+	/*036 MovimentoEstoque (Extrato Movimentação)*/
+	Create sequence Seq_MovimentoEstoque;
+	Create Table MovimentoEstoque(
+		id_MovimentoEstoque int not null default nextval('Seq_MovimentoEstoque'),
+		id_Empresa int not null,
+		id_CFOP int not null,
+		DataMovimento timestamp not null default Current_timestamp,
+		id_LancamentoEstoque int null,
+	);	
+	
+	/*037 MovimentoEstoqueItem*/
+	Create sequence Seq_MovimentoEstoqueItem;
+	Create Table MovimentoEstoqueItem(
+		id_MovimentoEstoqueItem int not null default nextval('Seq_MovimentoEstoqueItem'),
+		id_Deposito int not null,
+		id_ProdutoLote int not null,
+		id_ProdutoUnidade int not null,
+		FatorConversao Numeric(9,4) not null,
+		Quantidade numeric(17,4) not null,
+		QuantidadeMovimento numeric(17,4) not null,
+		SaldoAnterior numeric(17,4) not null,
+		SaldoMovimento numeric(17,4) not null
+	); 
+	
+	/*038 MovimentoFinanceiro*/
+	Create sequence Seq_MovimentoFinanceiro;
+	Create Table MovimentoFinanceiro(
+		id_MovimentoFinanceiro int not null default nextval('Seq_MovimentoFinanceiro'),
+		id_Empresa int not null,
+		id_Pessoa int not null,
+		id_CentroCusto int not null,
+		id_PlanoContas int not null,
+		id_ContaCorrente int null,
+		StatusMovimento varchar(1) not null,
+		TipoMovimento varchar(1) not null,
+		DataPrevisao timestamp null,
+		DataMovimento timestamp not null default Current_timestamp,
+		DataVencimento timestamp not null default Current_timestamp,
+		DataLiquidacao timestamp null,
+		DataCancelamento timestamp null,
+		DataBaixa timestamp null,
+		DataCompetenciaIni timestamp null,
+		DataCompetenciaFim timestamp null,		
+		ValorVencimento numeric(17,4) not null default 0,
+		ValorLiquidacao numeric(17,4) not null default 0,
+		ValorAcrescimos numeric(17,4) not null default 0,
+		ValorDescontos numeric(17,4) not null default 0,
+		ValorMulta numeric(17,4) not null default 0,
+		AliquotaJuros numeric(9,2) not null default 0,
+		Observacoes text null
+	);
+	Alter Table MovimentoFinanceiro add CONSTRAINT Pk_MovimentoFinanceiro primary key (id_MovimentoFinanceiro);
+	Alter Table MovimentoFinanceiro add Constraint Fk_MovimentoFinanceiro_Empresa Foreign Key (id_Empresa) references Empresa (id_Empresa) MATCH FULL;
+	Alter Table MovimentoFinanceiro add Constraint Fk_MovimentoFinanceiro_Pessoa Foreign Key (id_Pessoa) references Pessoa (id_Pessoa) MATCH FULL;
+	Alter Table MovimentoFinanceiro add Constraint Fk_MovimentoFinanceiro_CentroCusto Foreign Key (id_CentroCusto) references CentroCusto (id_CentroCusto) MATCH FULL;
+	Alter Table MovimentoFinanceiro add Constraint Fk_MovimentoFinanceiro_PlanoContas Foreign Key (id_PlanoContas) references PlanoContas (id_PlanoContas) MATCH FULL;
+	Alter Table MovimentoFinanceiro add Constraint Fk_MovimentoFinanceiro_ContaCorrente Foreign Key (id_ContaCorrente) references ContaCorrente (id_ContaCorrente) MATCH FULL;
+	Alter Table MovimentoFinanceiro ADD CONSTRAINT Dist_MovimentoFinanceiro UNIQUE (id_Empresa, id_Pessoa, id_CentroCusto, id_PlanoContas, TipoMovimento, DataVencimento, ValorVencimento);	
+
+	/*039 ExtratoContaCorrente*/
+	Create Sequence Seq_ExtratoContaCorrente;
+	Create Table ExtratoContaCorrente(
+		id_ExtratoContaCorrente int not null default nextval('ExtratoContaCorrente'),
+		id_Empresa int not null,	
+		id_ContaCorrente int not null,
+		id_MovimentoFinanceiro int null,
+		DataMovimento timestamp not null default Current_timestamp,
+		TipoMovimento varchar(1) not null, --(M ou E)
+		ValorMovimento numeric(17,4) not null	
+	);
+	Alter Table ExtratoContaCorrente add CONSTRAINT Pk_ExtratoContaCorrente primary key (id_ExtratoContaCorrente);
+	Alter Table ExtratoContaCorrente add Constraint Fk_ExtratoContaCorrente_Empresa Foreign Key (id_Empresa) references Empresa (id_Empresa) MATCH FULL;
+	Alter Table ExtratoContaCorrente add Constraint Fk_ExtratoContaCorrente_ContaCorrente Foreign Key (id_ContaCorrente) references ContaCorrente (id_ContaCorrente) MATCH FULL;
+	Alter Table ExtratoContaCorrente add Constraint Fk_ExtratoContaCorrente_MovimentoFinanceiro Foreign Key (id_MovimentoFinanceiro) references MovimentoFinanceiro (id_MovimentoFinanceiro) MATCH FULL;
+
+	/*040 SaldoContaCorrente*/
+	Create Sequence Seq_SaldoContaCorrente;
+	Create Table SaldoContaCorrente(
+		id_SaldoContaCorrente int not null default nextval('Seq_SaldoContaCorrente'),
+		id_ContaCorrente int not null,
+		DataSaldo timestamp not null default Current_timestamp,
+		SaldoAnterior numeric(17,4) not null default 0,
+		SaldoAnteriorConciliado numeric(17,4) not null default 0,
+		ValorSaldo numeric(17,4) not null default 0,
+		SaldoAtualConciliado numeric(17,4) not null default 0
+	);
+	Alter Table SaldoContaCorrente add CONSTRAINT Pk_SaldoContaCorrente primary key (id_SaldoContaCorrente);
+	Alter Table SaldoContaCorrente add Constraint Fk_SaldoContaCorrente_ContaCorrente Foreign Key (id_ContaCorrente) references ContaCorrente (id_ContaCorrente) MATCH FULL;
+	Alter Table SaldoContaCorrente ADD CONSTRAINT Dist_SaldoContaCorrente UNIQUE (id_ContaCorrente, DataSaldo);	
+	
+/* FUNCTION ValorLiqMovFinanceiro*/	
+CREATE or REPLACE FUNCTION ValorLiqMovFinanceiro(id_MovFinanceiro integer) RETURNS Numeric AS $$
+Declare recMovFinanceiro RECORD;
+	cValorLiquido Numeric(17,4);
+	cValorJuros Numeric(17,4);
+	cValorMulta Numeric(17,4);
+	iQtdDias integer;
+BEGIN
+	Select INTO recMovFinanceiro movimentofinanceiro.* from movimentofinanceiro where id_MovimentoFinanceiro = id_MovFinanceiro;
+	iQtdDias = DATE_PART('day', current_timestamp::date) - DATE_PART('day', recMovFinanceiro.datavencimento::date);
+
+	cValorJuros = 0;
+	cValorMulta = 0;
+	IF iQtdDias > 0 THEN
+		cValorJuros = recMovFinanceiro.AliquotaJuros * iQtdDias;
+		cValorMulta = recMovFinanceiro.ValorMulta;
+	END IF;
+
+	cValorLiquido = recMovFinanceiro.valorvencimento + recMovFinanceiro.ValorAcrescimos + cValorMulta + cValorJuros - recMovFinanceiro.ValorDescontos;
+
+	RETURN cValorLiquido;
+END;
+$$ LANGUAGE plpgsql;     
+
+	
+/* View Consulta Estoque Produto*/	
+Create or Replace View vwEstoqueProdutoLote
+As
+  Select 
+    estoqueproduto.id_EstoqueProduto,
+    estoqueproduto.id_Empresa,
+    estoqueproduto.id_Deposito,    
+    estoqueproduto.id_ProdutoLote,
+    produto.id_Produto,   
+    estoqueproduto.id_CFOP,
+    coalesce(estoqueproduto.Quantidade,0) as QuantidadeEstoque,
+    
+    coalesce((Select sum(quantidade) from lancamentoestoqueitem 
+       Inner Join lancamentoestoque on lancamentoestoque.id_LancamentoEstoque = lancamentoestoqueitem.id_LancamentoEstoque 
+       Inner join CFOP on lancamentoestoque.id_CFOP = CFOP.id_CFOP
+       Where lancamentoestoqueitem.id_ProdutoLote=estoqueproduto.id_ProdutoLote 
+       And lancamentoestoque.atualizado = false
+       And CFOP.Tipo = 'S'),0) as Reservas,
+       
+     coalesce(estoqueproduto.Quantidade,0) - coalesce((Select sum(quantidade) from lancamentoestoqueitem 
+       Inner Join lancamentoestoque on lancamentoestoque.id_LancamentoEstoque = lancamentoestoqueitem.id_LancamentoEstoque 
+       Inner join CFOP on lancamentoestoque.id_CFOP = CFOP.id_CFOP
+       Where lancamentoestoqueitem.id_ProdutoLote=estoqueproduto.id_ProdutoLote 
+       And lancamentoestoque.atualizado = false
+       And CFOP.Tipo = 'S'),0) as Disponivel  
+  From estoqueproduto 
+  Inner Join produtolote on estoqueproduto.id_ProdutoLote = produtolote.id_ProdutoLote 
+  Inner Join Produto on produto.id_Produto = produtolote.id_Produto 
+  Order By produto.id_Produto
+  	
+	
+/* Inserts Iniciais */	
+insert into usuario (nome,login,senha,email,ativo) values('ADMIN', 'ADMIN','21232f297a57a5a743894a0e4a801fc3','joaocarlosdv@hotmail.com',true);
+
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1001','Cadastro de Países',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1002','Cadastro de UF',true); 	
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1003','Cadastro de Município',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1004','Cadastro de Empresas',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1101','Cadastro de Grupo de Produtos',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1102','Cadastro de SubGrupo de Produtos',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1103','Cadastro de Marcas',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1104','Cadastro de NCM',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1105','Cadastro de Local de Estoque',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1106','Cadastro de Produtos',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1107','Cadastro de Unidades',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1201','Cadastro de Clientes',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1202','Cadastro de Fornecedores',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1203','Cadastro de Vendedores',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1204','Cadastro de Funcionários',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1205','Cadastro de Transportadoras',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1206','Cadastro de Convênios',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1207','Cadastro de Hospitais',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1208','Cadastro de Médicos',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1209','Cadastro de Enfermeiros',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1210','Cadastro de Pacientes',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1401','Cadastro de Situação Tributária A',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1402','Cadastro de Situação Tributária B',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1403','Cadastro de CFOP',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1404','Cadastro de Grupo Fiscal',true);
+Insert Into Transacao(CodigoTransacao, Descricao, Ativo) Values('1405','Cadastro de Situação Tributária PIS\COFINS',true);
+
+
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('01','Operação Tributável com Alíquota Básica');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('02','Operação Tributável com Alíquota Diferenciada');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('03','Operação Tributável com Alíquota por Unidade de Medida de Produto');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('04','Operação Tributável Monofásica - Revenda a Alíquota Zero');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('05','Operação Tributável por Substituição Tributária');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('06','Operação Tributável a Alíquota Zero');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('07','Operação Isenta da Contribuição');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('08','Operação sem Incidência da Contribuição');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('09','Operação com Suspensão da Contribuição');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('49','Outras Operações de Saída');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('50','Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Tributada no Mercado Interno');
+--insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('51','Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('52','Operação com Direito a Crédito - Vinculada Exclusivamente a Receita de Exportação');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('53','Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('54','Operação com Direito a Crédito - Vinculada a Receitas Tributadas no Mercado Interno e de Exportação');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('55','Operação com Direito a Crédito - Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('56','Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('60','Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('61','Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('62','Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('63','Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('64','Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('65','Crédito Presumido - Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('66','Crédito Presumido - Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('67','Crédito Presumido - Outras Operações');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('70','Operação de Aquisição sem Direito a Crédito');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('71','Operação de Aquisição com Isenção');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('72','Operação de Aquisição com Suspensão');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('73','Operação de Aquisição a Alíquota Zero');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('74','Operação de Aquisição sem Incidência da Contribuição');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('75','Operação de Aquisição por Substituição Tributária');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('98','Outras Operações de Entrada');
+insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS,Descricao) Values ('99','Outras Operações');
+
+
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1101','Compra para industrialização ou produção rural','E',false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1102','Compra para comercialização','E',false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1111','Compra para industrialização de mercadoria recebida anteriormente em consignação industrial',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1113','Compra para comercialização, de mercadoria recebida anteriormente em consignação mercantil',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1116','Compra para industrialização ou produção rural originada de encomenda para recebimento futuro',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1117','Compra para comercialização originada de encomenda para recebimento futuro',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1118','Compra de mercadoria para comercialização pelo adquirente originário, entregue pelo vendedor remetente ao destinatário, em venda à ordem',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1120','Compra para industrialização, em venda à ordem, já recebida do vendedor remetente',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1121','Compra para comercialização, em venda à ordem, já recebida do vendedor remetente',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1122','Compra para industrialização em que a mercadoria foi remetida pelo fornecedor ao industrializador sem transitar pelo estabelecimento adquirente',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1124','Industrialização efetuada por outra empresa',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1125','Industrialização efetuada por outra empresa quando a mercadoria remetida para utilização no processo de industrialização não transitou pelo estabelecimento adquirente da mercadoria',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1126','Compra para utilização na prestação de serviço sujeita ao ICMS',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1128','Compra para utilização na prestação de serviço sujeita ao ISSQN',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1150','TRANSFERÊNCIAS PARA INDUSTRIALIZAÇÃO, PRODUÇÃO RURAL, COMERCIALIZAÇÃO OU PRESTAÇÃO DE SERVIÇOS',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1151','Transferência para industrialização ou produção rural',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1152','Transferência para comercialização',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1153','Transferência de energia elétrica para distribuição',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1154','Transferência para utilização na prestação de serviço',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1200','DEVOLUÇÕES DE VENDAS DE PRODUÇÃO DO ESTABELECIMENTO, DE PRODUTOS DE TERCEIROS OU ANULAÇÕES DE VALORES',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1201','Devolução de venda de produção do estabelecimento',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1202','Devolução de venda de mercadoria adquirida ou recebida de terceiros',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1203','Devolução de venda de produção do estabelecimento, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1204','Devolução de venda de mercadoria adquirida ou recebida de terceiros, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1205','Anulação de valor relativo à prestação de serviço de comunicação',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1206','Anulação de valor relativo à prestação de serviço de transporte',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1207','Anulação de valor relativo à venda de energia elétrica',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1208','Devolução de produção do estabelecimento, remetida em transferência',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1209','Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1350','AQUISIÇÕES DE SERVIÇOS DE TRANSPORTE',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1351','Aquisição de serviço de transporte para execução de serviço da mesma natureza',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1352','Aquisição de serviço de transporte por estabelecimento industrial',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1353','Aquisição de serviço de transporte por estabelecimento comercial',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1354','Aquisição de serviço de transporte por estabelecimento de prestador de serviço de comunicação',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1360','Aquisição de serviço de transporte por contribuinte-substituto em relação ao serviço de transporte (ACR)',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1400','ENTRADAS DE MERCADORIAS SUJEITAS AO REGIME DE SUBSTITUIÇÃO TRIBUTÁRIA',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1401','Compra para industrialização ou produção rural de mercadoria sujeita ao regime de substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1403','Compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1406','Compra de bem para o ativo imobilizado cuja mercadoria está sujeita ao regime de substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1407','Compra de mercadoria para uso ou consumo cuja mercadoria está sujeita ao regime de substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1409','Transferência para comercialização em operação com mercadoria sujeita ao regime de substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1410','Devolução de venda de mercadoria, de produção do estabelecimento, sujeita ao regime de substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1411','Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1414','Retorno de mercadoria de produção do estabelecimento, remetida para venda fora do estabelecimento, sujeita ao regime de substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1415','Retorno de mercadoria adquirida ou recebida de terceiros, remetida para venda fora do estabelecimento em operação com mercadoria sujeita ao regime de substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1500','ENTRADAS DE MERCADORIAS REMETIDAS PARA FORMAÇÃO DE LOTE OU COM FIM ESPECÍFICO DE EXPORTAÇÃO E EVENTUAIS DEVOLUÇÕES',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1501','Entrada de mercadoria recebida com fim específico de exportação',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1503','Entrada decorrente de devolução de produto, de fabricação do estabelecimento, remetido com fim específico de exportação',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1504','Entrada decorrente de devolução de mercadoria remetida com fim específico de exportação, adquirida ou recebida de terceiros',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1505','Entrada decorrente de devolução simbólica de mercadoria remetida para formação de lote de exportação, de produto industrializado ou produzido pelo próprio estabelecimento',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1506','Entrada decorrente de devolução simbólica de mercadoria, adquirida ou recebida de terceiros, remetida para formação de lote de exportação',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1550','OPERAÇÕES COM BENS DE ATIVO IMOBILIZADO E MATERIAIS PARA USO OU CONSUMO',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1551','Compra de bem para o ativo imobilizado',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1552','Transferência de bem do ativo imobilizado',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1553','Devolução de venda de bem do ativo imobilizado',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1554','Retorno de bem do ativo imobilizado remetido para uso fora do estabelecimento',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1555','Entrada de bem do ativo imobilizado de terceiro, remetido para uso no estabelecimento',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1556','Compra de material para uso ou consumo',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1557','Transferência de material para uso ou consumo',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1600','CRÉDITOS E RESSARCIMENTOS DE ICMS',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1601','Recebimento, por transferência, de crédito de ICMS',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1602','Recebimento, por transferência, de saldo credor do ICMS, de outro estabelecimento da mesma empresa, para compensação de saldo devedor do imposto',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1603','Ressarcimento de ICMS retido por substituição tributária',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1604','Lançamento do crédito relativo à compra de bem para o ativo imobilizado',true,false,false,0);
+insert into cfop (codigocfop, descricao, entrada, saida, exigeretorno, diasretorno) values ('1605','Recebimento, por transferência, de saldo devedor do ICMS de outro estabelecimento da mesma empresa',true,false,false,0);
