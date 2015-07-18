@@ -1,2 +1,10 @@
 .idea*
 .target*
+.target/*
+.db.properties
+.*db.properties
+target/
+C:\Sistema\gcm\src\main\webapp\WEB-INF\db.properties
+src/main/webapp/WEB-INF/db.properties
+gcm.iml
+src/main/webapp/WEB-INF/db.properties
