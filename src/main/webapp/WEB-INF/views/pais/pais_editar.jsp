@@ -32,7 +32,15 @@
             <div class="navbar">
                 <div class="navbar-inner">
                     <div class="container-fluid">
-                        <a class="brand" style="font: bold;  margin-left: 38%;">Editar País</a>
+                        <c:choose>
+                            <c:when test="${operacao != 'D'}">
+                                <a class="brand" style="font: bold;  margin-left: 38%;">Editar País</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a class="brand" style="font: bold;  margin-left: 38%;">Detalhes País</a>
+                            </c:otherwise>
+                        </c:choose>
+
                     </div>
                 </div>
             </div>
@@ -46,7 +54,7 @@
                     </div>
                     <div class="span8" style="text-align: left;">
                         <form:input path="id_pais" type="text" maxlength="3"
-                                    class="form-control maiusculo" name="Id" placeholder="Id"
+                                    class="form-control maiusculo operacao" name="Id" placeholder="Id"
                                     style="width:80px;" readonly="true" />
                     </div>
                 </div>
@@ -57,7 +65,7 @@
                     </div>
                     <div class="span8" style="text-align: left;">
                         <form:input path="siglapais" type="text" maxlength="3"
-                                    class="form-control maiusculo" name="Sigla" placeholder="Sigla"
+                                    class="form-control maiusculo operacao" name="Sigla" placeholder="Sigla"
                                     required="autofocus" style="width:80px;"/>
                     </div>
                 </div>
@@ -69,7 +77,7 @@
                     </div>
                     <div class="span8" style="text-align: left;">
                         <form:input path="descricao" type="text"  maxlength="50" required="autofocus"
-                                    class="form-control maiusculo" name="Nome" placeholder="Nome"
+                                    class="form-control maiusculo operacao" name="Nome" placeholder="Nome"
                                     style="width:500px;" />
                     </div>
                 </div>
@@ -81,7 +89,7 @@
                     </div>
                     <div class="span8" style="text-align: left;">
                         <form:input path="ibge" type="text" maxlength="5" id="cod_ibge"
-                                    class="form-control apenasnumero"  name="Ibge" placeholder="Ibge"
+                                    class="form-control apenasnumero operacao"  name="Ibge" placeholder="Ibge"
                                     style="width:80px;" />
                     </div>
                 </div>
@@ -90,12 +98,21 @@
                 <div class="navbar-inner">
                     <div class="container-fluid">
                         <div class="row-fluid">
-                            <div class="span6" align="right">
-                                <form:button class="btn btn-lg btn-primary btn-block" type="submit" style="width: 100px;">Salvar</form:button>
-                            </div>
-                            <div class="span6">
-                                <a class="btn btn-lg btn-primary btn-block" style="width:100px;" href="<c:url value="/pais_lista"/>">Cancelar</a>
-                            </div>
+                            <c:choose>
+                                <c:when test="${operacao != 'D'}">
+                                    <div class="span6" align="right">
+                                        <form:button class="btn btn-lg btn-primary btn-block" id="btnSalvar" type="submit" style="width: 100px;">Salvar</form:button>
+                                    </div>
+                                    <div class="span6">
+                                        <a class="btn btn-lg btn-primary btn-block" style="width:100px;" href="<c:url value="/pais_lista"/>">Cancelar</a>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="span12" align="center">
+                                        <a class="btn btn-lg btn-primary btn-block" style="width:100px;" href="<c:url value="/pais_lista"/>">Voltar</a>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>
@@ -104,3 +121,12 @@
     </div>
 </div>
 
+
+<script>
+    $(document).ready(function () {
+        if (${operacao == 'D'}) {
+            $(".operacao").attr("readonly",true);
+            $("#btnSalvar").attr("visibled", false);
+        };
+    });
+</script>

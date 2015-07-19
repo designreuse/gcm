@@ -84,10 +84,11 @@ public class PaisController {
         return mav;
     }
 
-    @RequestMapping(value = "/editar_pais/{id}", method = RequestMethod.GET)
-    public String editar(@PathVariable("id") Integer id, Model model) {
+    @RequestMapping(value = "/editar_pais/{operacao}/{id}", method = RequestMethod.GET)
+    public String editar(@PathVariable("operacao") String operacao, @PathVariable("id") Integer id, Model model) {
         Pais pais = paisDao.selectById(id);
         model.addAttribute("pais", pais);
+        model.addAttribute("operacao", operacao);
         return "pais_editar";
     }
 
