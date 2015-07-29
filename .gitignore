@@ -8,3 +8,8 @@ C:\Sistema\gcm\src\main\webapp\WEB-INF\db.properties
 src/main/webapp/WEB-INF/db.properties
 gcm.iml
 src/main/webapp/WEB-INF/db.properties
+*.iml
+
+*.iml
+
+src/main/resources/rebel.xml

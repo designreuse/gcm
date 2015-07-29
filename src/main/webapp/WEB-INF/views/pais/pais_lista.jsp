@@ -63,7 +63,7 @@
                 <c:forEach items="${pais_lista}" var="p">
                 <tr>
                     <td>
-                        <a href="/pais_deleta/${p.id_pais}" class="btn btn-mini apagar" title="Deletar">
+                        <a href="/pais_deleta/${p.id_pais}" class="btn btn-default btn-mini apagar" title="Deletar">
                             <i class="icon-trash"></i>
                         </a>
                         <a href="/editar_pais/E/${p.id_pais}" class="btn btn-mini" title="Editar">
