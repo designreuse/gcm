@@ -738,6 +738,12 @@ DECLARE recMovFinanceiro RECORD;
 BEGIN
 	Select INTO recMovFinanceiro movimentofinanceiro.* from movimentofinanceiro where id_MovimentoFinanceiro = vid_MovFinanceiro;
 
+	-- Valida TipoOperacao
+	RAISE NOTICE 'Valida o Tipo da Operacao';
+	if vTipoOperacao='L' and vTipoOperacao='E' Then
+		RAISE EXCEPTION '%', 'Erro ao Liquidar. Verifique o Tipo da Operação.'; 
+	End if;
+	
 	-- Valida o Status do Movimento para a Liquidação
 	RAISE NOTICE 'Valida o Status do Movimento para a Liquidação';
 	if vTipoOperacao='L' and recMovFinanceiro.StatusMovimento <> 'P' Then

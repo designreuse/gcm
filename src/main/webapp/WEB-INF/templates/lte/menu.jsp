@@ -21,7 +21,7 @@
 
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
-            <li class="header">MENU</li>
+            <!-- li class="header">MENU</li -->
             <!-- Optionally, you can add icons to the links -->
             <li class="active"><a href="/"><i class="fa fa-home"></i> <span> Home</span></a></li>
             <li class="treeview">
@@ -108,17 +108,185 @@
             </li>
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-money"></i> <span>Comercial</span>
+                    <i class="fa fa-money"></i> <span style="color: #dd1144;">Comercial</span>
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                        <a href="#"><i class="fa fa-shopping-cart"></i> Compras <i class="fa fa-angle-left pull-right"></i></a>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-shopping-cart"></i> Compras <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-circle-o"></i> Cotação de Compras</a></li>
-                            <li><a href="#"><i class="fa fa-circle-o"></i> Pedido de Compras</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Cotação de Compras</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Pedido de Compras</a></li>
                         </ul>
                     </li>
+                </ul>
+                <ul class="treeview-menu">
+                    <li>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-usd"></i> Precificação <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Tabela de Preço por Produto</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Precificação Procedimentos - ANS</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="treeview-menu">
+                    <li>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-pencil"></i> Pedidos <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Orçamento de Vendas</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Pedidos de Vendas</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Pedidos Diversos (Consignação, Empréstimo, Doações, etc...)</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Retornar Pedidos (Consignação, Empréstimo, Doações)</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-suitcase"></i> <span>Estoque</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-exchange"></i> Inventário <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Preparação para o Inventário</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Lista para Contágem</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Lançar Contágens</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Emitir Divergências entre Contágem</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Apuração do Inventário</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Atualização do Inventário</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="#"><i class="fa fa-plus"></i> Entradas <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Efetuar Entradas por Compras</a></li>
+                            <li><a href="<c:url value="/lancamentoestoque_lista/E"/>"><i class="fa fa-circle-o"></i> Efetuar Entradas Diversas</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="#"><i class="fa fa-minus"></i> Saídas <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a href="<c:url value="/lancamentoestoque_lista/S"/>"><i class="fa fa-circle-o"></i> Efetuar Saídas Diversas</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="treeview-menu">
+                    <li>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-search"></i> Consultas <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Consultar Saldo por Produto</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Consultar Movimentação por Produto</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-bolt"></i> <span style="color: #dd1144;">Faturamento</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Faturar Pedidos em Aberto</a></li>
+                    <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Cancelar Faturamento</a></li>
+                    <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Consultar Faturamento</a></li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-suitcase"></i> <span>Financeiro</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="#"><i class="fa fa-barcode"></i> Contas a Pagar <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a href="<c:url value="/movimentofinanceiro_filtros/D"/>"><i class="fa fa-circle-o"></i> Lançamentos de Débito</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Liquidação de Débito em Grupo</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Negociação de Débito</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="#"><i class="fa fa-money"></i> Contas a Receber <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a href="<c:url value="/movimentofinanceiro_filtros/C"/>"><i class="fa fa-circle-o"></i> Lançamentos de Crédito</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Liquidação de Crédito em Grupo</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Negociação de Credito</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="treeview-menu">
+                    <li>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-hdd-o"></i> Conta Corrente <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Lançamento de Tarifas Bancárias</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Extrato de Conta Corrente</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Conciliação Bancária</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-gavel"></i> <span style="color: #dd1144;">Fiscal</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-external-link "></i> NF-e <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Consultar NF-e</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Transmitir NF-e</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Cancelar NF-e</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Inutilizar NF-e</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Reimprimir NF-e</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-bar-chart-o"></i> <span style="color: #dd1144;">Relatórios</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-suitcase"></i> Financeiro <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a style="color: #dd1144;" href="#"><i class="fa fa-money"></i> Contas a Receber <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Imprimir Lançamentos Programados</a></li>
+                                    <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Imprimir Lançamentos Liquidados</a></li>
+                                    <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Imprimir Lançamentos Cancelados</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-sitemap"></i> <span>Sistema</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="#"><i class="fa fa-user"></i> Usuários <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a href="<c:url value="/usuario_lista"/>"><i class="fa fa-circle-o"></i> Cadastro de Usuários</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Trocar Senha</a></li>
+                            <li><a href="<c:url value="/grupousuario_lista"/>"><i class="fa fa-circle-o"></i> Cadastrar Grupos de usuários</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="<c:url value="/logout"/>"><i class="fa fa-circle-o"></i> Sair</a></li>
                 </ul>
             </li>
         </ul><!-- /.sidebar-menu -->
