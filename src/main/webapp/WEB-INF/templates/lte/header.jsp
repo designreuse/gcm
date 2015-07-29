@@ -1,6 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
+
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="org.springframework.security.core.userdetails.UserDetails" %>
+<%@ page import="org.apache.commons.lang3.text.WordUtils" %>
+
+<%
+    // pega as credenciais
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    String nome;
+    UserDetails userDetails = (UserDetails) principal;
+    nome = userDetails.getUsername();
+    nome = WordUtils.capitalizeFully(nome);
+%>
+
 <!-- Main Header -->
 <header class="main-header">
 
@@ -119,7 +133,7 @@
                         <%--<img src="/static/lte/dist/img/user2-160x160.jpg" class="user-image" alt="User Image" />--%>
                         <span class="glyphicon glyphicon-user"></span>
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                        <span class="hidden-xs">João Carlos</span>
+                        <span class="hidden-xs"><%=nome%></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- The user image in the menu -->

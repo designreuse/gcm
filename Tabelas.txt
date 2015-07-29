@@ -619,6 +619,7 @@
 		DataMovimento timestamp not null default Current_timestamp,
 		DataVencimento timestamp not null default Current_timestamp,
 		DataLiquidacao timestamp null,
+		DataConciliacao timestamp  null,
 		DataCancelamento timestamp null,
 		DataBaixa timestamp null,
 		DataCompetenciaIni timestamp null,
@@ -642,11 +643,12 @@
 	/*039 ExtratoContaCorrente*/
 	Create Sequence Seq_ExtratoContaCorrente;
 	Create Table ExtratoContaCorrente(
-		id_ExtratoContaCorrente int not null default nextval('ExtratoContaCorrente'),
+		id_ExtratoContaCorrente int not null default nextval('Seq_ExtratoContaCorrente'),
 		id_Empresa int not null,	
 		id_ContaCorrente int not null,
 		id_MovimentoFinanceiro int null,
 		DataMovimento timestamp not null default Current_timestamp,
+		DataLancamento timestamp not null default Current_timestamp,
 		TipoMovimento varchar(1) not null, --(M ou E)
 		ValorMovimento numeric(17,4) not null	
 	);
@@ -670,8 +672,23 @@
 	Alter Table SaldoContaCorrente add Constraint Fk_SaldoContaCorrente_ContaCorrente Foreign Key (id_ContaCorrente) references ContaCorrente (id_ContaCorrente) MATCH FULL;
 	Alter Table SaldoContaCorrente ADD CONSTRAINT Dist_SaldoContaCorrente UNIQUE (id_ContaCorrente, DataSaldo);	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 /* FUNCTION ValorLiqMovFinanceiro*/	
-CREATE or REPLACE FUNCTION ValorLiqMovFinanceiro(id_MovFinanceiro integer) RETURNS Numeric AS $$
+CREATE OR REPLACE FUNCTION valorliqmovfinanceiro(id_movfinanceiro integer)
+  RETURNS numeric AS
+$BODY$
 Declare recMovFinanceiro RECORD;
 	cValorLiquido Numeric(17,4);
 	cValorJuros Numeric(17,4);
@@ -679,7 +696,14 @@ Declare recMovFinanceiro RECORD;
 	iQtdDias integer;
 BEGIN
 	Select INTO recMovFinanceiro movimentofinanceiro.* from movimentofinanceiro where id_MovimentoFinanceiro = id_MovFinanceiro;
-	iQtdDias = DATE_PART('day', current_timestamp::date) - DATE_PART('day', recMovFinanceiro.datavencimento::date);
+
+	iQtdDias = 0;
+	if recMovFinanceiro.StatusMovimento = 'P' Then 
+		iQtdDias = DATE_PART('day', current_timestamp::date) - DATE_PART('day', recMovFinanceiro.datavencimento::date);
+	end if;
+	if recMovFinanceiro.StatusMovimento = 'L' Then
+		iQtdDias = DATE_PART('day',recMovFinanceiro.DataLiquidacao::date) - DATE_PART('day', recMovFinanceiro.datavencimento::date);
+	End if;
 
 	cValorJuros = 0;
 	cValorMulta = 0;
@@ -692,8 +716,156 @@ BEGIN
 
 	RETURN cValorLiquido;
 END;
-$$ LANGUAGE plpgsql;     
+$BODY$
+LANGUAGE plpgsql VOLATILE COST 100;   
 
+
+
+
+
+	
+	
+
+
+CREATE OR REPLACE Function LiquidarMovimentoFinanceiro(vid_MovFinanceiro integer, vTipoOperacao varchar(1), vConciliado varchar(1), vDataLiquidacao Timestamp, vValoriquidacao Numeric(17,4)) RETURNS numeric AS
+$BODY$
+DECLARE recMovFinanceiro RECORD;
+	recSaldoContaCorrente RECORD;
+	vDataSaldo Timestamp;	
+	vValor Numeric(17,4);
+	vValorConciliado Numeric(17,4);
+	vTipoMovimento varchar(1);
+BEGIN
+	Select INTO recMovFinanceiro movimentofinanceiro.* from movimentofinanceiro where id_MovimentoFinanceiro = vid_MovFinanceiro;
+
+	-- Valida o Status do Movimento para a Liquidação
+	RAISE NOTICE 'Valida o Status do Movimento para a Liquidação';
+	if vTipoOperacao='L' and recMovFinanceiro.StatusMovimento <> 'P' Then
+		RAISE EXCEPTION '%', 'Erro ao Liquidar. Verifique o Status do Movimento.'; 
+	End if;
+
+	-- Valida o Valor da Liquidação
+	RAISE NOTICE 'Valida o Valora da Liquidação';
+	if (vTipoOperacao='L') and (vValoriquidacao <> valorliqmovfinanceiro(vid_MovFinanceiro)) then
+		RAISE EXCEPTION '%', 'Erro ao Liquidar. Valor da Liquidação diferente do Valor Líquido.'; 
+	End if;
+
+	-- Valida a Data da Liquidação
+	RAISE NOTICE 'Valida a Data da Liquidação';
+	if (vTipoOperacao='L') and (vDataLiquidacao > current_timestamp) then
+		RAISE EXCEPTION '%', 'Erro ao Liquidar. Verifique a Data da Liquidação.'; 
+	End if;
+
+	-- Valida Estorno
+	RAISE NOTICE 'Valida Estorno';
+	if vTipoOperacao='E' and recMovFinanceiro.StatusMovimento <> 'L' Then
+		RAISE EXCEPTION '%', 'Erro ao Estornar. Verifique o Status do Movimento.'; 
+	End if;
+
+	-- Valida a Conta do Movimento
+	RAISE NOTICE 'Valida a Conta do Movimento';
+	if (vTipoOperacao='L') and (recMovFinanceiro.id_ContaCorrente = null) then
+		RAISE EXCEPTION '%', 'Erro ao Liquidar. Informe a Conta Corrente de Movimento.'; 
+	end if;
+
+	-- Atualiza Saldo Conta Corrente
+	RAISE NOTICE 'Atualiza Saldo Conta Corrente';
+	vDataSaldo = vDataLiquidacao;	
+	
+	vValor = vValoriquidacao;
+	if recMovFinanceiro.tipomovimento = 'D' then
+		vValor = vValor * -1;
+	end if;
+	if vTipoOperacao = 'E' then
+		vValor = vValor * -1;		
+	end if; 
+
+	While vDataSaldo::date <= current_timestamp::date loop
+		if (select count(*) from saldocontacorrente where id_contacorrente = recMovFinanceiro.id_ContaCorrente and datasaldo = vDataSaldo) <= 0 then
+			insert into saldocontacorrente(id_contacorrente, datasaldo, saldoanterior, saldoanteriorconciliado, valorsaldo, saldoatualconciliado)
+			values(recMovFinanceiro.id_ContaCorrente, vDataSaldo, 0, 0, 0, 0);
+		end if;
+
+		vDataSaldo = vDataSaldo + '1 day';
+	end loop;
+
+	vDataSaldo = vDataLiquidacao;
+	if vTipoOperacao = 'E' then		
+		vDataSaldo = recMovFinanceiro.dataliquidacao;
+	end if; 
+
+	vValorConciliado = 0;
+	if (vConciliado = 'S') or (vTipoOperacao = 'E') then
+		vValorConciliado = vValor;
+	end if;
+
+	-- captura saldo anterior ao da liquidacao
+	select into recSaldoContaCorrente saldocontacorrente.* from saldocontacorrente 
+	where id_ContaCorrente = recMovFinanceiro.id_ContaCorrente 
+	and datasaldo = (select max(datasaldo) from saldocontacorrente where id_ContaCorrente = recMovFinanceiro.id_ContaCorrente and datasaldo < vDataLiquidacao);
+
+	update saldocontacorrente set
+		saldoanterior = coalesce(recSaldoContaCorrente.valorsaldo,0), 
+		saldoanteriorconciliado = coalesce(recSaldoContaCorrente.saldoatualconciliado,0), 
+		valorsaldo = valorsaldo + vValor,
+		saldoatualconciliado = saldoatualconciliado + vValorConciliado
+	where id_contacorrente = recMovFinanceiro.id_ContaCorrente and datasaldo = vDataSaldo;
+
+	update saldocontacorrente set
+		saldoanterior = saldoanterior + vValor, 
+		saldoanteriorconciliado = saldoanteriorconciliado + vValorConciliado,		
+		valorsaldo = valorsaldo + vValor,
+		saldoatualconciliado = saldoatualconciliado + vValorConciliado
+	where id_contacorrente = recMovFinanceiro.id_ContaCorrente and datasaldo > vDataSaldo;  	
+
+	-- Insere Extrato Conta Corrente
+	RAISE NOTICE 'Insere Extrato Conta Corrente';
+
+	vTipoMovimento = 'M';
+	if vTipoOperacao = 'E' then
+		vTipoMovimento = 'E';
+	end if;
+	
+	Insert into extratocontacorrente(id_empresa, id_contacorrente, id_movimentofinanceiro, datamovimento, tipomovimento, valormovimento)
+	values (recMovFinanceiro.id_empresa, recMovFinanceiro.id_contacorrente, recMovFinanceiro.id_movimentofinanceiro, vDataLiquidacao, vTipoMovimento, vValor);
+
+	-- Altera Movimento Financeiro
+	RAISE NOTICE 'Altera Movimento Financeiro';
+	if vTipoOperacao = 'L' then
+		if vConciliado = 'S' then 
+			Update movimentofinanceiro set
+				StatusMovimento = 'L',
+				DataLiquidacao = vDataLiquidacao,
+				ValorLiquidacao = vValoriquidacao,
+				DataConciliacao = vDataLiquidacao			
+			Where id_MovimentoFinanceiro = recMovFinanceiro.id_movimentofinanceiro;
+		else
+			Update movimentofinanceiro set
+				StatusMovimento = 'L',
+				DataLiquidacao = vDataLiquidacao,
+				ValorLiquidacao = vValoriquidacao			
+			Where id_MovimentoFinanceiro = recMovFinanceiro.id_movimentofinanceiro;
+		end if;
+	end if;
+	if vTipoOperacao = 'E' then
+		Update movimentofinanceiro set
+			StatusMovimento = 'P',
+			DataLiquidacao = null,
+			ValorLiquidacao = 0,
+			DataConciliacao = null
+		Where id_MovimentoFinanceiro = recMovFinanceiro.id_movimentofinanceiro;
+	end if;
+	
+	RETURN 0;	
+END;
+$BODY$
+LANGUAGE plpgsql VOLATILE COST 100;	 
+	
+	
+	
+	
+	
+	
 	
 /* View Consulta Estoque Produto*/	
 Create or Replace View vwEstoqueProdutoLote
@@ -725,6 +897,16 @@ As
   Inner Join Produto on produto.id_Produto = produtolote.id_Produto 
   Order By produto.id_Produto
   	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 /* Inserts Iniciais */	
 insert into usuario (nome,login,senha,email,ativo) values('ADMIN', 'ADMIN','21232f297a57a5a743894a0e4a801fc3','joaocarlosdv@hotmail.com',true);
