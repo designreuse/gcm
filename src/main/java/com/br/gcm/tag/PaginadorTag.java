@@ -17,10 +17,10 @@ public class PaginadorTag extends SimpleTagSupport {
     private static Logger logger = LoggerFactory.getLogger(PaginadorTag.class);
 
     // icons
-    private static final String FIRST_ICON = "icon-fast-backward";
-    private static final String PRIOR_ICON = "icon-step-backward";
-    private static final String NEXT_ICON  = "icon-step-forward";
-    private static final String LAST_ICON  = "icon-fast-forward";
+    private static final String FIRST_ICON = "fa fa-fast-backward";
+    private static final String PRIOR_ICON = "fa fa-step-backward";
+    private static final String NEXT_ICON  = "fa fa-step-forward";
+    private static final String LAST_ICON  = "fa fa-fast-forward";
 
 //    private static final String FIRST_ICON = "fa fa-angle-double-left";
 //    private static final String PRIOR_ICON = "fa fa-angle-left";
@@ -72,8 +72,21 @@ public class PaginadorTag extends SimpleTagSupport {
 
         // montagem
         StringBuilder sb = new StringBuilder();
-        sb.append("<div class=\"pagination pagination-small\">");
-        sb.append("<ul>");
+        //sb.append("<div class=\"pagination pagination-sm\">");
+        //sb.append("<ul>");
+
+        /*
+        <ul class="pagination">
+            <li><a href="#"><i class='fa fa-fast-backward'></i></a></li>
+            <li><a href="#"><i class='fa fa-step-backward'></i></a></li>
+            <li><a href="#">Página 1 de 1 (4 Registro...)</a></li>
+            <li><a href="#"><i class='fa fa-step-forward'></i></a></li>
+            <li><a href="#"><i class='fa fa-fast-forward'></i></a></li>
+        </ul>
+        * */
+
+
+        sb.append("<ul class=\"pagination pagination-sm\">");
 
         // primeira página
         if (actualPage == 0) {
@@ -97,7 +110,7 @@ public class PaginadorTag extends SimpleTagSupport {
         }
 
         sb.append("</ul>");
-        sb.append("</div>");
+        //sb.append("</div>");
 
         out.println(sb.toString());
     }

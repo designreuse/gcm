@@ -27,7 +27,7 @@ public class PaisController {
     @Inject private PaisService paisService;
 
     @RequestMapping(value = "/pais_lista")
-    public String pais_lista(@PageableDefault(size = 5) Pageable pageable, Model model) {
+    public String pais_lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         Filtro_Pais filtros = new Filtro_Pais();
         model.addAttribute("pais_lista", paisDao.Pais_Paginado(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, paisDao.count()));
@@ -37,7 +37,7 @@ public class PaisController {
 
     //Filtros
     @RequestMapping(value = "/pais_lista", method = RequestMethod.POST)
-    public ModelAndView filtros(@ModelAttribute Filtro_Pais filtros, @PageableDefault(size = 5) Pageable pageable) {
+    public ModelAndView filtros(@ModelAttribute Filtro_Pais filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
         mav.addObject("pais_lista", paisDao.Pais_Paginado(filtros, pageable));
         mav.addObject("pagina", new Pagina(pageable, paisDao.count_Paginado(filtros)));
@@ -70,7 +70,7 @@ public class PaisController {
 
     //Gravar
     @RequestMapping(value = "/pais_gravar", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute Pais pais, @PageableDefault(size = 5) Pageable pageable, BindingResult resultt) {
+    public ModelAndView insert(@ModelAttribute Pais pais, @PageableDefault(size = 10) Pageable pageable, BindingResult resultt) {
         try{
             paisService.insert(pais);
         }catch(Exception e){

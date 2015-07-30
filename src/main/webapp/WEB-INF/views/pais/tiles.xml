@@ -4,9 +4,17 @@
 <tiles-definitions>
 
     <!-- pais_lista.jsp-->
-    <definition name="pais_lista" extends="main-layout">
+    <!-- definition name="pais_lista" extends="main-layout">
         <put-attribute name="body" value="/WEB-INF/views/pais/pais_lista.jsp" />
+    </definition -->
+
+    <!-- uf_lista.jsp-->
+    <definition name="pais_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pais/pais_lista_lte.jsp" />
     </definition>
+
+
+
 
     <!-- pais_novo.jsp-->
     <definition name="pais_novo" extends="main-layout">
