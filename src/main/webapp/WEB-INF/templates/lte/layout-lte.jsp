@@ -34,6 +34,15 @@
     <script src="/static/lte/html5/html5shiv.min.js"></script>
     <script src="/static/lte/html5/respond.min.js"></script>
     <![endif]-->
+
+    <style type="text/css">
+        .maiusculo {
+            TEXT-TRANSFORM: uppercase;
+        }
+        .minusculo{
+            TEXT-TRANSFORM: lowercase;
+        }
+    </style>
 </head>
 <!--
 BODY TAG OPTIONS:

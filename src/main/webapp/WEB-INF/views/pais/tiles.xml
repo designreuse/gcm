@@ -17,9 +17,16 @@
 
 
     <!-- pais_novo.jsp-->
-    <definition name="pais_novo" extends="main-layout">
+    <!-- definition name="pais_novo" extends="main-layout">
         <put-attribute name="body" value="/WEB-INF/views/pais/pais_novo.jsp" />
+    </definition -->
+
+    <definition name="pais_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pais/pais_novo_lte.jsp" />
     </definition>
+
+
+
 
     <!-- pais_editar.jsp-->
     <definition name="pais_editar" extends="main-layout">
