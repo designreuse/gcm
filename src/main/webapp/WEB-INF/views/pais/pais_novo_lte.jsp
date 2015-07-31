@@ -10,9 +10,8 @@
 </div>
 
 <div class="content body">
-    <!-- c:url value="/pais_gravar" var="gravarPais"/ -->
-    <!-- form:form class="form-signin" modelAttribute="pais" id="FormCadastro" action="${gravarPais}" method="POST"-->
-    <form action="/pais_gravar" method="post" class="form-signin">
+    <form action="/pais_gravar" method="post" >
+    <fieldset>
         <div class="row">
             <div class="col-sm-12">
                 <div class="box box-primary">
@@ -22,24 +21,24 @@
                                 <div class="row">
                                     <label class="col-md-1 control-label" for="siglapais" style="margin-top: 5px;">Sigla</label>
                                     <div class="col-md-2">
-                                        <input path="siglapais" type="text" maxlength="3" style="width:60px;"
-                                                    class="form-control maiusculo" placeholder="Sigla" id="siglapais"/>
+                                        <input type="text" maxlength="3" style="width:60px;" required="autofocus"
+                                               class="form-control maiusculo" placeholder="Sigla" name="siglapais" id="siglapais"/>
                                     </div>
                                 </div>
                                 <br>
                                 <div class="row">
                                     <label class="col-md-1 control-label" for="descricao" style="margin-top: 5px;">Nome</label>
                                     <div class="col-md-6">
-                                        <input path="descricao" type="text" maxlength="50" style="width:100%;"
-                                                    class="form-control maiusculo" placeholder="Nome" id="descricao"/>
+                                        <input type="text" maxlength="50" style="width:100%;" required="true"
+                                               class="form-control maiusculo" placeholder="Nome" name="descricao" id="descricao"/>
                                     </div>
                                 </div>
                                 <br>
                                 <div class="row">
                                     <label class="col-md-1 control-label" for="ibge" style="margin-top: 5px;">Ibge</label>
                                     <div class="col-md-2">
-                                        <input path="ibge" type="text" maxlength="5" style="width:100%;"
-                                                    class="form-control maiusculo" placeholder="ibge" id="Ibge"/>
+                                        <input type="text" maxlength="5" style="width:100%;"
+                                               class="form-control maiusculo" placeholder="ibge" name="ibge" id="ibge"/>
                                     </div>
                                 </div>
                             </div>
@@ -59,5 +58,6 @@
                 </div>
             </div>
         </div>
+    </fieldset>
     </form>
 </div>

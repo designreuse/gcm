@@ -8,29 +8,35 @@
         <put-attribute name="body" value="/WEB-INF/views/pais/pais_lista.jsp" />
     </definition -->
 
-    <!-- uf_lista.jsp-->
-    <definition name="pais_lista" extends="lte-layout">
-        <put-attribute name="body" value="/WEB-INF/views/pais/pais_lista_lte.jsp" />
-    </definition>
-
-
-
-
     <!-- pais_novo.jsp-->
     <!-- definition name="pais_novo" extends="main-layout">
         <put-attribute name="body" value="/WEB-INF/views/pais/pais_novo.jsp" />
     </definition -->
 
+    <!-- pais_editar.jsp-->
+    <!--definition name="pais_editar" extends="main-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pais/pais_editar.jsp" />
+    </definition -->
+
+
+
+    <!-- uf_lista.jsp-->
+    <definition name="pais_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pais/pais_lista_lte.jsp" />
+    </definition>
+
     <definition name="pais_novo" extends="lte-layout">
         <put-attribute name="body" value="/WEB-INF/views/pais/pais_novo_lte.jsp" />
     </definition>
 
-
-
-
     <!-- pais_editar.jsp-->
-    <definition name="pais_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/pais/pais_editar.jsp" />
+    <definition name="pais_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pais/pais_editar_lte.jsp" />
+    </definition>
+
+    <!-- pais_detalhes.jsp-->
+    <definition name="pais_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pais/pais_detalhes_lte.jsp" />
     </definition>
 
 </tiles-definitions>

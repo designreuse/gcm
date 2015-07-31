@@ -17,25 +17,24 @@
                     <h3 class="box-title">Filtro</h3>
                 </div>
                 <div class="box-body">
-                    <form class="form-horizontal">
-                    <c:url value="/pais_lista" var="filtros"/>
-                    <form:form class="form-signin" modelAttribute="filtros" id="FormCadastro" action="${filtros}" method="POST">
+                    <form class="form-horizontal" action="/pais_lista" method="post">
+                    <fieldset>
                         <div class="form-group">
-                            <label class="col-md-1 control-label" for="Sigla">Sigla</label>
+                            <label class="col-md-1 control-label" for="siglapais">Sigla</label>
                             <div class="col-md-2">
-                                <form:input path="siglapais" type="text" maxlength="5"
-                                            class="form-control maiusculo" name="Id" placeholder="Sigla"  id="Sigla"/>
+                                <input type="text" maxlength="5"
+                                       class="form-control maiusculo" name="siglapais" placeholder="Sigla" id="siglapais"/>
                             </div>
 
-                            <label class="col-md-1 control-label" for="Nome">Nome</label>
+                            <label class="col-md-1 control-label" for="descricao">Nome</label>
                             <div class="col-md-4">
-                                <form:input path="descricao" type="text" maxlength="50"
-                                            class="form-control maiusculo" name="Id" placeholder="Nome" id="Nome"/>
+                                <input type="text" maxlength="50"
+                                       class="form-control maiusculo" name="descricao" placeholder="Nome" id="descricao"/>
                             </div>
                             <button style="width: 80px" class="btn btn-primary" type="reset">Limpar</button>
-                            <form:button class="btn btn-primary" type="submit" style="width: 80px;">Pesquisar</form:button>
+                            <button class="btn btn-primary" type="submit" style="width: 80px;">Pesquisar</button>
                         </div>
-                    </form:form>
+                        <fieldset>
                     </form>
                 </div>
             </div>
@@ -62,10 +61,10 @@
                                     <a href="/pais_deleta/${p.id_pais}" class="btn btn-default btn-xs" title="Deletar">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
-                                    <a href="/editar_pais/E/${p.id_pais}" class="btn btn-default btn-xs" title="Editar">
+                                    <a href="/editar_pais/${p.id_pais}" class="btn btn-default btn-xs" title="Editar">
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a href="/editar_pais/D/${p.id_pais}" class="btn btn-default btn-xs" title="Detalhes">
+                                    <a href="/pais_detalhes/${p.id_pais}" class="btn btn-default btn-xs" title="Detalhes">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>

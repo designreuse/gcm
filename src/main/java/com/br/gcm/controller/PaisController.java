@@ -84,16 +84,15 @@ public class PaisController {
         return mav;
     }
 
-    @RequestMapping(value = "/editar_pais/{operacao}/{id}", method = RequestMethod.GET)
-    public String editar(@PathVariable("operacao") String operacao, @PathVariable("id") Integer id, Model model) {
+    @RequestMapping(value = "/editar_pais/{id}", method = RequestMethod.GET)
+    public String editar(@PathVariable("id") Integer id, Model model) {
         Pais pais = paisDao.selectById(id);
         model.addAttribute("pais", pais);
-        model.addAttribute("operacao", operacao);
         return "pais_editar";
     }
 
-    @RequestMapping(value = "/alterar_pais", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute Pais pais, BindingResult resultt) {
+    @RequestMapping(value = "/alterar_pais", method = RequestMethod.POST)
+    public ModelAndView update(@ModelAttribute Pais pais, BindingResult result) {
         try{
             paisService.update(pais);
         }catch(Exception e){
@@ -104,5 +103,12 @@ public class PaisController {
         mav.addObject("lista", paisDao.Pais_lista());
         mav.setViewName("redirect:/pais_lista");
         return mav;
+    }
+
+    @RequestMapping(value = "/pais_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Pais pais = paisDao.selectById(id);
+        model.addAttribute("pais", pais);
+        return "pais_detalhes";
     }
 }
