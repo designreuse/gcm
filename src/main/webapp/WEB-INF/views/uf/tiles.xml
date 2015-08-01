@@ -4,18 +4,25 @@
 <tiles-definitions>
 
     <!-- uf_lista.jsp-->
-    <definition name="uf_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/uf/uf_lista.jsp" />
+    <definition name="uf_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/uf/uf_lista_lte.jsp" />
     </definition>
 
     <!-- teste.jsp-->
-    <definition name="uf_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/uf/uf_novo.jsp" />
+    <definition name="uf_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/uf/uf_novo_lte.jsp" />
     </definition>
 
-    <!-- uf_editar.jsp-->
-    <definition name="uf_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/uf/uf_editar.jsp" />
+    <!-- uf_editar.jsp -->
+    <definition name="uf_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/uf/uf_editar_lte.jsp" />
     </definition>
+
+    <!-- uf_editar.jsp -->
+    <definition name="uf_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/uf/uf_detalhes_lte.jsp" />
+    </definition>
+
+
 
 </tiles-definitions>

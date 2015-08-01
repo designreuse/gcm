@@ -140,10 +140,10 @@
                         <li class="user-header">
                             <img src="/static/lte/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image" />
 
-                            <p>
+                            <!--p>
                                 Joao Carlos Dantas Vieira
                                 <small>Administrador</small>
-                            </p>
+                            </p -->
                         </li>
                         <!-- Menu Footer-->
                         <li class="user-footer">
@@ -151,7 +151,7 @@
                                 <a href="#" class="btn btn-default btn-flat">Perfil</a>
                             </div>
                             <div class="pull-right">
-                                <a href="#" class="btn btn-default btn-flat">Logout</a>
+                                <a href="/logout" class="btn btn-default btn-flat">Logout</a>
                             </div>
                         </li>
                     </ul>

@@ -5,25 +5,30 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head class="main-header skin-blue">
     <!-- meta -->
-    <meta name="description" content="">
-    <meta name="author" content="Rodrigo G. Lima">
+    <meta name="description" content="Sistema de Gestão Comercial">
+    <meta name="author" content="João Carlos Dantas Vieira">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="<c:url value='/static/css/bootstrap.min.css'/>" rel="stylesheet">
-    <link href="<c:url value='/static/css/font-awesome.min.css'/>" rel="stylesheet">
+    <!-- lte -->
+    <link href="/static/lte/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/lte/fonts/font-awesome.min.css" rel="stylesheet" />
 
-    <link href="<c:url value='/static/css/bootstrap.2.3.2.min.css'/>" rel="stylesheet">
-    <script src="/static/js/jquery-1.10.2.min.js"></script>
-    <script src="/static/js/jquery-ui.js"></script>
+    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/lte/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/lte/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
+    <script src="/static/lte/html5/html5shiv.min.js"></script>
+    <script src="/static/lte/html5/respond.min.js"></script>
+
+
 
     <style type="text/css">
         body {
             padding-top: 40px;
             padding-bottom: 40px;
 
-            background-image: url(/static/img/bkg.jpg);
+            /*background-image: url(/static/img/bkg.jpg);   */
         }
         .form-signin {
             max-width: 300px;
@@ -63,49 +68,50 @@
     <link rel="shortcut icon" type="image/x-icon" href="${_favicon_ico}" />
 </head>
 
-<body onload="document.form.username.focus();">
-
-
-<!--h2 class="form-signin-heading" style="text-align: center">Sistema de Gestão</h2-->
-
-
-<div class="container" style="padding-top: 100px;">
-
-        <c:url value="/login" var="loginUrl" />
-        <form action="${loginUrl}" method="post" class="form-signin" name="form" id="form">
-            <h2 class="form-signin-heading">Login</h2>
-
-            <!-- Erros -->
-            <c:if test="${not empty error}">
-                <div class="alert alert-error">
-                    <c:if test="${SPRING_SECURITY_LAST_EXCEPTION != null}">
-                        <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}" />
-                    </c:if>
+<body class="skin-blue sidebar-mini" onload="document.form.username.focus();" style="background-color: steelblue">
+<div class="container container-fluid" style="padding-top: 10%; margin-left: 35%;">
+    <div class="col-md-4">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">Login</h3>
+                <c:if test="${not empty error}">
+                    <div class="alert alert-error">
+                        <c:if test="${SPRING_SECURITY_LAST_EXCEPTION != null}">
+                            <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}" />
+                        </c:if>
+                    </div>
+                </c:if>
+                <c:if test="${param.logout != null}">
+                    <div class="alert alert-success">
+                        Você deslogou.
+                    </div>
+                </c:if>
+            </div>
+            <form class="form-horizontal" action="/login" method="post">
+                <div class="box-body">
+                    <div class="form-group">
+                        <label for="username" class="col-sm-2 control-label">Usuário</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Usuário">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="col-sm-2 control-label">Senha</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Senha">
+                        </div>
+                    </div>
                 </div>
-            </c:if>
-            <!-- Info -->
-            <c:if test="${param.logout != null}">
-                <div class="alert alert-success">
-                    Você deslogou.
+                <div class="box-footer">
+                    <button class="btn btn-primary" type="submit" style="width: 80px;">Entrar</button>
                 </div>
-            </c:if>
+            </form>
+        </div>
+    </div>
+</div>
 
-            <!-- Usuário -->
-            <input type="text" class="input-block-level" id="username" name="username" placeholder="Usuário">
-
-            <!-- Senha -->
-            <input type="password" class="input-block-level" id="password" name="password" placeholder="Senha">
-            <br>
-            <button class="btn btn-large btn-primary" id="btnSubimit" type="submit">Entrar</button>
-        </form>
-
-</div> <!-- /container -->
-
-<!-- Le javascript
-    ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="<c:url value='/static/js/jquery-1.10.2.min.js'/>"></script>
-<script src="<c:url value='/static/js/bootstrap.min.js'/>"></script>
+    <script src="<c:url value='/static/js/jquery-1.10.2.min.js'/>"></script>
+    <script src="<c:url value='/static/js/bootstrap.min.js'/>"></script>
 </body>
 </html>
 

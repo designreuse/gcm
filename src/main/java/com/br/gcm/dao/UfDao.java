@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,7 +73,7 @@ public class UfDao {
         return db.query("Select uf.*, pais.siglapais from Uf inner join pais on uf.id_pais = pais.id_pais order by siglapais, siglauf", todasUf);
     }
 
-    public List<Uf> selectAll_Paginado(Pageable p) {
+    public List<Uf> selectAll(Pageable p) {
         return db.query("Select uf.*, pais.siglapais " +
                         "from Uf inner join pais on uf.id_pais = pais.id_pais " +
                         "order by siglapais, siglauf " +
@@ -80,6 +81,30 @@ public class UfDao {
                         todasUf,
                         p.getPageSize(),
                         p.getOffset());
+    }
+
+    public List<Uf> selectAll(Uf filtros, Pageable p) {
+        List arr = new ArrayList<>();
+        String sql = "Select uf.*, pais.siglapais from Uf inner join pais on uf.id_pais = pais.id_pais Where 1=1 ";
+
+        if (filtros.getId_Pais() > 0){
+            sql = sql + " And uf.id_pais = ? ";
+            arr.add(filtros.getId_Pais());
+        }
+        if (filtros.getSiglaUf() != null && filtros.getSiglaUf() != ""){
+            sql = sql + " And uf.SiglaUf = ? ";
+            arr.add(filtros.getSiglaUf());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And uf.Descricao = ? ";
+            arr.add(filtros.getDescricao());
+        }
+
+        sql = sql + "order by siglapais, siglauf LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql, todasUf, arr.toArray());
     }
 
     public void deleteById(Integer id) {

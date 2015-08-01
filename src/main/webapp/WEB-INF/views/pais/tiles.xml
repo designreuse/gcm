@@ -3,23 +3,6 @@
 
 <tiles-definitions>
 
-    <!-- pais_lista.jsp-->
-    <!-- definition name="pais_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/pais/pais_lista.jsp" />
-    </definition -->
-
-    <!-- pais_novo.jsp-->
-    <!-- definition name="pais_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/pais/pais_novo.jsp" />
-    </definition -->
-
-    <!-- pais_editar.jsp-->
-    <!--definition name="pais_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/pais/pais_editar.jsp" />
-    </definition -->
-
-
-
     <!-- uf_lista.jsp-->
     <definition name="pais_lista" extends="lte-layout">
         <put-attribute name="body" value="/WEB-INF/views/pais/pais_lista_lte.jsp" />

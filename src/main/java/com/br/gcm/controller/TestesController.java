@@ -36,7 +36,7 @@ public class TestesController {
 
     @RequestMapping(value = "/testelayout")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        model.addAttribute("uf_lista", ufDao.selectAll_Paginado(pageable));
+        model.addAttribute("uf_lista", ufDao.selectAll(pageable));
         model.addAttribute("pagina", new Pagina(pageable, ufDao.count()));
         return "teste_layout";
     }

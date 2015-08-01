@@ -2,6 +2,7 @@ package com.br.gcm.controller;
 
 import com.br.gcm.dao.PaisDao;
 import com.br.gcm.dao.UfDao;
+import com.br.gcm.model.Pais;
 import com.br.gcm.model.Uf;
 import com.br.gcm.service.UfService;
 import com.br.gcm.tag.Pagina;
@@ -35,9 +36,30 @@ public class UfController {
 
     @RequestMapping(value = "/uf_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        model.addAttribute("uf_lista", ufDao.selectAll_Paginado(pageable));
+
+        List<Pais> listaPais = paisDao.Pais_lista();
+        Uf filtros = new Uf();
+        filtros.setId_Pais(listaPais.get(0).getId_pais());
+
+        model.addAttribute("lista_pais", listaPais);
+        model.addAttribute("uf_lista", ufDao.selectAll(filtros, pageable));
+        model.addAttribute("filtros", filtros);
         model.addAttribute("pagina", new Pagina(pageable, ufDao.count()));
         return "uf_lista";
+    }
+
+    //Filtros
+    @RequestMapping(value = "/uf_lista", method = RequestMethod.POST)
+    public ModelAndView filtros(@ModelAttribute Uf filtros, @PageableDefault(size = 10) Pageable pageable) {
+        ModelAndView mav = new ModelAndView();
+
+        mav.addObject("lista_pais", paisDao.Pais_lista());
+        mav.addObject("uf_lista", ufDao.selectAll(filtros, pageable));
+        mav.addObject("pagina", new Pagina(pageable, ufDao.count()));
+        mav.addObject("filtros", filtros);
+
+        mav.setViewName("uf_lista");
+        return mav;
     }
 
     //Deleta uf
@@ -56,6 +78,7 @@ public class UfController {
     @RequestMapping(value = "/uf_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
         Uf uf = new Uf();
+
         model.addAttribute("uf", uf);
         model.addAttribute("lista_pais", paisDao.Pais_lista());
         return "uf_novo";
@@ -71,7 +94,7 @@ public class UfController {
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
         ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", ufDao.selectAll_Paginado(pageable));
+        mav.addObject("lista", ufDao.selectAll(pageable));
         mav.setViewName("redirect:/uf_lista");
         return mav;
     }
@@ -86,8 +109,8 @@ public class UfController {
     }
 
     //Alterar_uf
-    @RequestMapping(value = "/alterar_uf", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute Uf uf, @PageableDefault(size = 10) Pageable pageable, BindingResult resultt) {
+    @RequestMapping(value = "/alterar_uf", method = RequestMethod.POST)
+    public ModelAndView update(@ModelAttribute Uf uf, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             ufService.update(uf);
         }catch(Exception e){
@@ -95,10 +118,17 @@ public class UfController {
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
         ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", ufDao.selectAll_Paginado(pageable));
+        mav.addObject("lista", ufDao.selectAll(pageable));
         mav.setViewName("redirect:/uf_lista");
         return mav;
     }
 
-
+    //Editar uf
+    @RequestMapping(value = "/uf_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Uf uf = ufDao.selectById(id);
+        model.addAttribute("uf", uf);
+        model.addAttribute("lista_pais", paisDao.Pais_lista());
+        return "uf_detalhes";
+    }
 }
