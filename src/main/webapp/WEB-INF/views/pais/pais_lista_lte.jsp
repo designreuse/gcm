@@ -14,7 +14,7 @@
         <div class="col-sm-12">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Filtro</h3>
+                    <h3 class="box-title">Filtros</h3>
                 </div>
                 <div class="box-body">
                     <form class="form-horizontal" action="/pais_lista" method="post">
@@ -81,18 +81,20 @@
     </div>
 
     <div class="row">
-        <div class="box box-primary">
-            <div class="box-body">
-                <div class="col-sm-9">
-                    <vls:paginador pagina="${pagina}"/>
-                </div>
-                <div class="col-sm-3" style="margin-top: 15px;">
-                    <a style="width: 80px" href="<c:url value="/pais_novo"/>" class="btn btn-primary" title="Novo">
-                        <i class="fa fa-plus"></i> Novo
-                    </a>
-                    <a style="width: 100px" href="<c:url value="/report/pais_report/pdf"/>" class="btn btn-primary" title="Imprimir">
-                        <i class="fa fa-print"></i> Imprimir
-                    </a>
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <div class="col-sm-9">
+                        <vls:paginador pagina="${pagina}"/>
+                    </div>
+                    <div class="col-sm-3" style="margin-top: 15px;">
+                        <a style="width: 80px" href="<c:url value="/pais_novo"/>" class="btn btn-primary" title="Novo">
+                            <i class="fa fa-plus"></i> Novo
+                        </a>
+                        <a style="width: 100px" href="<c:url value="/report/pais_report/pdf"/>" class="btn btn-primary" title="Imprimir">
+                            <i class="fa fa-print"></i> Imprimir
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

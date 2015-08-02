@@ -49,11 +49,13 @@
         </div>
 
         <div class="row">
-            <div class="box box-primary">
-                <div class="box-body">
-                    <div class="col-sm-12" style="margin-top: 15px; text-align: center;">
-                        <button class="btn btn-primary" type="submit" style="width: 80px;">Salvar</button>
-                        <a style="width: 80px" href="<c:url value="/pais_lista"/>" class="btn btn-primary" title="Cancelar">Cancelar</a>
+            <div class="col-sm-12">
+                <div class="box box-primary">
+                    <div class="box-body">
+                        <div class="col-sm-12" style="margin-top: 15px; text-align: center;">
+                            <button class="btn btn-primary" type="submit" style="width: 80px;">Salvar</button>
+                            <a style="width: 80px" href="<c:url value="/pais_lista"/>" class="btn btn-primary" title="Cancelar">Cancelar</a>
+                        </div>
                     </div>
                 </div>
             </div>

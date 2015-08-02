@@ -35,6 +35,9 @@
     <script src="/static/lte/html5/respond.min.js"></script>
     <![endif]-->
 
+    <script src="/static/js/jquery-1.10.2.min.js"></script>
+    <script src="/static/js/jquery-ui.js"></script>
+
     <style type="text/css">
         .maiusculo {
             TEXT-TRANSFORM: uppercase;

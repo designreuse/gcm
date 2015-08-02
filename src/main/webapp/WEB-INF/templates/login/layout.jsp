@@ -69,43 +69,51 @@
 </head>
 
 <body class="skin-blue sidebar-mini" onload="document.form.username.focus();" style="background-color: steelblue">
-<div class="container container-fluid" style="padding-top: 10%; margin-left: 35%;">
-    <div class="col-md-4">
-        <div class="box box-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">Login</h3>
-                <c:if test="${not empty error}">
-                    <div class="alert alert-error">
-                        <c:if test="${SPRING_SECURITY_LAST_EXCEPTION != null}">
-                            <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}" />
-                        </c:if>
+<!-- div class="container container-fluid" style="padding-top: 10%; margin-left: 35%;" -->
+<div class="content body">
+    <br>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Login</h3>
+                    <c:if test="${not empty error}">
+                        <div class="alert alert-error">
+                            <c:if test="${SPRING_SECURITY_LAST_EXCEPTION != null}">
+                                <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}" />
+                            </c:if>
+                        </div>
+                    </c:if>
+                    <c:if test="${param.logout != null}">
+                        <div class="alert alert-success">
+                            Você deslogou.
+                        </div>
+                    </c:if>
+                </div>
+                <form class="form-horizontal" action="/login" method="post">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">Usuário</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Usuário">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="col-sm-2 control-label">Senha</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Senha">
+                            </div>
+                        </div>
                     </div>
-                </c:if>
-                <c:if test="${param.logout != null}">
-                    <div class="alert alert-success">
-                        Você deslogou.
+                    <div class="box-footer">
+                        <button class="btn btn-primary" type="submit" style="width: 80px;">Entrar</button>
                     </div>
-                </c:if>
+                </form>
             </div>
-            <form class="form-horizontal" action="/login" method="post">
-                <div class="box-body">
-                    <div class="form-group">
-                        <label for="username" class="col-sm-2 control-label">Usuário</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Usuário">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="password" class="col-sm-2 control-label">Senha</label>
-                        <div class="col-sm-10">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Senha">
-                        </div>
-                    </div>
-                </div>
-                <div class="box-footer">
-                    <button class="btn btn-primary" type="submit" style="width: 80px;">Entrar</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>

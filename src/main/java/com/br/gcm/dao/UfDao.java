@@ -96,7 +96,7 @@ public class UfDao {
             arr.add(filtros.getSiglaUf());
         }
         if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
-            sql = sql + " And uf.Descricao = ? ";
+            sql = sql + " And uf.Descricao = '%?%' ";
             arr.add(filtros.getDescricao());
         }
 

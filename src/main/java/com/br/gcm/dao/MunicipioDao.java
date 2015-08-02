@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,6 +52,33 @@ public class MunicipioDao {
         return db.queryForObject("SELECT COUNT(*) FROM Municipio", Long.class);
     }
 
+    public Long count(Municipio filtros) {
+        List arr = new ArrayList<>();
+        String sql = "SELECT COUNT(*) FROM Municipio "+
+                "inner join uf on municipio.id_uf = uf.id_uf " +
+                "inner join pais on uf.id_pais = pais.id_pais " +
+                "WHERE 1=1";
+
+        if (filtros.getId_pais() > 0) {
+            sql = sql + " And pais.id_pais = ? ";
+            arr.add(filtros.getId_pais());
+        };
+        if (filtros.getId_uf() > 0){
+            sql = sql + " And municipio.id_uf = ? ";
+            arr.add(filtros.getId_uf());
+        };
+        if (filtros.getId_municipio() > 0) {
+            sql = sql + " And municipio.id_municipio = ? ";
+            arr.add(filtros.getId_municipio());
+        };
+        if (filtros.getDescricao() != null && filtros.getDescricao() != "") {
+            sql = sql + " And municipio.descricao like '%?%' ";
+            arr.add(filtros.getId_municipio());
+        };
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
+    }
+
     public Municipio selectById(Integer id) {
         return db.queryForObject("select Municipio.*, uf.siglauf, uf.id_pais, pais.siglapais from Municipio inner join uf on municipio.id_uf = uf.id_uf inner join pais on uf.id_pais = pais.id_pais where municipio.id_municipio=?", todosMunicipios, id);
     }
@@ -59,7 +87,41 @@ public class MunicipioDao {
         return db.query("Select Municipio.*, uf.siglauf, uf.id_pais, pais.siglapais from Municipio inner join uf on municipio.id_uf = uf.id_uf inner join pais on uf.id_pais = pais.id_pais order by id_pais, sigla_uf, nome_municipio", todosMunicipios);
     }
 
-    public List<Municipio> selectAll_Paginado(Pageable p) {
+    public List<Municipio> selectAll(Municipio filtros, Pageable p) {
+        List arr = new ArrayList<>();
+        String sql = "Select Municipio.*, uf.siglauf, uf.id_pais, pais.siglapais " +
+                "from Municipio " +
+                "inner join uf on municipio.id_uf = uf.id_uf " +
+                "inner join pais on uf.id_pais = pais.id_pais " +
+                " Where 1=1 ";
+
+        if (filtros.getId_pais() > 0) {
+            sql = sql + " And pais.id_pais = ? ";
+            arr.add(filtros.getId_pais());
+        };
+        if (filtros.getId_uf() > 0){
+            sql = sql + " And municipio.id_uf = ? ";
+            arr.add(filtros.getId_uf());
+        };
+        if (filtros.getId_municipio() > 0) {
+            sql = sql + " And municipio.id_municipio = ? ";
+            arr.add(filtros.getId_municipio());
+        };
+        if (filtros.getDescricao() != null && filtros.getDescricao() != "") {
+            sql = sql + " And municipio.descricao like '%?%' ";
+            arr.add(filtros.getId_municipio());
+        };
+
+        sql = sql + "order by pais.id_pais, uf.siglauf, municipio.descricao LIMIT ? OFFSET ?";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql,
+                todosMunicipios,
+                arr.toArray());
+    }
+
+    public List<Municipio> selectAll(Pageable p) {
         return db.query("Select Municipio.*, uf.siglauf, uf.id_pais, pais.siglapais " +
                 "from Municipio " +
                 "inner join uf on municipio.id_uf = uf.id_uf " +

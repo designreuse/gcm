@@ -4,6 +4,7 @@ import com.br.gcm.dao.MunicipioDao;
 import com.br.gcm.dao.PaisDao;
 import com.br.gcm.dao.UfDao;
 import com.br.gcm.model.Municipio;
+import com.br.gcm.model.Pais;
 import com.br.gcm.service.MunicipioService;
 import com.br.gcm.tag.Pagina;
 import org.springframework.data.domain.Pageable;
@@ -37,9 +38,29 @@ public class MunicipioController {
 
     @RequestMapping(value = "/municipio_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        model.addAttribute("municipio_lista", MunicipioDao.selectAll_Paginado(pageable));
-        model.addAttribute("pagina", new Pagina(pageable, MunicipioDao.count()));
+        Municipio filtros = new Municipio();
+        List<Pais> listaPais = paisDao.Pais_lista();
+        filtros.setId_pais(listaPais.get(0).getId_pais());
+
+        model.addAttribute("filttros", filtros);
+        model.addAttribute("municipio_lista", MunicipioDao.selectAll(filtros, pageable));
+        model.addAttribute("lista_pais", listaPais);
+        model.addAttribute("pagina", new Pagina(pageable, MunicipioDao.count(filtros)));
         return "municipio_lista";
+    }
+
+    //Filtros
+    @RequestMapping(value = "/municipio_lista", method = RequestMethod.POST)
+    public ModelAndView filtros(@ModelAttribute Municipio filtros, @PageableDefault(size = 10) Pageable pageable) {
+        ModelAndView mav = new ModelAndView();
+
+        mav.addObject("lista_pais", paisDao.Pais_lista());
+        mav.addObject("municipio_lista", MunicipioDao.selectAll(filtros, pageable));
+        mav.addObject("pagina", new Pagina(pageable, MunicipioDao.count(filtros)));
+        mav.addObject("filtros", filtros);
+
+        mav.setViewName("municipio_lista");
+        return mav;
     }
 
     //Deleta municipio
@@ -73,7 +94,7 @@ public class MunicipioController {
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
         ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", MunicipioDao.selectAll_Paginado(pageable));
+        mav.addObject("lista", MunicipioDao.selectAll(pageable));
         mav.addObject("pagina", new Pagina(pageable, MunicipioDao.count()));
         mav.setViewName("redirect:/municipio_lista");
         return mav;
@@ -98,7 +119,7 @@ public class MunicipioController {
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
         ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", MunicipioDao.selectAll_Paginado(pageable));
+        mav.addObject("lista", MunicipioDao.selectAll(pageable));
         mav.addObject("pagina", new Pagina(pageable, MunicipioDao.count()));
         mav.setViewName("redirect:/municipio_lista");
         return mav;

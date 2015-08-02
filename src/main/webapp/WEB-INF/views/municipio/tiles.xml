@@ -3,10 +3,15 @@
 
 <tiles-definitions>
 
-    <!-- municipio_lista.jsp-->
+    <!-- municipio_lista.jsp -->
+    <definition name="municipio_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_lista_lte.jsp" />
+    </definition >
+
+    <!-- municipio_lista.jsp>
     <definition name="municipio_lista" extends="main-layout">
         <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_lista.jsp" />
-    </definition>
+    </definition -->
 
     <!-- municipio_novo.jsp-->
     <definition name="municipio_novo" extends="main-layout">
