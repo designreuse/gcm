@@ -120,10 +120,16 @@
 </div>
 
 <script>
-    $("#id_pais").change();
+    $(window).load(function() {
+        carrega_uf($("#id_pais").val());
+    });
 
     $("#id_pais").change(function(){
-        var id_pais = $(this).val();
+        carrega_uf($(this).val());
+    });
+
+    function carrega_uf(id){
+        var id_pais = id;
         if( id_pais.length <= 0 ) return;
         $.getJSON("${pageContext.request.contextPath}/carregauf-pais/"+id_pais,
                 function(result){
@@ -132,6 +138,9 @@
                         $("#id_Uf").append('<option value="' + result[i].id_Uf + '">' + result[i].siglaUf + '</option>');
                     });
                 });
-    });
+    };
+
+
+
 
 </script>
