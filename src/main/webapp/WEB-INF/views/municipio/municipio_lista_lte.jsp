@@ -25,6 +25,7 @@
                                     <label class="col-md-1 control-label" for="id_pais">País</label>
                                     <div class="col-md-2">
                                         <select class="form-control" id="id_pais" name="id_pais">
+                                            <option value="0"></option>
                                             <c:forEach items="${lista_pais}" var="p">
                                                 <c:choose>
                                                     <c:when test="${p.id_pais != filtros.id_pais}">
@@ -38,15 +39,15 @@
                                         </select>
                                     </div>
 
-                                    <label class="col-md-1 control-label" for="id_Uf">UF</label>
+                                    <label class="col-md-1 control-label" for="id_uf">UF</label>
                                     <div class="col-md-2">
-                                        <select class="form-control" name="id_Uf" id="id_Uf" name="id_Uf">
+                                        <select class="form-control" name="id_uf" id="id_uf">
                                         </select>
                                     </div>
 
                                     <label class="col-md-1 control-label" for="descricao">Nome</label>
-                                    <div class="col-md-3">
-                                        <input type="text" maxlength="50"
+                                    <div class="col-md-2">
+                                        <input type="text" maxlength="50" value="${filtros.descricao}"
                                                class="form-control maiusculo" name="descricao" placeholder="Nome" id="descricao" name="descricao"/>
                                     </div>
                                     <button style="width: 80px" class="btn btn-primary" type="reset">Limpar</button>
@@ -60,7 +61,7 @@
         </div>
     </div>
 
-    <div class="row" style="height: 250px; overflow:auto;">
+    <div class="row" style="height: 300px; overflow:auto;">
         <div class="col-sm-12">
             <div class="box box-primary">
                 <div class="box-body">
@@ -84,7 +85,7 @@
                                     <a href="/editar_municipio/${p.id_municipio}" class="btn btn-default btn-xs" title="Editar">
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a href="/municipio_detalhes/${p.id_municipio}" class="btn btn-default btn-xs" title="Detalhes">
+                                    <a href="/detalhes_municipio/${p.id_municipio}" class="btn btn-default btn-xs" title="Detalhes">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
@@ -133,9 +134,15 @@
         if( id_pais.length <= 0 ) return;
         $.getJSON("${pageContext.request.contextPath}/carregauf-pais/"+id_pais,
                 function(result){
-                    $('#id_Uf').empty();
+                    $('#id_uf').empty();
+                    $("#id_uf").append('<option value="0"></option>');
                     $.each(result, function(i){
-                        $("#id_Uf").append('<option value="' + result[i].id_Uf + '">' + result[i].siglaUf + '</option>');
+                        if (result[i].id_Uf != ${filtros.id_uf}){
+                            $("#id_uf").append('<option value="' + result[i].id_Uf + '">' + result[i].siglaUf + '</option>');
+                        } else {
+                            $("#id_uf").append('<option value="' + result[i].id_Uf + '" selected="selected">' + result[i].siglaUf + '</option>');
+                        }
+
                     });
                 });
     };

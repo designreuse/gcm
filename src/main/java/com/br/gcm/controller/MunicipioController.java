@@ -42,7 +42,7 @@ public class MunicipioController {
         List<Pais> listaPais = paisDao.Pais_lista();
         filtros.setId_pais(listaPais.get(0).getId_pais());
 
-        model.addAttribute("filttros", filtros);
+        model.addAttribute("filtros", filtros);
         model.addAttribute("municipio_lista", MunicipioDao.selectAll(filtros, pageable));
         model.addAttribute("lista_pais", listaPais);
         model.addAttribute("pagina", new Pagina(pageable, MunicipioDao.count(filtros)));
@@ -110,7 +110,7 @@ public class MunicipioController {
     }
 
     //Update_municipio
-    @RequestMapping(value = "/alterar_municipio", method = RequestMethod.PUT)
+    @RequestMapping(value = "/alterar_municipio", method = RequestMethod.POST)
     public ModelAndView update(@ModelAttribute Municipio municipio, @PageableDefault(size = 10) Pageable pageable, BindingResult resultt) {
         try{
             municipioService.update(municipio);
@@ -125,5 +125,12 @@ public class MunicipioController {
         return mav;
     }
 
-
+    //Editar municipio
+    @RequestMapping(value = "/detalhes_municipio/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Municipio municipio = MunicipioDao.selectById(id);
+        model.addAttribute("municipio", municipio);
+        model.addAttribute("lista_pais", paisDao.Pais_lista());
+        return "municipio_detalhes";
+    }
 }

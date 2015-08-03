@@ -24,6 +24,7 @@
                                     <label class="col-md-1 control-label" for="id_Pais">País</label>
                                     <div class="col-md-7">
                                         <select class="form-control" name="id_Pais" id="id_Pais">
+                                            <option value="0"></option>
                                             <c:forEach items="${lista_pais}" var="p">
                                                 <c:choose>
                                                     <c:when test="${p.id_pais != filtros.id_Pais}">
@@ -42,13 +43,13 @@
                                 <div class="form-group">
                                     <label class="col-md-1 control-label" for="siglaUf">UF</label>
                                     <div class="col-md-2">
-                                        <input type="text" maxlength="5"
+                                        <input type="text" maxlength="5" value="${filtros.siglaUf}"
                                                class="form-control maiusculo" name="siglaUf" placeholder="Sigla" id="siglaUf"/>
                                     </div>
 
                                     <label class="col-md-1 control-label" for="descricao">Nome</label>
                                     <div class="col-md-4">
-                                        <input type="text" maxlength="50"
+                                        <input type="text" maxlength="50" value="${filtros.descricao}"
                                                class="form-control maiusculo" name="descricao" placeholder="Nome" id="descricao"/>
                                     </div>
                                     <button style="width: 80px" class="btn btn-primary" type="reset">Limpar</button>

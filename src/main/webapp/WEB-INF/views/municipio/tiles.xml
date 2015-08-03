@@ -8,19 +8,19 @@
         <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_lista_lte.jsp" />
     </definition >
 
-    <!-- municipio_lista.jsp>
-    <definition name="municipio_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_lista.jsp" />
-    </definition -->
-
     <!-- municipio_novo.jsp-->
-    <definition name="municipio_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_novo.jsp" />
+    <definition name="municipio_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_novo_lte.jsp"/>
     </definition>
 
     <!-- municipio_editar.jsp-->
-    <definition name="municipio_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_editar.jsp" />
+    <definition name="municipio_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_editar_lte.jsp" />
+    </definition>
+
+    <!-- municipio_detalhes.jsp-->
+    <definition name="municipio_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/municipio/municipio_detalhes_lte.jsp" />
     </definition>
 
 </tiles-definitions>

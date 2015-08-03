@@ -72,8 +72,8 @@ public class MunicipioDao {
             arr.add(filtros.getId_municipio());
         };
         if (filtros.getDescricao() != null && filtros.getDescricao() != "") {
-            sql = sql + " And municipio.descricao like '%?%' ";
-            arr.add(filtros.getId_municipio());
+            sql = sql + " And municipio.descricao like ? ";
+            arr.add('%'+filtros.getDescricao().toUpperCase()+'%');
         };
 
         return db.queryForObject(sql, Long.class, arr.toArray());
@@ -108,11 +108,11 @@ public class MunicipioDao {
             arr.add(filtros.getId_municipio());
         };
         if (filtros.getDescricao() != null && filtros.getDescricao() != "") {
-            sql = sql + " And municipio.descricao like '%?%' ";
-            arr.add(filtros.getId_municipio());
+            sql = sql + " And municipio.descricao like ? ";
+            arr.add('%'+filtros.getDescricao().toUpperCase()+'%');
         };
 
-        sql = sql + "order by pais.id_pais, uf.siglauf, municipio.descricao LIMIT ? OFFSET ?";
+        sql = sql + " order by pais.id_pais, uf.siglauf, municipio.descricao LIMIT ? OFFSET ?";
         arr.add(p.getPageSize());
         arr.add(p.getOffset());
 

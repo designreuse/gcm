@@ -61,6 +61,26 @@ public class UfDao {
         return db.queryForObject("SELECT COUNT(*) FROM uf", Long.class);
     }
 
+    public Long count(Uf filtros) {
+        List arr = new ArrayList<>();
+        String sql = "SELECT COUNT(*) FROM uf Where 1=1 ";
+
+        if (filtros.getId_Pais() > 0){
+            sql = sql + " And uf.id_pais = ? ";
+            arr.add(filtros.getId_Pais());
+        }
+        if (filtros.getSiglaUf() != null && filtros.getSiglaUf() != ""){
+            sql = sql + " And uf.SiglaUf = ? ";
+            arr.add(filtros.getSiglaUf().toUpperCase());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And uf.Descricao like ? ";
+            arr.add('%'+filtros.getDescricao().toUpperCase()+'%');
+        }
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
+    }
+
     public Uf selectById(Integer id) {
         return db.queryForObject("Select uf.*, pais.siglapais from Uf inner join pais on uf.id_pais = pais.id_pais where id_uf=?", todasUf, id);
     }
@@ -96,8 +116,8 @@ public class UfDao {
             arr.add(filtros.getSiglaUf());
         }
         if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
-            sql = sql + " And uf.Descricao = '%?%' ";
-            arr.add(filtros.getDescricao());
+            sql = sql + " And uf.Descricao like ? ";
+            arr.add('%'+filtros.getDescricao()+'%');
         }
 
         sql = sql + "order by siglapais, siglauf LIMIT ? OFFSET ? ";

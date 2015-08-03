@@ -44,7 +44,7 @@ public class UfController {
         model.addAttribute("lista_pais", listaPais);
         model.addAttribute("uf_lista", ufDao.selectAll(filtros, pageable));
         model.addAttribute("filtros", filtros);
-        model.addAttribute("pagina", new Pagina(pageable, ufDao.count()));
+        model.addAttribute("pagina", new Pagina(pageable, ufDao.count(filtros)));
         return "uf_lista";
     }
 
@@ -55,7 +55,7 @@ public class UfController {
 
         mav.addObject("lista_pais", paisDao.Pais_lista());
         mav.addObject("uf_lista", ufDao.selectAll(filtros, pageable));
-        mav.addObject("pagina", new Pagina(pageable, ufDao.count()));
+        mav.addObject("pagina", new Pagina(pageable, ufDao.count(filtros)));
         mav.addObject("filtros", filtros);
 
         mav.setViewName("uf_lista");

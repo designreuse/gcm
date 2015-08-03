@@ -53,6 +53,16 @@ public class PaisDao {
         return db.queryForObject("SELECT COUNT(*) FROM pais", Long.class);
     }
 
+    public Long count(Filtro_Pais f) {
+        String sql = "SELECT COUNT(*) FROM pais Where 1=1 ";
+        if (f.getId_pais() != 0) {sql = sql + " And id_pais = "+f.getId_pais();}
+        if (f.getSiglapais() != null && f.getSiglapais().trim() != "") {sql = sql + " And siglapais ilike '%"+f.getSiglapais().toUpperCase()+"%'";}
+        if (f.getDescricao() != null && f.getDescricao().trim() != "") {sql = sql + " And descricao ilike '%"+f.getDescricao().toUpperCase()+"%'";}
+        if (f.getibge() != null && f.getibge().trim() != "") {sql = sql + " And ibge = "+f.getibge().toUpperCase();}
+
+        return db.queryForObject(sql, Long.class);
+    }
+
     public Pais selectById(Integer id) {
         return db.queryForObject("select * from pais where id_pais=?", todosPaises, id);
     }
@@ -78,16 +88,6 @@ public class PaisDao {
                 todosPaises,
                 p.getPageSize(),
                 p.getOffset());
-    }
-
-    public Long count_Paginado(Filtro_Pais f) {
-        String sql = "SELECT COUNT(*) FROM pais Where 1=1 ";
-        if (f.getId_pais() != 0) {sql = sql + " And id_pais = "+f.getId_pais();}
-        if (f.getSiglapais() != null && f.getSiglapais().trim() != "") {sql = sql + " And siglapais ilike '%"+f.getSiglapais().toUpperCase()+"%'";}
-        if (f.getDescricao() != null && f.getDescricao().trim() != "") {sql = sql + " And descricao ilike '%"+f.getDescricao().toUpperCase()+"%'";}
-        if (f.getibge() != null && f.getibge().trim() != "") {sql = sql + " And ibge = "+f.getibge().toUpperCase();}
-
-        return db.queryForObject(sql, Long.class);
     }
 
     //mappers

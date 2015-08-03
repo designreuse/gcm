@@ -30,7 +30,7 @@ public class PaisController {
     public String pais_lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         Filtro_Pais filtros = new Filtro_Pais();
         model.addAttribute("pais_lista", paisDao.Pais_Paginado(filtros, pageable));
-        model.addAttribute("pagina", new Pagina(pageable, paisDao.count()));
+        model.addAttribute("pagina", new Pagina(pageable, paisDao.count(filtros)));
         model.addAttribute("filtros", filtros);
         return "pais_lista";
     }
@@ -40,7 +40,7 @@ public class PaisController {
     public ModelAndView filtros(@ModelAttribute Filtro_Pais filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
         mav.addObject("pais_lista", paisDao.Pais_Paginado(filtros, pageable));
-        mav.addObject("pagina", new Pagina(pageable, paisDao.count_Paginado(filtros)));
+        mav.addObject("pagina", new Pagina(pageable, paisDao.count(filtros)));
         mav.addObject("filtros", filtros);
         mav.setViewName("pais_lista");
         return mav;

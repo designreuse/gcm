@@ -22,13 +22,13 @@
                         <div class="form-group">
                             <label class="col-md-1 control-label" for="siglapais">Sigla</label>
                             <div class="col-md-2">
-                                <input type="text" maxlength="5"
+                                <input type="text" maxlength="5" value="${filtros.siglapais}"
                                        class="form-control maiusculo" name="siglapais" placeholder="Sigla" id="siglapais"/>
                             </div>
 
                             <label class="col-md-1 control-label" for="descricao">Nome</label>
                             <div class="col-md-4">
-                                <input type="text" maxlength="50"
+                                <input type="text" maxlength="50" value="${filtros.descricao}"
                                        class="form-control maiusculo" name="descricao" placeholder="Nome" id="descricao"/>
                             </div>
                             <button style="width: 80px" class="btn btn-primary" type="reset">Limpar</button>
