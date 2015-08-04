@@ -85,7 +85,7 @@ public class GrupoProdutoController {
     }
 
     //Update
-    @RequestMapping(value = "/grupoproduto_update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/grupoproduto_update", method = RequestMethod.POST)
     public ModelAndView update(@ModelAttribute GrupoProduto grupoProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             grupoProdutoService.update(grupoProduto);
@@ -98,5 +98,12 @@ public class GrupoProdutoController {
         mav.addObject("pagina", new Pagina(pageable, grupoProdutoDao.count()));
         mav.setViewName("redirect:/grupoproduto_lista");
         return mav;
+    }
+
+    @RequestMapping(value = "/grupoproduto_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        GrupoProduto grupoProduto = grupoProdutoDao.selectById(id);
+        model.addAttribute("grupoproduto", grupoProduto);
+        return "grupoproduto_detalhes";
     }
 }

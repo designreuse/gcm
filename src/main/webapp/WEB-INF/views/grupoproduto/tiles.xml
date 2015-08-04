@@ -3,17 +3,22 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="grupoproduto_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/grupoproduto/grupoproduto_lista.jsp" />
+    <definition name="grupoproduto_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupoproduto/grupoproduto_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="grupoproduto_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/grupoproduto/grupoproduto_novo.jsp" />
+    <definition name="grupoproduto_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupoproduto/grupoproduto_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="grupoproduto_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/grupoproduto/grupoproduto_editar.jsp" />
+    <definition name="grupoproduto_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupoproduto/grupoproduto_editar_lte.jsp" />
+    </definition>
+
+    <!-- editar-->
+    <definition name="grupoproduto_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupoproduto/grupoproduto_detalhes_lte.jsp" />
     </definition>
 </tiles-definitions>
