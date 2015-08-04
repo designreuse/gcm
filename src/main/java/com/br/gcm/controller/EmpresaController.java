@@ -101,7 +101,7 @@ public class EmpresaController {
     }
 
     //Update
-    @RequestMapping(value = "/empresa_update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/empresa_update", method = RequestMethod.POST)
     public ModelAndView update(@ModelAttribute Empresa empresa, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             empresaService.update(empresa);
@@ -114,6 +114,15 @@ public class EmpresaController {
         mav.addObject("pagina", new Pagina(pageable, empresaDao.count()));
         mav.setViewName("redirect:/empresa_lista");
         return mav;
+    }
+
+    //Editar
+    @RequestMapping(value = "/empresa_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Empresa empresa = empresaDao.selectById(id);
+        model.addAttribute("empresa", empresa);
+        model.addAttribute("lista_pais", paisDao.Pais_lista());
+        return "empresa_detalhes";
     }
 
 }

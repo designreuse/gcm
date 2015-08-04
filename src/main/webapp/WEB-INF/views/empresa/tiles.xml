@@ -5,18 +5,23 @@
 
 
     <!-- empresa_lista.jsp-->
-    <definition name="empresa_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_lista.jsp" />
+    <definition name="empresa_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_lista_lte.jsp" />
     </definition>
 
     <!-- empresa_novo.jsp-->
-    <definition name="empresa_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_novo.jsp" />
+    <definition name="empresa_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_novo_lte.jsp" />
     </definition>
 
     <!-- empresa_editar.jsp-->
-    <definition name="empresa_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_editar.jsp" />
+    <definition name="empresa_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_editar_lte.jsp" />
+    </definition>
+
+    <!-- empresa_editar.jsp-->
+    <definition name="empresa_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/empresa/empresa_detalhes_lte.jsp" />
     </definition>
 
 </tiles-definitions>
