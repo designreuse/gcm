@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,15 +30,18 @@ public class SubGrupoProdutoDao {
     @Inject GrupoProdutoDao grupoProdutoDao;
 
     public void insert(SubGrupoProduto subGrupoProduto) {
-        db.update("insert into SubGrupoProduto (id_GrupoProduto, Descricao) values(?,?)",
-                subGrupoProduto.getGrupoProduto().getId_GrupoProduto(),
+        int id = db.queryForObject("insert into SubGrupoProduto (id_GrupoProduto, Descricao) values(?,?) RETURNING id_SubGrupoProduto",
+                Integer.class,
+                subGrupoProduto.getId_GrupoProduto(),
                 subGrupoProduto.getDescricao());
+
+        subGrupoProduto.setId_SubGrupoProduto(id);
     }
 
     public void update(SubGrupoProduto subGrupoProduto){
         db.update("update SubGrupoProduto set id_grupoproduto=?, descricao=? where id_SubGrupoProduto = ?",
                 subGrupoProduto.getId_GrupoProduto(),
-                subGrupoProduto.getGrupoProduto().getDescricao(),
+                subGrupoProduto.getDescricao(),
                 subGrupoProduto.getId_SubGrupoProduto());
     }
 
@@ -47,6 +51,28 @@ public class SubGrupoProdutoDao {
 
     public Long count() {
         return db.queryForObject("SELECT COUNT(*) FROM SubGrupoProduto", Long.class);
+    }
+
+    public Long count(SubGrupoProduto filtros) {
+        List arr = new ArrayList<>();
+        String sql = "SELECT COUNT(*) FROM SubGrupoProduto Where 1=1 ";
+
+        if (filtros.getId_SubGrupoProduto() > 0){
+            sql = sql + " And Id_SubGrupoProduto = ? ";
+            arr.add(filtros.getId_SubGrupoProduto());
+        };
+
+        if (filtros.getId_GrupoProduto() > 0){
+            sql = sql + " And Id_GrupoProduto = ?";
+            arr.add(filtros.getId_GrupoProduto());
+        };
+
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And Descricao like ? ";
+            arr.add("%"+filtros.getDescricao()+"%");
+        };
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
     }
 
     public SubGrupoProduto selectById(Integer id) {
@@ -79,6 +105,34 @@ public class SubGrupoProdutoDao {
                 listaSubGrupoProduto,
                 p.getPageSize(),
                 p.getOffset());
+    }
+
+    public List<SubGrupoProduto> selectAll_paginado(SubGrupoProduto filtros, Pageable p) {
+        List arr = new ArrayList<>();
+        String sql =  "Select SubGrupoProduto.*, GrupoProduto.descricao as DescricaoGrupo from  SubGrupoProduto " +
+                      " Inner Join GrupoProduto on SubGrupoProduto.id_GrupoProduto = GrupoProduto.id_GrupoProduto Where 1=1 ";
+
+        if (filtros.getId_SubGrupoProduto() > 0){
+            sql = sql + " And SubGrupoProduto.Id_SubGrupoProduto = ? ";
+            arr.add(filtros.getId_SubGrupoProduto());
+        };
+
+        if (filtros.getId_GrupoProduto() > 0){
+            sql = sql + " And SubGrupoProduto.Id_GrupoProduto = ? ";
+            arr.add(filtros.getId_GrupoProduto());
+        };
+
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And SubGrupoProduto.Descricao like ? ";
+            arr.add("%"+filtros.getDescricao()+"%");
+        };
+
+        sql = sql + " Order By GrupoProduto.descricao, SubGrupoProduto.descricao " +
+                " LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql, listaSubGrupoProduto, arr.toArray());
     }
 
     //mappers

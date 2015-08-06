@@ -96,7 +96,7 @@
                 </ul>
                 <ul class="treeview-menu">
                     <li>
-                        <a href="#"><i class="fa fa-briefcase"></i> Financeiro <i class="fa fa-angle-left pull-right"></i></a>
+                        <a href="#"><i class="fa fa-usd"></i> Financeiro <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu">
                             <li><a href="<c:url value="/centrocusto_lista"/>"><i class="fa fa-circle-o"></i> 1501 Centro de Custo</a></li>
                             <li><a href="<c:url value="/planocontas_lista"/>"><i class="fa fa-circle-o"></i> 1502 Plano de Contas</a></li>
@@ -199,7 +199,7 @@
             </li>
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-suitcase"></i> <span>Financeiro</span>
+                    <i class="fa fa-usd"></i> <span>Financeiro</span>
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">

@@ -39,9 +39,24 @@ public class SubGrupoProdutoController {
     //Listar
     @RequestMapping(value = "/subgrupoproduto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        model.addAttribute("subgrupoproduto_lista", subGrupoProdutoDao.selectAll_paginado(pageable));
-        model.addAttribute("pagina", new Pagina(pageable, subGrupoProdutoDao.count()));
+        SubGrupoProduto filtros = new SubGrupoProduto();
+        model.addAttribute("lista_grupoproduto", grupoProdutoDao.selectAll());
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("subgrupoproduto_lista", subGrupoProdutoDao.selectAll_paginado(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, subGrupoProdutoDao.count(filtros)));
         return "subgrupoproduto_lista";
+    }
+
+    @RequestMapping(value = "/subgrupoproduto_lista", method = RequestMethod.POST)
+    public ModelAndView filtros(@ModelAttribute SubGrupoProduto filtros, @PageableDefault(size = 10) Pageable pageable) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("lista_grupoproduto", grupoProdutoDao.selectAll());
+        mav.addObject("subgrupoproduto_lista", subGrupoProdutoDao.selectAll_paginado(filtros, pageable));
+        mav.addObject("pagina", new Pagina(pageable, subGrupoProdutoDao.count(filtros)));
+        mav.addObject("filtros", filtros);
+
+        mav.setViewName("subgrupoproduto_lista");
+        return mav;
     }
 
     //Deletar
@@ -75,8 +90,13 @@ public class SubGrupoProdutoController {
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
         ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", subGrupoProdutoDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, subGrupoProdutoDao.count()));
+        SubGrupoProduto filtros = new SubGrupoProduto();
+        filtros.setId_GrupoProduto(subGrupoProduto.getId_GrupoProduto());
+
+        mav.addObject("lista_grupoproduto", grupoProdutoDao.selectAll());
+        mav.addObject("subgrupoproduto_lista", subGrupoProdutoDao.selectAll_paginado(filtros, pageable));
+        mav.addObject("pagina", new Pagina(pageable, subGrupoProdutoDao.count(filtros)));
+        mav.addObject("filtros", filtros);
         mav.setViewName("redirect:/subgrupoproduto_lista");
         return mav;
     }
@@ -91,7 +111,7 @@ public class SubGrupoProdutoController {
     }
 
     //Update
-    @RequestMapping(value = "/subgrupoproduto_update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/subgrupoproduto_update", method = RequestMethod.POST)
     public ModelAndView update(@ModelAttribute SubGrupoProduto subGrupoProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             subGrupoProdutoService.update(subGrupoProduto);
@@ -104,6 +124,14 @@ public class SubGrupoProdutoController {
         mav.addObject("pagina", new Pagina(pageable, subGrupoProdutoDao.count()));
         mav.setViewName("redirect:/subgrupoproduto_lista");
         return mav;
+    }
+
+    @RequestMapping(value = "/subgrupoproduto_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        SubGrupoProduto subGrupoProduto = subGrupoProdutoDao.selectById(id);
+        model.addAttribute("subgrupoproduto", subGrupoProduto);
+        model.addAttribute("listagrupoproduto", grupoProdutoDao.selectAll());
+        return "subgrupoproduto_detalhes";
     }
 }
 

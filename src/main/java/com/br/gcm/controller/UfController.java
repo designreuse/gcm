@@ -39,7 +39,9 @@ public class UfController {
 
         List<Pais> listaPais = paisDao.Pais_lista();
         Uf filtros = new Uf();
-        filtros.setId_Pais(listaPais.get(0).getId_pais());
+        if (!listaPais.isEmpty()) {
+            filtros.setId_Pais(listaPais.get(0).getId_pais());
+        }
 
         model.addAttribute("lista_pais", listaPais);
         model.addAttribute("uf_lista", ufDao.selectAll(filtros, pageable));
