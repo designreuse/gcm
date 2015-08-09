@@ -38,9 +38,22 @@ public class NCMController {
     //Listar
     @RequestMapping(value = "/ncm_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        model.addAttribute("ncm_lista", ncmDao.selectAll_paginado(pageable));
-        model.addAttribute("pagina", new Pagina(pageable, ncmDao.count()));
+        NCM filtros = new NCM();
+
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("ncm_lista", ncmDao.selectAll_paginado(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, ncmDao.count(filtros)));
         return "ncm_lista";
+    }
+
+    @RequestMapping(value = "/ncm_lista", method = RequestMethod.POST)
+    public ModelAndView filtros(@ModelAttribute NCM filtros, @PageableDefault(size = 10) Pageable pageable) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("ncm_lista", ncmDao.selectAll_paginado(filtros, pageable));
+        mav.addObject("pagina", new Pagina(pageable, ncmDao.count(filtros)));
+        mav.addObject("filtros", filtros);
+        mav.setViewName("ncm_lista");
+        return mav;
     }
 
     //Deletar
@@ -74,8 +87,10 @@ public class NCMController {
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
         ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", ncmDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, ncmDao.count()));
+        NCM filtros = new NCM();
+        mav.addObject("ncm_lista", ncmDao.selectAll_paginado(filtros, pageable));
+        mav.addObject("pagina", new Pagina(pageable, ncmDao.count(filtros)));
+        mav.addObject("filtros", filtros);
         mav.setViewName("redirect:/ncm_lista");
         return mav;
     }
@@ -90,7 +105,7 @@ public class NCMController {
     }
 
     //Update
-    @RequestMapping(value = "/ncm_update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/ncm_update", method = RequestMethod.POST)
     public ModelAndView update(@ModelAttribute NCM ncm, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             ncmService.update(ncm);
@@ -99,9 +114,20 @@ public class NCMController {
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
         ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", ncmDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, ncmDao.count()));
+        NCM filtros = new NCM();
+        mav.addObject("ncm_lista", ncmDao.selectAll_paginado(filtros, pageable));
+        mav.addObject("pagina", new Pagina(pageable, ncmDao.count(filtros)));
+        mav.addObject("filtros", filtros);
         mav.setViewName("redirect:/ncm_lista");
         return mav;
+    }
+
+    //Editar
+    @RequestMapping(value = "/ncm_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        NCM ncm = ncmDao.selectById(id);
+        model.addAttribute("ncm", ncm);
+        model.addAttribute("lista_cst", situacaoTributariaPISCOFINSDao.selectAll());
+        return "ncm_detalhes";
     }
 }

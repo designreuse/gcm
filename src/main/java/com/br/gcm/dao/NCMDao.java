@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +55,26 @@ public class NCMDao {
         return db.queryForObject("SELECT COUNT(*) FROM NCM", Long.class);
     }
 
+    public Long count(NCM filtros) {
+        List arr = new ArrayList<>();
+        String sql = "SELECT COUNT(*) FROM NCM Where 1=1";
+
+        if (filtros.getId_NCM() > 0){
+            sql = sql + " And id_ncm = ? ";
+            arr.add(filtros.getId_NCM());
+        }
+        if (filtros.getCodigoNCM() != null && filtros.getCodigoNCM() != ""){
+            sql = sql + " And CodigoNCM like ? ";
+            arr.add("%"+filtros.getCodigoNCM()+"%");
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And Descricao like ? ";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
+    }
+
     public NCM selectById(Integer id) {
         return db.queryForObject("Select * from NCM Where id_NCM=?", listaNCM, id);
     }
@@ -68,6 +89,32 @@ public class NCMDao {
                 listaNCM,
                 p.getPageSize(),
                 p.getOffset());
+    }
+
+    public List<NCM> selectAll_paginado(NCM filtros, Pageable p) {
+        List arr = new ArrayList<>();
+        String sql = "Select * from Ncm Where 1=1 ";
+
+        if (filtros.getId_NCM() > 0){
+            sql = sql + " And id_ncm = ? ";
+            arr.add(filtros.getId_NCM());
+        }
+        if (filtros.getCodigoNCM() != null && filtros.getCodigoNCM() != ""){
+            sql = sql + " And CodigoNCM like ? ";
+            arr.add("%"+filtros.getCodigoNCM()+"%");
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And Descricao like ? ";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+
+        sql = sql + "Order By CodigoNCM LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql,
+                listaNCM,
+                arr.toArray());
     }
 
     //mappers

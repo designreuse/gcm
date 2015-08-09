@@ -4,18 +4,23 @@
 <tiles-definitions>
 
     <!-- lista-->
-    <definition name="ncm_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_lista.jsp" />
+    <definition name="ncm_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="ncm_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_novo.jsp" />
+    <definition name="ncm_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="ncm_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_editar.jsp" />
+    <definition name="ncm_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_editar_lte.jsp"/>
+    </definition>
+
+    <!-- editar-->
+    <definition name="ncm_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/ncm/ncm_detalhes_lte.jsp" />
     </definition>
 
 </tiles-definitions>
