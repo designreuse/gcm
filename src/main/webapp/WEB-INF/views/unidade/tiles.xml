@@ -3,17 +3,22 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="unidade_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/unidade/unidade_lista.jsp" />
+    <definition name="unidade_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/unidade/unidade_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="unidade_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/unidade/unidade_novo.jsp" />
+    <definition name="unidade_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/unidade/unidade_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="unidade_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/unidade/unidade_editar.jsp" />
+    <definition name="unidade_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/unidade/unidade_editar_lte.jsp" />
+    </definition>
+
+    <!-- editar-->
+    <definition name="unidade_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/unidade/unidade_detalhes_lte.jsp" />
     </definition>
 </tiles-definitions>

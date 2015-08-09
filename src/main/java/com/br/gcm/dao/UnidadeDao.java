@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,13 +29,13 @@ public class UnidadeDao {
     public void insert(Unidade unidade) {
         db.update("insert into Unidade (sigla, descricao) values(?,?)",
                 unidade.getSigla().toUpperCase(rotinas.getPT_BR()),
-                unidade.getDescricao());
+                unidade.getDescricao().toUpperCase(rotinas.getPT_BR()));
     }
 
     public void update(Unidade unidade){
         db.update("update Unidade set sigla=?, descricao=? where id_Unidade=?",
                 unidade.getSigla().toUpperCase(rotinas.getPT_BR()),
-                unidade.getDescricao(),
+                unidade.getDescricao().toUpperCase(rotinas.getPT_BR()),
                 unidade.getId_Unidade());
     }
 
@@ -44,6 +45,22 @@ public class UnidadeDao {
 
     public Long count() {
         return db.queryForObject("SELECT COUNT(*) FROM Unidade", Long.class);
+    }
+
+    public Long count(Unidade filtros) {
+        List arr = new ArrayList();
+        String sql = "SELECT COUNT(*) FROM Unidade Where 1=1 ";
+
+        if (filtros.getSigla() != null && filtros.getSigla() != ""){
+            sql = sql + " And sigla = ? ";
+            arr.add(filtros.getSigla());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And descricao = ? ";
+            arr.add(filtros.getDescricao());
+        }
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
     }
 
     public Unidade selectById(Integer id) {
@@ -60,6 +77,28 @@ public class UnidadeDao {
                 listaUnidade,
                 p.getPageSize(),
                 p.getOffset());
+    }
+
+    public List<Unidade> selectAll_paginado(Unidade filtros, Pageable p) {
+        List arr = new ArrayList();
+        String sql = "Select * from  Unidade Where 1=1 ";
+
+        if (filtros.getSigla() != null && filtros.getSigla() != ""){
+            sql = sql + " And sigla = ? ";
+            arr.add(filtros.getSigla().toUpperCase());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And descricao like ? ";
+            arr.add("%"+filtros.getDescricao().toUpperCase()+"%");
+        }
+
+        sql = sql + " Order By Descricao LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql,
+                listaUnidade,
+                arr.toArray());
     }
 
     //mappers

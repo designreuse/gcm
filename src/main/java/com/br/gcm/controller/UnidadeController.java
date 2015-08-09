@@ -35,8 +35,19 @@ public class UnidadeController {
     //Listar
     @RequestMapping(value = "/unidade_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        model.addAttribute("unidade_lista", unidadeDao.selectAll_paginado(pageable));
-        model.addAttribute("pagina", new Pagina(pageable, unidadeDao.count()));
+        Unidade filtros = new Unidade();
+        model.addAttribute("unidade_lista", unidadeDao.selectAll_paginado(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, unidadeDao.count(filtros)));
+        model.addAttribute("filtros", filtros);
+        return "unidade_lista";
+    }
+
+    //Listar
+    @RequestMapping(value = "/unidade_lista", method = RequestMethod.POST)
+    public String filtros(@ModelAttribute Unidade filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
+        model.addAttribute("unidade_lista", unidadeDao.selectAll_paginado(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, unidadeDao.count(filtros)));
+        model.addAttribute("filtros", filtros);
         return "unidade_lista";
     }
 
@@ -85,7 +96,7 @@ public class UnidadeController {
     }
 
     //Update
-    @RequestMapping(value = "/unidade_update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/unidade_update", method = RequestMethod.POST)
     public ModelAndView update(@ModelAttribute Unidade unidade, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             unidadeService.update(unidade);
@@ -98,5 +109,13 @@ public class UnidadeController {
         mav.addObject("pagina", new Pagina(pageable, unidadeDao.count()));
         mav.setViewName("redirect:/unidade_lista");
         return mav;
+    }
+
+    //Editar
+    @RequestMapping(value = "/unidade_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Unidade unidade = unidadeDao.selectById(id);
+        model.addAttribute("unidade", unidade);
+        return "unidade_detalhes";
     }
 }
