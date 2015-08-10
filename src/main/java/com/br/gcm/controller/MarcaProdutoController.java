@@ -18,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,7 +37,9 @@ public class MarcaProdutoController {
     //Listar
     @RequestMapping(value = "/marcaproduto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        model.addAttribute("marcaproduto_lista", marcaProdutoDao.selectAll_paginado(pageable));
+        List<MarcaProduto> lista = marcaProdutoDao.selectAll_paginado(pageable);
+
+        model.addAttribute("marcaproduto_lista", lista);
         model.addAttribute("pagina", new Pagina(pageable, marcaProdutoDao.count()));
         return "marcaproduto_lista";
     }
@@ -61,7 +65,7 @@ public class MarcaProdutoController {
     }
 
     //Insert
-    @RequestMapping(value = "/marcaproduto_insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/marcaproduto_gravar", method = RequestMethod.POST)
     public ModelAndView insert(@ModelAttribute MarcaProduto marcaProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             marcaProdutoService.insert(marcaProduto);
@@ -85,7 +89,7 @@ public class MarcaProdutoController {
     }
 
     //Update
-    @RequestMapping(value = "/marcaproduto_update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/marcaproduto_update", method = RequestMethod.POST)
     public ModelAndView update(@ModelAttribute MarcaProduto marcaProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             marcaProdutoService.update(marcaProduto);

@@ -5,58 +5,90 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/tld/custom_tags.tld" prefix="vls"%>
 
-<div class="container">
-    <div class="navbar">
-        <div class="navbar-inner">
-            <div class="container-fluid">
-                <a class="brand" style="font: bold; margin-left: 300px;">Lista de Marcas de Produtos</a>
+
+<div class="content-header">
+    <h1>Lista de Marcas</h1>
+</div>
+
+<div class="content body">
+    <!-- Inicio do Box de Filtro -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Filtro</h3>
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" for="id_marcaProduto">ID</label>
+                            <div class="col-md-2">
+                                <input id="id_marcaProduto" class="form-control" placeholder="ID" type="number" />
+                            </div>
+
+                            <label class="col-md-1 control-label" for="descricao">Descricao</label>
+                            <div class="col-md-4">
+                                <input id="descricao" class="form-control" placeholder="Descrição..." type="text" />
+                            </div>
+                            <button class="btn btn-primary" type="reset">Limpar</button>
+                            <button class="btn btn-primary" type="submit">Pesquisar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fim do Box de Filtro -->
+
+    <div class="row" style="height: 280px; overflow:auto;">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <table class="table table-bordered  table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th style="width:10%; text-align:center;">Operações</th>
+                            <th style="width:10%; text-align:right;">ID</th>
+                            <th>Descrição</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <%--marcaproduto_lista--%>
+                        <c:forEach items="${marcaproduto_lista}" var="m">
+                            <tr>
+                                <td align="center">
+                                    <a href="/marcaproduto_deleta/${m.id_MarcaProduto}" class="btn btn-default btn-xs" title="Deletar">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                    <a href="/marcaproduto_editar/${m.id_MarcaProduto}" class="btn btn-default btn-xs" title="Editar">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                </td>
+                                <td align="right">${m.id_MarcaProduto}</td>
+                                <td>${m.descricao}</td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <div class="col-sm-9">
+                        <vls:paginador pagina="${pagina}"/>
+                    </div>
+                    <div class="col-sm-3" style="margin-top: 15px;">
+                        <a style="width: 80px" href="<c:url value="/marcaproduto_novo"/>" class="btn btn-primary" title="Novo">
+                            <i class="fa fa-plus"></i> Novo
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<div class="container">
-    <div class="navbar-inner" style="height: 350px; overflow:auto;">
-        <br>
-        <table class="table table-striped table-bordered table-hover table-condensed active tabelaPaginada" id="example">
-            <thead style="background-color:silver">
-            <tr>
-                <th style="width:60px;"></th>
-                <th>Descrição</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach items="${marcaproduto_lista}" var="p">
-                <tr>
-                    <td>
-                        <a href="/marcaproduto_deleta/${p.id_MarcaProduto}" class="btn btn-mini apagar" title="Deletar">
-                            <i class="icon-trash"></i>
-                        </a>
-                        <a href="/marcaproduto_editar/${p.id_MarcaProduto}" class="btn btn-mini" title="Editar">
-                            <i class="icon-pencil"></i>
-                        </a>
-                    </td>
-                    <td>${p.descricao}</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-
-    </div>
-</div>
-<br>
-<div class="container">
-    <div class="navbar-inner">
-        <div class="row-fluid">
-            <div class="span6">
-                <vls:paginador pagina="${pagina}"/>
-            </div>
-            <div class="span6" style="text-align: right;" >
-                <br>
-                <a href="<c:url value="/marcaproduto_novo"/>" class="btn btn-lg btn-primary" style="width: 70px;"><span class="icon-plus"></span> Novo</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-

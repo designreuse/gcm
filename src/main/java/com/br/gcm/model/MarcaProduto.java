@@ -24,6 +24,6 @@ public class MarcaProduto {
     }
 
     public void setDescricao(String descricao) {
-        Descricao = descricao;
+        Descricao = descricao.toUpperCase();
     }
 }

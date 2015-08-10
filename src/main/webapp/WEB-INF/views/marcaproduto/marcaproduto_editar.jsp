@@ -2,61 +2,56 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="/WEB-INF/tld/custom_tags.tld" prefix="vls"%>
 
-<div class="container">
-    <div class="container-fluid">
-        <c:url value="/marcaproduto_update" var="update"/>
-        <form:form class="form-signin" modelAttribute="marcaproduto" id="FormCadastro" action="${update}" method="PUT">
+<div class="content-header">
+    <h1>Alteração de Marca</h1>
+</div>
 
-            <div class="navbar">
-                <div class="navbar-inner">
-                    <div class="container-fluid">
-                        <a class="brand" style="font: bold;  margin-left: 38%;">Editar Marca de Produtos</a>
+<div class="content body">
+    <form action="/marcaproduto_update" method="post" >
+        <fieldset>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="box box-primary">
+                        <div class="box-body">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-1 control-label" for="idMarcaProduto" style="margin-top: 5px;">ID</label>
+                                        <div class="col-md-1">
+                                            <input type="text" maxlength="50"  required="true"
+                                                   class="form-control maiusculo " readonly="true" value="${marcaproduto.id_MarcaProduto}" name="id_MarcaProduto" id="idMarcaProduto"/>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="row">
+                                        <label class="col-md-1 control-label" for="marcaDescricao" style="margin-top: 5px;">Descricao</label>
+                                        <div class="col-md-5">
+                                            <input type="text" maxlength="50"  required="true"
+                                                   class="form-control maiusculo " placeholder="descricao..." value="${marcaproduto.descricao}" name="descricao" id="marcaDescricao"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="container-fluid navbar navbar-inner">
-                <br>
-                <div class="row-fluid">
-                    <div class="span2" style="text-align: left;"></div>
-                    <div class="span2" style="text-align: left;">
-                        <label style="font-size: 16px; margin-top:10px;">Id</label>
-                    </div>
-                    <div class="span8" style="text-align: left;">
-                        <form:input path="id_MarcaProduto" type="text" maxlength="3"
-                                    class="form-control maiusculo" name="Id" placeholder="Id"
-                                    style="width:80px;" readonly="true" />
-                    </div>
-                </div>
-
-                <div class="row-fluid">
-                    <div class="span2" style="text-align: left;"></div>
-                    <div class="span2" style="text-align: left;">
-                        <label style="font-size: 16px; margin-top:10px;">Descrição</label>
-                    </div>
-                    <div class="span8" style="text-align: left;">
-                        <form:input path="descricao" type="text"  maxlength="50" required="autofocus"
-                                    class="form-control" name="Descricao" placeholder="Descrição"
-                                    style="width:500px;" />
-                    </div>
-                </div>
-            </div>
-            <div class="navbar">
-                <div class="navbar-inner">
-                    <div class="container-fluid">
-                        <div class="row-fluid">
-                            <div class="span6" align="right">
-                                <form:button class="btn btn-lg btn-primary btn-block" type="submit" style="width: 100px;">Salvar</form:button>
-                            </div>
-                            <div class="span6">
-                                <a class="btn btn-lg btn-primary btn-block" style="width:100px;" href="<c:url value="/marcaproduto_lista"/>">Cancelar</a>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="box box-primary">
+                        <div class="box-body">
+                            <div class="col-sm-12" style="margin-top: 15px; text-align: center;">
+                                <button class="btn btn-primary" type="submit" style="width: 80px;">Salvar</button>
+                                <a style="width: 80px" href="<c:url value="/marcaproduto_lista"/>" class="btn btn-primary" title="Cancelar">Cancelar</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </form:form>
-    </div>
+        </fieldset>
+    </form>
 </div>
-

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,15 +46,35 @@ public class MarcaProdutoDao {
     }
 
     public MarcaProduto selectById(Integer id) {
-        return db.queryForObject("Select * from MarcaProduto Where id_MarcaProduto=?", listaMarcaProduto, id);
+        return db.queryForObject("Select id_marcaproduto, descricao from MarcaProduto Where id_MarcaProduto=?", listaMarcaProduto, id);
     }
 
     public List<MarcaProduto> selectAll() {
-        return db.query("Select * from MarcaProduto", listaMarcaProduto);
+        return db.query("Select id_marcaproduto, descricao from MarcaProduto", listaMarcaProduto);
+    }
+
+    public List<MarcaProduto> selectAll(MarcaProduto filtros, Pageable p) {
+        List arr = new ArrayList<>();
+        String sql = "Select id_marcaproduto, descricao from MarcaProduto where 1=1 ";
+
+        if (filtros.getId_MarcaProduto() > 0) {
+            sql = sql + " and marcaproduto.id_marcaproduto = ?";
+            arr.add(filtros.getId_MarcaProduto());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != "") {
+            sql = sql + " and marcaproduto.descricao = ? ";
+            arr.add(filtros.getDescricao());
+        }
+        sql = sql + " order by marcaproduto.id_marcaproduto, marcaproduto.descricao  LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+        return db.query(sql, listaMarcaProduto, arr.toArray());
+
     }
 
     public List<MarcaProduto> selectAll_paginado(Pageable p) {
-        return db.query("Select * from  MarcaProduto Order By Descricao " +
+
+        return db.query("Select id_marcaproduto, descricao from  MarcaProduto Order By Descricao " +
                 "LIMIT ? OFFSET ? ",
                 listaMarcaProduto,
                 p.getPageSize(),

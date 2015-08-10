@@ -13,3 +13,7 @@ src/main/webapp/WEB-INF/db.properties
 *.iml
 
 src/main/resources/rebel.xml
+
+*.iml
+
+*.properties

@@ -3,17 +3,17 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="marcaproduto_lista" extends="main-layout">
+    <definition name="marcaproduto_lista" extends="lte-layout">
         <put-attribute name="body" value="/WEB-INF/views/marcaproduto/marcaproduto_lista.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="marcaproduto_novo" extends="main-layout">
+    <definition name="marcaproduto_novo" extends="lte-layout">
         <put-attribute name="body" value="/WEB-INF/views/marcaproduto/marcaproduto_novo.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="marcaproduto_editar" extends="main-layout">
+    <definition name="marcaproduto_editar" extends="lte-layout">
         <put-attribute name="body" value="/WEB-INF/views/marcaproduto/marcaproduto_editar.jsp" />
     </definition>
 </tiles-definitions>

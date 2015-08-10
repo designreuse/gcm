@@ -81,10 +81,10 @@
                         <c:forEach items="${uf_lista}" var="p">
                             <tr>
                                 <td>
-                                    <a href="/uf_deleta/${p.id_Uf}" class="btn btn-default btn-xs" title="Deletar">
+                                    <a href="/marcaproduto_deleta/${p.id_Uf}" class="btn btn-default btn-xs" title="Deletar">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
-                                    <a href="/editar_uf/${p.id_Uf}" class="btn btn-default btn-xs" title="Editar">
+                                    <a href="/marcaproduto_editar/${p.id_Uf}" class="btn btn-default btn-xs" title="Editar">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                     <a href="/uf_detalhes/${p.id_Uf}" class="btn btn-default btn-xs" title="Detalhes">
