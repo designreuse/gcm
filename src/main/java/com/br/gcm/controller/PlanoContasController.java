@@ -40,6 +40,14 @@ public class PlanoContasController {
     @Inject private Rotinas rotinas;
     @Inject private EmpresaDao empresaDao;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Filtros
     @RequestMapping(value = "/planocontas_filtro/{id_empresa}")
     public String lista(@PathVariable("id_empresa") Integer id_empresa, @PageableDefault(size = 10) Pageable pageable, Model model) {

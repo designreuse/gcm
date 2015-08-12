@@ -75,7 +75,6 @@ desired effect
         <tiles:insertAttribute name="menu"/>
 
         <div class="content-wrapper" style="min-height: 326px;">
-            
             <tiles:insertAttribute name="body"/>
         </div>
 

@@ -43,6 +43,14 @@ public class GrupoUsuarioController {
     @Inject private GrupoTransacaoDao grupoTransacaoDao;
     @Inject private EmpresaGrupoDao empresaGrupoDao;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Listar
     @RequestMapping(value = "/grupousuario_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {

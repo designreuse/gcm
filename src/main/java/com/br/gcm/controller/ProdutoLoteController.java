@@ -38,6 +38,14 @@ public class ProdutoLoteController {
     @Inject private ProdutoDao produtoDao;
     @Inject private ProdutoLoteService produtoLoteService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");

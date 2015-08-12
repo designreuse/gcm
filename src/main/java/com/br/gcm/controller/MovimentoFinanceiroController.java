@@ -47,6 +47,14 @@ public class MovimentoFinanceiroController {
     @Inject private MovimentoFinanceiroService movimentoFinanceiroService;
     @Inject private BancoDao bancoDao;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");

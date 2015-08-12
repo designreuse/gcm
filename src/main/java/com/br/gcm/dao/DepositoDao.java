@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,6 +50,22 @@ public class DepositoDao {
         return db.queryForObject("SELECT COUNT(*) FROM Deposito Where id_Empresa=?", Long.class, id_Empresa);
     }
 
+    public Long count(Deposito filtros) {
+        List arr = new ArrayList<>();
+        String sql = "Select COUNT(*) from Deposito Where 1=1 ";
+
+        if (filtros.getId_Empresa() > 0){
+            sql = sql + " And id_Empresa = ? ";
+            arr.add(filtros.getId_Empresa());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() !=""){
+            sql = sql + " And descricao like ? ";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
+    }
+
     public Deposito selectById(Integer id) {
         return db.queryForObject("Select * from Deposito Where id_Deposito=?", listaDeposito, id);
     }
@@ -64,6 +81,28 @@ public class DepositoDao {
                 id_Empresa,
                 p.getPageSize(),
                 p.getOffset());
+    }
+
+    public List<Deposito> selectAll_paginado(Deposito filtros, Pageable p) {
+        List arr = new ArrayList<>();
+        String sql = "Select * from Deposito Where 1=1 ";
+
+        if (filtros.getId_Empresa() > 0){
+            sql = sql + " And id_Empresa = ? ";
+            arr.add(filtros.getId_Empresa());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() !=""){
+            sql = sql + " And descricao like ? ";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+
+        sql = sql + " Order By Descricao LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql,
+                listaDeposito,
+                arr.toArray());
     }
 
     //mappers

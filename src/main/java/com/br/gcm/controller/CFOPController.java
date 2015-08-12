@@ -34,6 +34,14 @@ public class CFOPController {
     @Inject private CFOPService cfopService;
     @Inject private RelacaoCFOPDao relacaoCFOPDao;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Listar
     @RequestMapping(value = "/cfop_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {

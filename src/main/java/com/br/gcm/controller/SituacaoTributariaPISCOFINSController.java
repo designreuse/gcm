@@ -32,6 +32,14 @@ public class SituacaoTributariaPISCOFINSController {
     @Inject private SituacaoTributariaPISCOFINSDao situacaoTributariaPISCOFINSDao;
     @Inject private SituacaoTributariaPISCOFINSService situacaoTributariaPISCOFINSService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Listar
     @RequestMapping(value = "/situacaotributariapiscofins_lista")
     public String lista(@PageableDefault(size = 8) Pageable pageable, Model model) {

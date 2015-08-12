@@ -48,6 +48,14 @@ public class UsuarioController {
     @Inject private JavaMailSender mailSender;
     @Inject private Rotinas rotinas;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     @RequestMapping(value = "/usuario_lista")
     public String lista(@PageableDefault(size = 20) Pageable pageable, Model model) {
         model.addAttribute("lista", usuarioDao.all(pageable));

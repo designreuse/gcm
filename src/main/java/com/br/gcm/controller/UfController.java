@@ -2,6 +2,7 @@ package com.br.gcm.controller;
 
 import com.br.gcm.dao.PaisDao;
 import com.br.gcm.dao.UfDao;
+import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.model.Pais;
 import com.br.gcm.model.Uf;
 import com.br.gcm.service.UfService;
@@ -34,6 +35,14 @@ public class UfController {
     @Inject private PaisDao paisDao;
     @Inject private UfService ufService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     @RequestMapping(value = "/uf_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
 
@@ -43,10 +52,17 @@ public class UfController {
             filtros.setId_Pais(listaPais.get(0).getId_pais());
         }
 
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+        model.addAttribute("mensagem", mensagemTransacao);
+
         model.addAttribute("lista_pais", listaPais);
         model.addAttribute("uf_lista", ufDao.selectAll(filtros, pageable));
         model.addAttribute("filtros", filtros);
         model.addAttribute("pagina", new Pagina(pageable, ufDao.count(filtros)));
+
+        limparmensagem();
         return "uf_lista";
     }
 
@@ -55,12 +71,18 @@ public class UfController {
     public ModelAndView filtros(@ModelAttribute Uf filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
 
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        mav.addObject("mensagem", mensagemTransacao);
         mav.addObject("lista_pais", paisDao.Pais_lista());
         mav.addObject("uf_lista", ufDao.selectAll(filtros, pageable));
         mav.addObject("pagina", new Pagina(pageable, ufDao.count(filtros)));
         mav.addObject("filtros", filtros);
-
         mav.setViewName("uf_lista");
+
+        limparmensagem();
         return mav;
     }
 
@@ -69,9 +91,11 @@ public class UfController {
     public String deletar(@PathVariable("id_uf") Integer id_uf) {
         try{
             ufService.delete(id_uf);
+            tipo = 0;
+            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         return "redirect:/uf_lista";
     }
@@ -88,17 +112,16 @@ public class UfController {
 
     //Gravar
     @RequestMapping(value = "/uf_gravar", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute Uf uf, @PageableDefault(size = 10) Pageable pageable, BindingResult resultt) {
+    public String insert(@ModelAttribute Uf uf, @PageableDefault(size = 10) Pageable pageable, BindingResult resultt) {
         try{
             ufService.insert(uf);
+            tipo = 0;
+            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", ufDao.selectAll(pageable));
-        mav.setViewName("redirect:/uf_lista");
-        return mav;
+        return "redirect:/uf_lista";
     }
 
     //Editar uf
@@ -112,20 +135,18 @@ public class UfController {
 
     //Alterar_uf
     @RequestMapping(value = "/alterar_uf", method = RequestMethod.POST)
-    public ModelAndView update(@ModelAttribute Uf uf, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute Uf uf, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             ufService.update(uf);
+            tipo = 0;
+            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", ufDao.selectAll(pageable));
-        mav.setViewName("redirect:/uf_lista");
-        return mav;
+        return "redirect:/uf_lista";
     }
 
-    //Editar uf
     @RequestMapping(value = "/uf_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
         Uf uf = ufDao.selectById(id);

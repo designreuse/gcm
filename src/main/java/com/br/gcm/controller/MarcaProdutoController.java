@@ -34,6 +34,14 @@ public class MarcaProdutoController {
     @Inject private MarcaProdutoDao marcaProdutoDao;
     @Inject private MarcaProdutoService marcaProdutoService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Listar
     @RequestMapping(value = "/marcaproduto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {

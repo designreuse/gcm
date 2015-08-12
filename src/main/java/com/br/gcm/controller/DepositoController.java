@@ -3,6 +3,7 @@ package com.br.gcm.controller;
 import com.br.gcm.dao.DepositoDao;
 import com.br.gcm.dao.EmpresaDao;
 import com.br.gcm.model.Deposito;
+import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.model.Empresa;
 import com.br.gcm.model.Usuario;
 import com.br.gcm.service.DepositoService;
@@ -39,16 +40,12 @@ public class DepositoController {
     @Inject private Rotinas rotinas;
     @Inject private EmpresaDao empresaDao;
 
-    @RequestMapping(value = "/deposito_filtro/{id_empresa}")
-    public String filtros(@PathVariable("id_empresa") Integer id_empresa, @PageableDefault(size = 10) Pageable pageable, Model model) {
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
+    private String mensagem = "";
+    private int tipo = 9;
 
-        model.addAttribute("filtro", id_empresa);
-        model.addAttribute("deposito_lista", depositoDao.selectAll_paginado(id_empresa, pageable));
-        model.addAttribute("listaempresa", listaEmpresa);
-        model.addAttribute("pagina", new Pagina(pageable, depositoDao.count(id_empresa)));
-        return "deposito_lista";
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
     }
 
     //Listar
@@ -56,13 +53,45 @@ public class DepositoController {
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-        Empresa empresa = listaEmpresa.get(0);
+        Deposito filtros = new Deposito();
 
-        model.addAttribute("filtro", empresa.getId_Empresa());
-        model.addAttribute("deposito_lista", depositoDao.selectAll_paginado(empresa.getId_Empresa(), pageable));
-        model.addAttribute("listaempresa", listaEmpresa);
-        model.addAttribute("pagina", new Pagina(pageable, depositoDao.count(empresa.getId_Empresa())));
+        if (!listaEmpresa.isEmpty()){
+            filtros.setId_Empresa(listaEmpresa.get(0).getId_Empresa());
+        };
+
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        model.addAttribute("mensagem", mensagemTransacao);
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("deposito_lista", depositoDao.selectAll_paginado(filtros, pageable));
+        model.addAttribute("lista_empresa", listaEmpresa);
+        model.addAttribute("pagina", new Pagina(pageable, depositoDao.count(filtros)));
+
+        limparmensagem();
         return "deposito_lista";
+    }
+
+    @RequestMapping(value = "/deposito_lista", method = RequestMethod.POST)
+    public ModelAndView filtros(@ModelAttribute Deposito filtros, @PageableDefault(size = 10) Pageable pageable) {
+        ModelAndView mav = new ModelAndView();
+        Usuario usuario = rotinas.usuarioLogado();
+        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
+
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        mav.addObject("mensagem", mensagemTransacao);
+        mav.addObject("filtros", filtros);
+        mav.addObject("deposito_lista", depositoDao.selectAll_paginado(filtros, pageable));
+        mav.addObject("lista_empresa", listaEmpresa);
+        mav.addObject("pagina", new Pagina(pageable, depositoDao.count(filtros)));
+        limparmensagem();
+
+        mav.setViewName("deposito_lista");
+        return mav;
     }
 
     //Deletar
@@ -70,9 +99,11 @@ public class DepositoController {
     public String deletar(@PathVariable("id") Integer id) {
         try{
             depositoService.delete(id);
+            tipo = 0;
+            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         return "redirect:/deposito_lista";
     }
@@ -84,7 +115,6 @@ public class DepositoController {
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
         Deposito deposito = new Deposito();
-
         model.addAttribute("listaempresa", listaEmpresa);
         model.addAttribute("deposito", deposito);
         return "deposito_novo";
@@ -92,22 +122,17 @@ public class DepositoController {
 
     //Insert
     @RequestMapping(value = "/deposito_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute Deposito deposito, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute Deposito deposito, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             depositoService.insert(deposito);
+            tipo = 0;
+            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", depositoDao.selectAll_paginado(deposito.getId_Empresa(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, depositoDao.count(deposito.getId_Empresa())));
-        mav.setViewName("redirect:/deposito_lista");
-        return mav;
+        return "redirect:/deposito_lista";
     }
 
     //Editar
@@ -123,21 +148,15 @@ public class DepositoController {
 
     //Update
     @RequestMapping(value = "/deposito_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute Deposito deposito, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute Deposito deposito, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             depositoService.update(deposito);
+            tipo = 0;
+            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", depositoDao.selectAll_paginado(deposito.getId_Empresa(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, depositoDao.count(deposito.getId_Empresa())));
-        mav.setViewName("redirect:/deposito_lista");
-        return mav;
+        return "redirect:/deposito_lista";
     }
 }

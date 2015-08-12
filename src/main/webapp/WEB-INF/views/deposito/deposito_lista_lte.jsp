@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/tld/custom_tags.tld" prefix="vls"%>
 
 <div class="content-header">
-    <h1>Lista de UFs</h1>
+    <h1>Lista de Depósitos</h1>
 </div>
 
 <div class="content body">
@@ -17,40 +17,25 @@
                     <h3 class="box-title">Filtros</h3>
                 </div>
                 <div class="box-body">
-                    <form class="form-horizontal" action="/uf_lista" method="post">
+                    <form class="form-horizontal" action="/deposito_lista" method="post">
                         <fieldset>
                             <div class="row">
                                 <div class="form-group">
-                                    <label class="col-md-1 control-label" for="id_Pais">País</label>
+                                    <label class="col-md-1 control-label" for="id_Empresa">Empresa</label>
                                     <div class="col-md-7">
-                                        <select class="form-control" name="id_Pais" id="id_Pais">
+                                        <select class="form-control" name="id_Empresa" id="id_Empresa">
                                             <option value="0"></option>
-                                            <c:forEach items="${lista_pais}" var="p">
+                                            <c:forEach items="${lista_empresa}" var="p">
                                                 <c:choose>
-                                                    <c:when test="${p.id_pais != filtros.id_Pais}">
-                                                        <option value="${p.id_pais}">${p.descricao}</option>
+                                                    <c:when test="${p.id_Empresa != filtros.id_Empresa}">
+                                                        <option value="${p.id_Empresa}">${p.razaoSocial}</option>
                                                     </c:when>
-                                                    <c:when test="${p.id_pais == filtros.id_Pais}">
-                                                        <option value="${p.id_pais}" selected="selected">${p.descricao}</option>
+                                                    <c:when test="${p.id_Empresa == filtros.id_Empresa}">
+                                                        <option value="${p.id_Empresa}" selected="selected">${p.razaoSocial}</option>
                                                     </c:when>
                                                 </c:choose>
                                             </c:forEach>
                                         </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group">
-                                    <label class="col-md-1 control-label" for="siglaUf">UF</label>
-                                    <div class="col-md-2">
-                                        <input type="text" maxlength="5" value="${filtros.siglaUf}"
-                                               class="form-control maiusculo" name="siglaUf" placeholder="Sigla" id="siglaUf"/>
-                                    </div>
-
-                                    <label class="col-md-1 control-label" for="descricao">Nome</label>
-                                    <div class="col-md-4">
-                                        <input type="text" maxlength="50" value="${filtros.descricao}"
-                                               class="form-control maiusculo" name="descricao" placeholder="Nome" id="descricao"/>
                                     </div>
                                     <button style="width: 80px" class="btn btn-primary" type="reset">Limpar</button>
                                     <button class="btn btn-primary" type="submit" style="width: 80px;">Pesquisar</button>
@@ -71,30 +56,28 @@
                         <thead style="background-color:silver">
                         <tr>
                             <th style="width:100px; text-align:center;">Operações</th>
-                            <th style="width:80px;">País</th>
-                            <th style="width:80px;">UF</th>
-                            <th>Nome</th>
-                            <th style="width:100px;">IBGE</th>
+                            <th style="width:80px;">Empresa</th>
+                            <th style="width:80px;">ID</th>
+                            <th>Descrição</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <c:forEach items="${uf_lista}" var="p">
+                        <c:forEach items="${deposito_lista}" var="p">
                             <tr>
                                 <td>
-                                    <a href="/marcaproduto_deleta/${p.id_Uf}" class="btn btn-default btn-xs" title="Deletar">
+                                    <a href="/deposito_deleta/${p.id_Deposito}" class="btn btn-default btn-xs" title="Deletar">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
-                                    <a href="/marcaproduto_editar/${p.id_Uf}" class="btn btn-default btn-xs" title="Editar">
+                                    <a href="/deposito_delete/${p.id_Deposito}" class="btn btn-default btn-xs" title="Editar">
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a href="/uf_detalhes/${p.id_Uf}" class="btn btn-default btn-xs" title="Detalhes">
+                                    <a href="/deposito_detalhes/${p.id_Deposito}" class="btn btn-default btn-xs" title="Detalhes">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
-                                <td>${p.siglaPais}</td>
-                                <td>${p.siglaUf}</td>
+                                <td>${p.id_Empresa}</td>
+                                <td>${p.id_Deposito}</td>
                                 <td>${p.descricao}</td>
-                                <td>${p.ibge}</td>
                             </tr>
                         </c:forEach>
                         </tbody>
@@ -112,7 +95,7 @@
                         <vls:paginador pagina="${pagina}"/>
                     </div>
                     <div class="col-sm-3" style="margin-top: 15px;">
-                        <a style="width: 80px" href="<c:url value="/uf_novo"/>" class="btn btn-primary" title="Novo">
+                        <a style="width: 80px" href="<c:url value="/deposito_novo"/>" class="btn btn-primary" title="Novo">
                             <i class="fa fa-plus"></i> Novo
                         </a>
                     </div>
@@ -121,3 +104,4 @@
         </div>
     </div>
 </div>
+

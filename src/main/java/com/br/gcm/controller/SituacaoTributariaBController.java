@@ -29,6 +29,14 @@ public class SituacaoTributariaBController {
     @Inject private SituacaoTributariaBDao situacaoTributariaBDao;
     @Inject private SituacaoTributariaBService situacaoTributariaBService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Listar
     @RequestMapping(value = "/stb_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {

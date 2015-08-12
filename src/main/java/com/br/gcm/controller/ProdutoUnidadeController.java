@@ -40,6 +40,14 @@ public class ProdutoUnidadeController {
     @Inject private UnidadeDao unidadeDao;
     @Inject private ProdutoUnidadeService produtoUnidadeService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Listar
     @RequestMapping(value = "/produtounidade_lista/{id_produto}")
     public String lista(@PathVariable("id_produto") int id_Produto, @PageableDefault(size = 8) Pageable pageable, Model model) {

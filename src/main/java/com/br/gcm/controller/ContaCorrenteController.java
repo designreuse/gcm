@@ -42,6 +42,14 @@ public class ContaCorrenteController {
     @Inject private EmpresaDao empresaDao;
     @Inject private BancoDao bancoDao;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Filtros
     @RequestMapping(value = "/contacorrente_filtro/{id_empresa}")
     public String filtros(@PathVariable("id_empresa") Integer id_empresa, @PageableDefault(size = 10) Pageable pageable, Model model) {

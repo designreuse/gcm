@@ -3,6 +3,7 @@ package com.br.gcm.controller;
 import com.br.gcm.dao.MunicipioDao;
 import com.br.gcm.dao.PaisDao;
 import com.br.gcm.dao.UfDao;
+import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.model.Municipio;
 import com.br.gcm.model.Pais;
 import com.br.gcm.service.MunicipioService;
@@ -36,16 +37,31 @@ public class MunicipioController {
     @Inject private UfDao ufDao;
     @Inject private MunicipioService municipioService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     @RequestMapping(value = "/municipio_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         Municipio filtros = new Municipio();
         List<Pais> listaPais = paisDao.Pais_lista();
         filtros.setId_pais(listaPais.get(0).getId_pais());
 
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+        model.addAttribute("mensagem", mensagemTransacao);
+
         model.addAttribute("filtros", filtros);
         model.addAttribute("municipio_lista", MunicipioDao.selectAll(filtros, pageable));
         model.addAttribute("lista_pais", listaPais);
         model.addAttribute("pagina", new Pagina(pageable, MunicipioDao.count(filtros)));
+
+        limparmensagem();
         return "municipio_lista";
     }
 
@@ -54,12 +70,18 @@ public class MunicipioController {
     public ModelAndView filtros(@ModelAttribute Municipio filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
 
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        mav.addObject("mensagem", mensagemTransacao);
         mav.addObject("lista_pais", paisDao.Pais_lista());
         mav.addObject("municipio_lista", MunicipioDao.selectAll(filtros, pageable));
         mav.addObject("pagina", new Pagina(pageable, MunicipioDao.count(filtros)));
         mav.addObject("filtros", filtros);
-
         mav.setViewName("municipio_lista");
+
+        limparmensagem();
         return mav;
     }
 
@@ -68,9 +90,11 @@ public class MunicipioController {
     public String deletar(@PathVariable("id_municipio") Integer id_municipio) {
         try{
             municipioService.delete(id_municipio);
+            tipo = 0;
+            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         return "redirect:/municipio_lista";
     }
@@ -86,18 +110,16 @@ public class MunicipioController {
 
     //Insert
     @RequestMapping(value = "/municipio_gravar", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute Municipio municipio, @PageableDefault(size = 10) Pageable pageable, BindingResult resultt) {
+    public String insert(@ModelAttribute Municipio municipio, @PageableDefault(size = 10) Pageable pageable, BindingResult resultt) {
         try{
             municipioService.insert(municipio);
+            tipo = 0;
+            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", MunicipioDao.selectAll(pageable));
-        mav.addObject("pagina", new Pagina(pageable, MunicipioDao.count()));
-        mav.setViewName("redirect:/municipio_lista");
-        return mav;
+        return "redirect:/municipio_lista";
     }
 
     //Editar municipio
@@ -114,9 +136,11 @@ public class MunicipioController {
     public ModelAndView update(@ModelAttribute Municipio municipio, @PageableDefault(size = 10) Pageable pageable, BindingResult resultt) {
         try{
             municipioService.update(municipio);
+            tipo = 0;
+            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         ModelAndView mav = new ModelAndView();
         mav.addObject("lista", MunicipioDao.selectAll(pageable));

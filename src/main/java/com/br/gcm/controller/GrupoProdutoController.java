@@ -2,6 +2,7 @@ package com.br.gcm.controller;
 
 import com.br.gcm.dao.GrupoProdutoDao;
 import com.br.gcm.model.GrupoProduto;
+import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.service.GrupoProdutoService;
 import com.br.gcm.tag.Pagina;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -32,11 +33,27 @@ public class GrupoProdutoController {
     @Inject private GrupoProdutoDao grupoProdutoDao;
     @Inject private GrupoProdutoService grupoProdutoService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Listar
     @RequestMapping(value = "/grupoproduto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
+
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("grupoproduto_lista", grupoProdutoDao.selectAll_paginado(pageable));
         model.addAttribute("pagina", new Pagina(pageable, grupoProdutoDao.count()));
+
+        limparmensagem();
         return "grupoproduto_lista";
     }
 
@@ -45,9 +62,11 @@ public class GrupoProdutoController {
     public String deletar(@PathVariable("id") Integer id) {
         try{
             grupoProdutoService.delete(id);
+            tipo = 0;
+            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         return "redirect:/grupoproduto_lista";
     }
@@ -65,9 +84,11 @@ public class GrupoProdutoController {
     public ModelAndView insert(@ModelAttribute GrupoProduto grupoProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             grupoProdutoService.insert(grupoProduto);
+            tipo = 0;
+            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         ModelAndView mav = new ModelAndView();
         mav.addObject("lista", grupoProdutoDao.selectAll_paginado(pageable));
@@ -89,9 +110,11 @@ public class GrupoProdutoController {
     public ModelAndView update(@ModelAttribute GrupoProduto grupoProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             grupoProdutoService.update(grupoProduto);
+            tipo = 0;
+            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         ModelAndView mav = new ModelAndView();
         mav.addObject("lista", grupoProdutoDao.selectAll_paginado(pageable));

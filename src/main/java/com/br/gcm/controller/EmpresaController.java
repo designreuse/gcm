@@ -5,6 +5,7 @@ import com.br.gcm.dao.MunicipioDao;
 import com.br.gcm.dao.PaisDao;
 import com.br.gcm.dao.UfDao;
 import com.br.gcm.model.Empresa;
+import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.service.EmpresaService;
 import com.br.gcm.tag.Pagina;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -40,6 +41,14 @@ public class EmpresaController {
     @Inject private UfDao ufDao;
     @Inject private EmpresaService empresaService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -49,8 +58,16 @@ public class EmpresaController {
 
     @RequestMapping(value = "/empresa_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
+
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("empresa_lista", empresaDao.selectAll_paginado(pageable));
         model.addAttribute("pagina", new Pagina(pageable, empresaDao.count()));
+
+        limparmensagem();
         return "empresa_lista";
     }
 
@@ -59,9 +76,11 @@ public class EmpresaController {
     public String deletar(@PathVariable("id_empresa") Integer id_empresa) {
         try{
             empresaService.delete(id_empresa);
+            tipo = 0;
+            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         return "redirect:/empresa_lista";
     }
@@ -80,9 +99,11 @@ public class EmpresaController {
     public ModelAndView insert(@ModelAttribute Empresa empresa, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             empresaService.insert(empresa);
+            tipo = 0;
+            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         ModelAndView mav = new ModelAndView();
         mav.addObject("lista", empresaDao.selectAll_paginado(pageable));
@@ -105,9 +126,11 @@ public class EmpresaController {
     public ModelAndView update(@ModelAttribute Empresa empresa, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             empresaService.update(empresa);
+            tipo = 0;
+            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         ModelAndView mav = new ModelAndView();
         mav.addObject("lista", empresaDao.selectAll_paginado(pageable));

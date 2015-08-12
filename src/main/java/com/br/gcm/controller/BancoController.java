@@ -32,6 +32,14 @@ public class BancoController {
     @Inject private BancoDao bancoDao;
     @Inject private BancoService bancoService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Listar
     @RequestMapping(value = "/banco_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {

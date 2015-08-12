@@ -1,6 +1,7 @@
 package com.br.gcm.controller;
 
 import com.br.gcm.dao.UnidadeDao;
+import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.model.Unidade;
 import com.br.gcm.service.UnidadeService;
 import com.br.gcm.tag.Pagina;
@@ -32,22 +33,45 @@ public class UnidadeController {
     @Inject private UnidadeDao unidadeDao;
     @Inject private UnidadeService unidadeService;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     //Listar
     @RequestMapping(value = "/unidade_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         Unidade filtros = new Unidade();
+
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("unidade_lista", unidadeDao.selectAll_paginado(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, unidadeDao.count(filtros)));
         model.addAttribute("filtros", filtros);
+
+        limparmensagem();
         return "unidade_lista";
     }
 
     //Listar
     @RequestMapping(value = "/unidade_lista", method = RequestMethod.POST)
     public String filtros(@ModelAttribute Unidade filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("unidade_lista", unidadeDao.selectAll_paginado(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, unidadeDao.count(filtros)));
         model.addAttribute("filtros", filtros);
+
+        limparmensagem();
         return "unidade_lista";
     }
 
@@ -56,9 +80,11 @@ public class UnidadeController {
     public String deletar(@PathVariable("id") Integer id) {
         try{
             unidadeService.delete(id);
+            tipo = 0;
+            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         return "redirect:/unidade_lista";
     }
@@ -73,18 +99,16 @@ public class UnidadeController {
 
     //Insert
     @RequestMapping(value = "/unidade_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute Unidade unidade, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute Unidade unidade, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             unidadeService.insert(unidade);
+            tipo = 0;
+            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", unidadeDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, unidadeDao.count()));
-        mav.setViewName("redirect:/unidade_lista");
-        return mav;
+        return "redirect:/unidade_lista";
     }
 
     //Editar
@@ -97,18 +121,16 @@ public class UnidadeController {
 
     //Update
     @RequestMapping(value = "/unidade_update", method = RequestMethod.POST)
-    public ModelAndView update(@ModelAttribute Unidade unidade, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute Unidade unidade, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             unidadeService.update(unidade);
+            tipo = 0;
+            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", unidadeDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, unidadeDao.count()));
-        mav.setViewName("redirect:/unidade_lista");
-        return mav;
+        return "redirect:/unidade_lista";
     }
 
     //Editar

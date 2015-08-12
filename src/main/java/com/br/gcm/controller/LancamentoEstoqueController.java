@@ -56,6 +56,14 @@ public class LancamentoEstoqueController {
     @Inject private ProdutoLoteDao produtoLoteDao;
     @Inject private DepositoDao depositoDao;
 
+    private String mensagem = "";
+    private int tipo = 9;
+
+    private  void limparmensagem(){
+        mensagem = "";
+        tipo = 9;
+    }
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
