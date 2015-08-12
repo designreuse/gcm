@@ -201,7 +201,6 @@
 <script>
     $(window).load(function() {
         if (${mensagem != null}){
-            alert(${mensagem.tipo});
 
             if (${mensagem.tipo == 0}){
                 $("#MensagemSucesso").modal('show');
