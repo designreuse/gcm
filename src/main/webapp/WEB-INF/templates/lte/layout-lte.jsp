@@ -74,7 +74,7 @@ desired effect
 
         <tiles:insertAttribute name="menu"/>
 
-        <div class="content-wrapper" style="min-height: 326px;">
+        <div class="content-wrapper" >  <!--style="min-height: 326px;"-->
             <tiles:insertAttribute name="body"/>
         </div>
 
@@ -83,6 +83,9 @@ desired effect
         <tiles:insertAttribute name="footer"/>
 
         <tiles:insertAttribute name="control-side"/>
+
+        <!-- mensagens de sucesso ou erro -->
+        <tiles:insertAttribute name="mensagens"/>
 
     </div>
 
@@ -95,11 +98,8 @@ desired effect
 <!-- AdminLTE App -->
 <script src="/static/lte/dist/js/app.min.js" type="text/javascript"></script>
 
-    <script src="/static/lte/dist/js/demo.js" type="text/javascript"></script>
+<script src="/static/lte/dist/js/demo.js" type="text/javascript"></script>
 
-<!-- Optionally, you can add Slimscroll and FastClick plugins.
-      Both of these plugins are recommended to enhance the
-      user experience. Slimscroll is required when using the
-      fixed layout. -->
+
 </body>
 </html>

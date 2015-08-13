@@ -32,6 +32,7 @@
         <put-attribute name="menu" value="/WEB-INF/templates/lte/menu.jsp" />
         <put-attribute name="footer" value="/WEB-INF/templates/lte/footer.jsp"/>
         <put-attribute name="control-side" value="/WEB-INF/templates/lte/control-sidebar.jsp"/>
+        <put-attribute name="mensagens" value="/WEB-INF/templates/lte/mensagens-lte.jsp"/>
 
     </definition>
 
