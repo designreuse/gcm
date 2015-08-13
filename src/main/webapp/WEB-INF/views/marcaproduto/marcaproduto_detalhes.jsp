@@ -6,12 +6,10 @@
 <%@ taglib uri="/WEB-INF/tld/custom_tags.tld" prefix="vls"%>
 
 <div class="content-header">
-    <h1>Novo Depósito</h1>
+    <h1>Detalhes Marca</h1>
 </div>
 
 <div class="content body">
-    <form action="/deposito_insert" method="post" >
-        <fieldset>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="box box-primary">
@@ -19,21 +17,18 @@
                             <form class="form-horizontal">
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-1 control-label" for="id_Empresa" style="margin-top: 5px;">Empresa</label>
-                                        <div class="col-md-6">
-                                            <select class="form-control" name="id_Empresa" id="id_Empresa" required="autofocus">
-                                                    <c:forEach items="${listaempresa}" var="p">
-                                                        <option value="${p.id_Empresa}">${p.razaoSocial}</option>
-                                                    </c:forEach>
-                                            </select>
+                                        <label class="col-md-1 control-label" for="idMarcaProduto" style="margin-top: 5px;">ID</label>
+                                        <div class="col-md-1">
+                                            <input type="text" maxlength="50"
+                                                   class="form-control maiusculo " readonly="true" value="${marcaproduto.id_MarcaProduto}" name="id_MarcaProduto" id="idMarcaProduto"/>
                                         </div>
                                     </div>
-                                    <br>
+                                    <br/>
                                     <div class="row">
-                                        <label class="col-md-1 control-label" for="descricao" style="margin-top: 5px;">Descrição</label>
-                                        <div class="col-md-6">
-                                            <input type="text" maxlength="50" required="true"
-                                                   class="form-control maiusculo" placeholder="Descricao" name="descricao" id="descricao"/>
+                                        <label class="col-md-1 control-label" for="marcaDescricao" style="margin-top: 5px;">Descricao</label>
+                                        <div class="col-md-5">
+                                            <input type="text" maxlength="50"  readonly="true"
+                                                   class="form-control maiusculo " placeholder="descricao" value="${marcaproduto.descricao}" name="descricao" id="marcaDescricao"/>
                                         </div>
                                     </div>
                                 </div>
@@ -48,13 +43,11 @@
                     <div class="box box-primary">
                         <div class="box-body">
                             <div class="col-sm-12" style="margin-top: 15px; text-align: center;">
-                                <button class="btn btn-primary" type="submit" style="width: 80px;">Salvar</button>
-                                <a style="width: 80px" href="<c:url value="/deposito_lista"/>" class="btn btn-primary" title="Cancelar">Cancelar</a>
+                                <a style="width: 80px" href="<c:url value="/marcaproduto_lista"/>" class="btn btn-primary" title="Cancelar">Cancelar</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </fieldset>
-    </form>
+
 </div>

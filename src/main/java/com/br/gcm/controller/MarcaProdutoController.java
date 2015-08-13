@@ -2,6 +2,7 @@ package com.br.gcm.controller;
 
 import com.br.gcm.dao.MarcaProdutoDao;
 import com.br.gcm.model.MarcaProduto;
+import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.service.MarcaProdutoService;
 import com.br.gcm.tag.Pagina;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -45,11 +46,36 @@ public class MarcaProdutoController {
     //Listar
     @RequestMapping(value = "/marcaproduto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        List<MarcaProduto> lista = marcaProdutoDao.selectAll_paginado(pageable);
+        MarcaProduto filtros = new MarcaProduto();
 
-        model.addAttribute("marcaproduto_lista", lista);
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        model.addAttribute("mensagem", mensagemTransacao);
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("marcaproduto_lista",  marcaProdutoDao.selectAll_paginado(pageable));
         model.addAttribute("pagina", new Pagina(pageable, marcaProdutoDao.count()));
+        limparmensagem();
         return "marcaproduto_lista";
+    }
+
+    @RequestMapping(value = "/deposito_lista", method = RequestMethod.POST)
+    public ModelAndView filtros(@ModelAttribute MarcaProduto filtros, @PageableDefault(size = 10) Pageable pageable) {
+        ModelAndView mav = new ModelAndView();
+
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+
+        mav.addObject("mensagem", mensagemTransacao);
+        mav.addObject("filtros", filtros);
+        mav.addObject("marcaproduto_lista",  marcaProdutoDao.selectAll_paginado(pageable));
+        mav.addObject("pagina", new Pagina(pageable, marcaProdutoDao.count()));
+        limparmensagem();
+
+        mav.setViewName("deposito_lista");
+        return mav;
     }
 
     //Deletar
@@ -57,9 +83,11 @@ public class MarcaProdutoController {
     public String deletar(@PathVariable("id") Integer id) {
         try{
             marcaProdutoService.delete(id);
+            tipo = 0;
+            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
         return "redirect:/marcaproduto_lista";
     }
@@ -74,18 +102,16 @@ public class MarcaProdutoController {
 
     //Insert
     @RequestMapping(value = "/marcaproduto_gravar", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute MarcaProduto marcaProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute MarcaProduto marcaProduto) {
         try{
             marcaProdutoService.insert(marcaProduto);
+            tipo = 0;
+            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", marcaProdutoDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, marcaProdutoDao.count()));
-        mav.setViewName("redirect:/marcaproduto_lista");
-        return mav;
+        return "redirect:/marcaproduto_lista";
     }
 
     //Editar
@@ -98,17 +124,22 @@ public class MarcaProdutoController {
 
     //Update
     @RequestMapping(value = "/marcaproduto_update", method = RequestMethod.POST)
-    public ModelAndView update(@ModelAttribute MarcaProduto marcaProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute MarcaProduto marcaProduto) {
         try{
             marcaProdutoService.update(marcaProduto);
+            tipo = 0;
+            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            tipo = 1;
+            mensagem = e.getCause().toString();
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", marcaProdutoDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, marcaProdutoDao.count()));
-        mav.setViewName("redirect:/marcaproduto_lista");
-        return mav;
+        return "redirect:/marcaproduto_lista";
+    }
+
+    @RequestMapping(value = "/marcaproduto_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        MarcaProduto marcaProduto = marcaProdutoDao.selectById(id);
+        model.addAttribute("marcaproduto", marcaProduto);
+        return "marcaproduto_detalhes";
     }
 }

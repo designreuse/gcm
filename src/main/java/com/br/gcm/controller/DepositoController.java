@@ -122,7 +122,7 @@ public class DepositoController {
 
     //Insert
     @RequestMapping(value = "/deposito_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute Deposito deposito, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute Deposito deposito) {
         try{
             depositoService.insert(deposito);
             tipo = 0;
@@ -147,8 +147,8 @@ public class DepositoController {
     }
 
     //Update
-    @RequestMapping(value = "/deposito_update", method = RequestMethod.PUT)
-    public String update(@ModelAttribute Deposito deposito, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/deposito_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute Deposito deposito) {
         try{
             depositoService.update(deposito);
             tipo = 0;
@@ -158,5 +158,15 @@ public class DepositoController {
             mensagem = e.getCause().toString();
         }
         return "redirect:/deposito_lista";
+    }
+
+    @RequestMapping(value = "/deposito_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
+
+        model.addAttribute("listaempresa", listaEmpresa);
+        model.addAttribute("deposito", depositoDao.selectById(id));
+        return "deposito_detalhes";
     }
 }

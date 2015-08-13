@@ -68,7 +68,7 @@
                                     <a href="/deposito_deleta/${p.id_Deposito}" class="btn btn-default btn-xs" title="Deletar">
                                         <i class="fa fa-trash-o"></i>
                                     </a>
-                                    <a href="/deposito_delete/${p.id_Deposito}" class="btn btn-default btn-xs" title="Editar">
+                                    <a href="/deposito_editar/${p.id_Deposito}" class="btn btn-default btn-xs" title="Editar">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                     <a href="/deposito_detalhes/${p.id_Deposito}" class="btn btn-default btn-xs" title="Detalhes">

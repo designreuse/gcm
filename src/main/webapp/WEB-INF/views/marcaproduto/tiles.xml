@@ -16,4 +16,8 @@
     <definition name="marcaproduto_editar" extends="lte-layout">
         <put-attribute name="body" value="/WEB-INF/views/marcaproduto/marcaproduto_editar.jsp" />
     </definition>
+
+    <definition name="marcaproduto_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/marcaproduto/marcaproduto_detalhes.jsp" />
+    </definition>
 </tiles-definitions>

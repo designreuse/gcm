@@ -21,14 +21,14 @@
                 <div class="box-body">
                     <form class="form-horizontal">
                         <div class="form-group">
-                            <label class="col-md-1 control-label" for="id_marcaProduto">ID</label>
+                            <label class="col-md-1 control-label" for="id_MarcaProduto">ID</label>
                             <div class="col-md-2">
-                                <input id="id_marcaProduto" class="form-control" placeholder="ID" type="number" />
+                                <input id="id_MarcaProduto" name="id_MarcaProduto" class="form-control" placeholder="ID" type="number" />
                             </div>
 
                             <label class="col-md-1 control-label" for="descricao">Descricao</label>
                             <div class="col-md-4">
-                                <input id="descricao" class="form-control" placeholder="Descrição..." type="text" />
+                                <input id="descricao" name="descricao" class="form-control" placeholder="Descrição" type="text" />
                             </div>
                             <button class="btn btn-primary" type="reset">Limpar</button>
                             <button class="btn btn-primary" type="submit">Pesquisar</button>
@@ -45,7 +45,7 @@
             <div class="box box-primary">
                 <div class="box-body">
                     <table class="table table-bordered  table-hover table-striped">
-                        <thead>
+                        <thead style="background-color:silver">
                         <tr>
                             <th style="width:10%; text-align:center;">Operações</th>
                             <th style="width:10%; text-align:right;">ID</th>
@@ -62,6 +62,9 @@
                                     </a>
                                     <a href="/marcaproduto_editar/${m.id_MarcaProduto}" class="btn btn-default btn-xs" title="Editar">
                                         <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a href="/marcaproduto_detalhes/${m.id_MarcaProduto}" class="btn btn-default btn-xs" title="Detalhes">
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
                                 <td align="right">${m.id_MarcaProduto}</td>
