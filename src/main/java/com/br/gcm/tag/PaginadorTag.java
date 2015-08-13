@@ -98,7 +98,7 @@ public class PaginadorTag extends SimpleTagSupport {
         }
 
         // meio
-        sb.append("<li class='active'><a href='#'>Página ").append(actualPage + 1).append(" de ").append(lastPage + 1).append(" (").append(pagina.getTotal()).append(" Registros)</a></li>");
+        sb.append("<li class='pagination'><a href='#'>Página ").append(actualPage + 1).append(" de ").append(lastPage + 1).append(" (").append(pagina.getTotal()).append(" Registros)</a></li>");
 
         // última página
         if (actualPage == lastPage) {

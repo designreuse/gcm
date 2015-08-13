@@ -17,3 +17,5 @@ src/main/resources/rebel.xml
 *.iml
 
 *.properties
+
+*.properties
