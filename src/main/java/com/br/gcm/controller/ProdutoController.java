@@ -8,6 +8,7 @@ import com.br.gcm.dao.SituacaoTributariaBDao;
 import com.br.gcm.dao.NCMDao;
 import com.br.gcm.dao.MarcaProdutoDao;
 import com.br.gcm.dao.UnidadeDao;
+import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.model.Produto;
 import com.br.gcm.model.SubGrupoProduto;
 import com.br.gcm.service.ProdutoService;
@@ -60,7 +61,7 @@ public class ProdutoController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
@@ -68,12 +69,36 @@ public class ProdutoController {
     //Listar
     @RequestMapping(value = "/produto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        model.addAttribute("produto_lista", produtoDao.selectAll_paginado(pageable));
-        model.addAttribute("pagina", new Pagina(pageable, produtoDao.count()));
+        Produto filtros = new Produto();
+
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+        model.addAttribute("mensagem", mensagemTransacao);
+
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("produto_lista", produtoDao.selectAll(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, produtoDao.count(filtros)));
+        limparmensagem();
         return "produto_lista";
     }
 
-    //Deletar
+    //Filtros
+    @RequestMapping(value = "/produto_lista", method = RequestMethod.POST)
+    public String filtros(@ModelAttribute Produto filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+        model.addAttribute("mensagem", mensagemTransacao);
+
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("produto_lista", produtoDao.selectAll(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, produtoDao.count(filtros)));
+        limparmensagem();
+        return "produto_lista";
+    }
+
+        //Deletar
     @RequestMapping(value = "/produto_deleta/{id}")
     public String deletar(@PathVariable("id") Integer id) {
         try{
@@ -101,7 +126,7 @@ public class ProdutoController {
 
     //Insert
     @RequestMapping(value = "/produto_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute Produto produto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute Produto produto) {
         try{
             produtoService.insert(produto);
         }catch(Exception e){
@@ -109,11 +134,7 @@ public class ProdutoController {
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", produtoDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, produtoDao.count()));
-        mav.setViewName("redirect:/produto_lista");
-        return mav;
+        return "redirect:/produto_lista";
     }
 
     //Editar
@@ -131,19 +152,29 @@ public class ProdutoController {
     }
 
     //Update
-    @RequestMapping(value = "/produto_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute Produto produto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/produto_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute Produto produto) {
         try{
             produtoService.update(produto);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", produtoDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, produtoDao.count()));
-        mav.setViewName("redirect:/produto_lista");
-        return mav;
+        return "redirect:/produto_lista";
+    }
+
+    //Editar
+    @RequestMapping(value = "/produto_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Produto produto = produtoDao.selectById(id);
+        model.addAttribute("lista_GrupoProduto", grupoProdutoDao.selectAll());
+        model.addAttribute("lista_STA", situacaoTributariaADao.selectAll());
+        model.addAttribute("lista_STB", situacaoTributariaBDao.selectAll());
+        model.addAttribute("lista_NCM", ncmDao.selectAll());
+        model.addAttribute("lista_Marca", marcaProdutoDao.selectAll());
+        model.addAttribute("lista_Unidade", unidadeDao.selectAll());
+        model.addAttribute("produto", produto);
+        return "produto_detalhes";
     }
 
     //Pesquisa pela descriçao

@@ -60,7 +60,7 @@ public class MarcaProdutoController {
         return "marcaproduto_lista";
     }
 
-    @RequestMapping(value = "/deposito_lista", method = RequestMethod.POST)
+    @RequestMapping(value = "/marcaproduto_lista", method = RequestMethod.POST)
     public ModelAndView filtros(@ModelAttribute MarcaProduto filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
 

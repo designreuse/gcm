@@ -51,8 +51,7 @@
                             <li><a href="<c:url value="/ncm_lista"/>"><i class="fa fa-circle-o"></i> 1104 NCM</a></li>
                             <li><a href="<c:url value="/unidade_lista"/>"><i class="fa fa-circle-o"></i> 1107 Unidade</a></li>
                             <li><a href="<c:url value="/deposito_lista"/>"><i class="fa fa-circle-o"></i> 1105 Depósito</a></li>
-                            <li class="divider"></li>
-                            <li><a href="<c:url value="/produto_lista"/>"><i class="fa fa-circle-o"></i><b> 1106 Produto</b></a></li>
+                            <li><a href="<c:url value="/produto_lista"/>"><i class="fa fa-circle-o"></i> 1106 Produto</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -77,8 +76,8 @@
                     <li>
                         <a style="color: #dd1144;" href="#"><i class="fa fa-tags"></i> Procedimentos <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu">
-                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> 1301 Procedimento Médico - ANS</a></li>
-                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> 1302 Classificação de Doenças - CID</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> 1301 Proc. Médico - ANS</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> 1302 Class. de Doenças - CID</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -88,9 +87,9 @@
                         <ul class="treeview-menu">
                             <li><a href="<c:url value="/sta_lista"/>"><i class="fa fa-circle-o"></i> 1401 Situação Tributária A</a></li>
                             <li><a href="<c:url value="/stb_lista"/>"><i class="fa fa-circle-o"></i> 1402 Situaçao Tributária B</a></li>
-                            <li><a href="<c:url value="/situacaotributariapiscofins_lista"/>"><i class="fa fa-circle-o"></i> 1405 Situaçao Tributária PIS\COFINS</a></li>
+                            <li><a href="<c:url value="/stpiscofins_lista"/>"><i class="fa fa-circle-o"></i> 1405 ST PIS\COFINS</a></li>
                             <li><a href="<c:url value="/cfop_lista"/>"><i class="fa fa-circle-o"></i> 1403 CFOP</a></li>
-                            <li><a href="<c:url value=""/>"><i class="fa fa-circle-o"></i> 1404 Grupo Fiscal</a></li>
+                            <li><a href="<c:url value=""/>" style="color: #dd1144;"><i class="fa fa-circle-o"></i> 1404 Grupo Fiscal</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -143,7 +142,7 @@
             </li>
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-suitcase"></i> <span>Estoque</span>
+                    <i class="fa fa-suitcase"></i> <span style="color: #dd1144;">Estoque</span>
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
@@ -161,18 +160,18 @@
                 </ul>
                 <ul class="treeview-menu">
                     <li>
-                        <a href="#"><i class="fa fa-plus"></i> Entradas <i class="fa fa-angle-left pull-right"></i></a>
+                        <a href="#" style="color: #dd1144;"><i class="fa fa-plus"></i> Entradas <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu">
                             <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Efetuar Entradas por Compras</a></li>
-                            <li><a href="<c:url value="/lancamentoestoque_lista/E"/>"><i class="fa fa-circle-o"></i> Efetuar Entradas Diversas</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Efetuar Entradas Diversas</a></li>
                         </ul>
                     </li>
                 </ul>
                 <ul class="treeview-menu">
                     <li>
-                        <a href="#"><i class="fa fa-minus"></i> Saídas <i class="fa fa-angle-left pull-right"></i></a>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-minus"></i> Saídas <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu">
-                            <li><a href="<c:url value="/lancamentoestoque_lista/S"/>"><i class="fa fa-circle-o"></i> Efetuar Saídas Diversas</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Efetuar Saídas Diversas</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -207,6 +206,7 @@
                         <a href="#"><i class="fa fa-barcode"></i> Contas a Pagar <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu">
                             <li><a href="<c:url value="/movimentofinanceiro_filtros/D"/>"><i class="fa fa-circle-o"></i> Lançamentos de Débito</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Lançamento de Débito em Grupo</a></li>
                             <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Liquidação de Débito em Grupo</a></li>
                             <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Negociação de Débito</a></li>
                         </ul>
@@ -217,8 +217,19 @@
                         <a href="#"><i class="fa fa-money"></i> Contas a Receber <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu">
                             <li><a href="<c:url value="/movimentofinanceiro_filtros/C"/>"><i class="fa fa-circle-o"></i> Lançamentos de Crédito</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Lançamento de Crédito em Grupo</a></li>
                             <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Liquidação de Crédito em Grupo</a></li>
                             <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Negociação de Credito</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="treeview-menu">
+                    <li>
+                        <a style="color: #dd1144;" href="#"><i class="fa fa-sign-out"></i> Integração Bancária <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Emitir boletos de Cobrança</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Gerar arquivo de remessa</a></li>
+                            <li><a style="color: #dd1144;" href="#"><i class="fa fa-circle-o"></i> Processar Arquivo de Retorno</a></li>
                         </ul>
                     </li>
                 </ul>

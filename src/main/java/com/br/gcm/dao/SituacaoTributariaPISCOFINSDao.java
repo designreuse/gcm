@@ -27,7 +27,7 @@ public class SituacaoTributariaPISCOFINSDao {
     @Inject private Rotinas rotinas;
 
     public void insert(SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS) {
-        db.update("insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS, descricao, IsentoAliquotaZero) values(?,?)",
+        db.update("insert into SituacaoTributariaPISCOFINS (CodigoSTPISCOFINS, descricao, IsentoAliquotaZero) values(?,?,?)",
                 situacaoTributariaPISCOFINS.getCodigoSTPISCOFINS(),
                 situacaoTributariaPISCOFINS.getDescricao(),
                 situacaoTributariaPISCOFINS.getIsentoAliquotaZero());

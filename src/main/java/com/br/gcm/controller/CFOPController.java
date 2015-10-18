@@ -3,6 +3,7 @@ package com.br.gcm.controller;
 import com.br.gcm.dao.CFOPDao;
 import com.br.gcm.dao.RelacaoCFOPDao;
 import com.br.gcm.model.CFOP;
+import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.service.CFOPService;
 import com.br.gcm.tag.Pagina;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -45,8 +46,31 @@ public class CFOPController {
     //Listar
     @RequestMapping(value = "/cfop_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        model.addAttribute("lista", cfopDao.selectAll_paginado(pageable));
-        model.addAttribute("pagina", new Pagina(pageable, cfopDao.count()));
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+        model.addAttribute("mensagem", mensagemTransacao);
+
+        CFOP filtros = new CFOP();
+
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("lista", cfopDao.selectAll(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, cfopDao.count(filtros)));
+        limparmensagem();
+        return "cfop_lista";
+    }
+
+    @RequestMapping(value = "/cfop_lista", method = RequestMethod.POST)
+    public String filtros(@ModelAttribute CFOP filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
+        MensagemTransacao mensagemTransacao = new MensagemTransacao();
+        mensagemTransacao.setTipo(tipo);
+        mensagemTransacao.setMensagem(mensagem);
+        model.addAttribute("mensagem", mensagemTransacao);
+
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("lista", cfopDao.selectAll(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, cfopDao.count(filtros)));
+        limparmensagem();
         return "cfop_lista";
     }
 
@@ -59,7 +83,7 @@ public class CFOPController {
     }
 
     //Deletar
-    @RequestMapping(value = "/cfop_deleta/{id}")
+    @RequestMapping(value = "/cfop_deletar/{id}")
     public String deletar(@PathVariable("id") Integer id) {
         try{
             cfopService.delete(id);
@@ -80,18 +104,14 @@ public class CFOPController {
 
     //Insert
     @RequestMapping(value = "/cfop_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute CFOP cfop, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute CFOP cfop) {
         try{
             cfopService.insert(cfop);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", cfopDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, cfopDao.count()));
-        mav.setViewName("redirect:/cfop_lista");
-        return mav;
+        return "redirect:/cfop_lista";
     }
 
     //Editar
@@ -103,18 +123,21 @@ public class CFOPController {
     }
 
     //Update
-    @RequestMapping(value = "/cfop_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute CFOP cfop, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/cfop_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute CFOP cfop) {
         try{
             cfopService.update(cfop);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", cfopDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, cfopDao.count()));
-        mav.setViewName("redirect:/cfop_lista");
-        return mav;
+        return "redirect:/cfop_lista";
+    }
+
+    @RequestMapping(value = "/cfop_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        CFOP cfop = cfopDao.selectById(id);
+        model.addAttribute("cfop", cfop);
+        return "cfop_detalhes";
     }
 }

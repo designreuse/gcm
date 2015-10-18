@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class ProdutoDao {
     @Inject private UnidadeDao unidadeDao;
 
     public void insert(Produto produto) {
-        db.update("insert into Produto (" +
+        int id = db.queryForObject("insert into Produto (" +
                 " Referencia," +
                 " Descricao," +
                 " id_SubGrupoProduto," +
@@ -49,7 +50,8 @@ public class ProdutoDao {
                 " ControlaLote," +
                 " AtivoCompra, " +
                 " AtivoVenda) " +
-                " Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                " Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id_Produto",
+                Integer.class,
                 produto.getReferencia(),
                 produto.getDescricao(),
                 produto.getId_SubGrupoProduto(),
@@ -65,6 +67,8 @@ public class ProdutoDao {
                 produto.isControlaLote(),
                 produto.isAtivoCompra(),
                 produto.isAtivoVenda());
+
+        produto.setId_Produto(id);
     }
 
     public void update(Produto produto) {
@@ -109,12 +113,56 @@ public class ProdutoDao {
         return db.queryForObject("SELECT COUNT(*) FROM Produto", Long.class);
     }
 
+    public Long count(Produto filtros) {
+        List arr = new ArrayList<>();
+        String sql = "SELECT COUNT(*) FROM Produto Where 1=1 ";
+
+        if (filtros.getId_Produto() > 0){
+            sql = sql + " And Produto.id_Produto = ? ";
+            arr.add(filtros.getId_Produto());
+        }
+        if (filtros.getReferencia() != "" && filtros.getReferencia() != null){
+            sql = sql + " And Produto.Referencia = ?";
+            arr.add(filtros.getReferencia());
+        }
+        if (filtros.getDescricao() != "" && filtros.getDescricao() != null){
+            sql = sql + " And Produto.Descricao like ?";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
+    }
+
     public Produto selectById(Integer id) {
         return db.queryForObject("Select * from Produto Where id_Produto=?", listaProduto, id);
     }
 
     public List<Produto> selectAll() {
         return db.query("Select * from Produto", listaProduto);
+    }
+
+    public List<Produto> selectAll(Produto filtros, Pageable p) {
+        List arr = new ArrayList<>();
+        String sql = "SELECT * FROM Produto Where 1=1 ";
+
+        if (filtros.getId_Produto() > 0){
+            sql = sql + " And Produto.id_Produto = ? ";
+            arr.add(filtros.getId_Produto());
+        }
+        if (filtros.getReferencia() != "" && filtros.getReferencia() != null){
+            sql = sql + " And Produto.Referencia = ?";
+            arr.add(filtros.getReferencia());
+        }
+        if (filtros.getDescricao() != "" && filtros.getDescricao() != null){
+            sql = sql + " And Produto.Descricao like ?";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+
+        sql = sql + " Order By Descricao LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql, listaProduto, arr.toArray());
     }
 
     public List<Produto> selectAll_paginado(Pageable p) {
@@ -199,6 +247,10 @@ public class ProdutoDao {
             produto.setControlaLote(rs.getBoolean("ControlaLote"));
             produto.setAtivoCompra(rs.getBoolean("AtivoCompra"));
             produto.setAtivoVenda(rs.getBoolean("AtivoVenda"));
+
+            produto.setNcm(ncmDao.selectById(rs.getInt("id_NCM")));
+            produto.setSubGrupoProduto(subGrupoProdutoDao.selectById(rs.getInt("id_SubGrupoProduto")));
+            produto.setGrupoProduto(grupoProdutoDao.selectById(produto.getSubGrupoProduto().getId_GrupoProduto()));
 
             return produto;
         }

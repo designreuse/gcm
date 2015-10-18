@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,24 +56,96 @@ public class CFOPDao {
         return db.queryForObject("SELECT COUNT(*) FROM CFOP", Long.class);
     }
 
+    public Long count(CFOP filtros) {
+        List arr = new ArrayList<>();
+        String sql = "SELECT COUNT(*) FROM CFOP Where 1=1 ";
+
+        if (filtros.getId_CFOP() > 0){
+            sql = sql + " And Id_CFOP = ?";
+            arr.add(filtros.getId_CFOP());
+        }
+        if (filtros.getCodigoCFOP() != null && filtros.getCodigoCFOP() != ""){
+            sql = sql + " And CodigoCFOP = ?";
+            arr.add(filtros.getCodigoCFOP());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And Descricao like ?";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+        if (filtros.getTipo() != null && filtros.getTipo() != ""){
+            sql = sql + " And Tipo = ?";
+            arr.add(filtros.getTipo());
+        }
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
+    }
+
     public CFOP selectById(Integer id) {
         return db.queryForObject("Select * from CFOP Where id_CFOP=?", listaCFOP, id);
     }
 
-    public List<CFOP> selectAll() {
-        return db.query("Select * from CFOP", listaCFOP);
+    public List<CFOP> selectAll(CFOP filtros) {
+        List arr = new ArrayList<>();
+        String sql = "Select * from CFOP Where 1 = 1 ";
+
+        if (filtros.getId_CFOP() > 0){
+            sql = sql + " And Id_CFOP = ?";
+            arr.add(filtros.getId_CFOP());
+        }
+        if (filtros.getCodigoCFOP() != null && filtros.getCodigoCFOP() != ""){
+            sql = sql + " And CodigoCFOP = ?";
+            arr.add(filtros.getCodigoCFOP());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And Descricao like ?";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+        if (filtros.getTipo() != null && filtros.getTipo() != ""){
+            sql = sql + " And Tipo = ?";
+            arr.add(filtros.getTipo());
+        }
+
+        sql = sql + " Order By CodigoCFOP ";
+
+        return db.query(sql, listaCFOP, arr.toArray());
     }
 
-    public List<CFOP> selectAll_Filtros(CFOP filtros) {
-        return db.query("Select * from CFOP Where Tipo=? and Ajuste=? ", listaCFOP, filtros.getTipo(), filtros.getAjuste());
-    }
-
-    public List<CFOP> selectAll_paginado(Pageable p) {
+    public List<CFOP> selectAll(Pageable p) {
         return db.query("Select * from CFOP Order By CodigoCFOP " +
                 "LIMIT ? OFFSET ? ",
                 listaCFOP,
                 p.getPageSize(),
                 p.getOffset());
+    }
+
+    public List<CFOP> selectAll(CFOP filtros, Pageable p) {
+        List arr = new ArrayList<>();
+        String sql = "Select * from CFOP Where 1 = 1 ";
+
+        if (filtros.getId_CFOP() > 0){
+            sql = sql + " And Id_CFOP = ?";
+            arr.add(filtros.getId_CFOP());
+        }
+        if (filtros.getCodigoCFOP() != null && filtros.getCodigoCFOP() != ""){
+            sql = sql + " And CodigoCFOP = ?";
+            arr.add(filtros.getCodigoCFOP());
+        }
+        if (filtros.getDescricao() != null && filtros.getDescricao() != ""){
+            sql = sql + " And Descricao like ?";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+        if (filtros.getTipo() != null && filtros.getTipo() != ""){
+            sql = sql + " And Tipo = ?";
+            arr.add(filtros.getTipo());
+        }
+
+        sql = sql + " Order By CodigoCFOP LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql,
+                listaCFOP,
+                arr.toArray());
     }
 
     //mappers

@@ -67,18 +67,14 @@ public class SituacaoTributariaAController {
 
     //Insert
     @RequestMapping(value = "/sta_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute SituacaoTributariaA situacaoTributariaA, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute SituacaoTributariaA situacaoTributariaA) {
         try{
             situacaoTributariaAService.insert(situacaoTributariaA);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", situacaoTributariaADao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, situacaoTributariaADao.count()));
-        mav.setViewName("redirect:/sta_lista");
-        return mav;
+        return "redirect:/sta_lista";
     }
 
     //Editar
@@ -90,18 +86,22 @@ public class SituacaoTributariaAController {
     }
 
     //Update
-    @RequestMapping(value = "/sta_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute SituacaoTributariaA situacaoTributariaA, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/sta_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute SituacaoTributariaA situacaoTributariaA) {
         try{
             situacaoTributariaAService.update(situacaoTributariaA);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", situacaoTributariaADao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, situacaoTributariaADao.count()));
-        mav.setViewName("redirect:/sta_lista");
-        return mav;
+        return "redirect:/sta_lista";
+    }
+
+    //Editar
+    @RequestMapping(value = "/sta_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        SituacaoTributariaA situacaoTributariaA = situacaoTributariaADao.selectById(id);
+        model.addAttribute("sta", situacaoTributariaA);
+        return "sta_detalhes";
     }
 }

@@ -52,7 +52,7 @@ public class ProdutoUnidadeDao {
                 " CodigoBarras=?," +
                 " FatorConversao=?, " +
                 " PesoBruto=?, " +
-                " PesoLiquido=?, " +
+                " PesoLiquido=? " +
                 " Where id_ProdutoUnidade=? ",
                 produtoUnidade.getId_Produto(),
                 produtoUnidade.getId_Unidade(),

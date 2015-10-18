@@ -46,31 +46,35 @@ public class CentroCustoController {
     }
 
     //Filtros
-    @RequestMapping(value = "/centrocusto_filtro/{id_empresa}")
-    public String lista(@PathVariable("id_empresa") Integer id_empresa, @PageableDefault(size = 10) Pageable pageable, Model model) {
-
+    @RequestMapping(value = "/centrocusto_lista", method = RequestMethod.POST)
+    public ModelAndView filtros(@ModelAttribute CentroCusto filtros, @PageableDefault(size = 10) Pageable pageable) {
+        ModelAndView mav = new ModelAndView();
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
-        model.addAttribute("filtro", id_empresa);
-        model.addAttribute("listaempresa", listaEmpresa);
-        model.addAttribute("lista", centroCustoDao.selectAll_paginado(id_empresa , pageable));
-        model.addAttribute("pagina", new Pagina(pageable, centroCustoDao.count(id_empresa)));
-        return "centrocusto_lista";
+        mav.addObject("filtros", filtros);
+        mav.addObject("listaempresa", listaEmpresa);
+        mav.addObject("lista", centroCustoDao.selectAll_paginado(filtros.getId_Empresa() , pageable));
+        mav.addObject("pagina", new Pagina(pageable, centroCustoDao.count(filtros.getId_Empresa())));
+        mav.setViewName("centrocusto_lista");
+        return mav;
     }
 
     //Listar
     @RequestMapping(value = "/centrocusto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-        Empresa empresa = listaEmpresa.get(0);
+        CentroCusto filtros = new CentroCusto();
 
-        model.addAttribute("filtro", empresa.getId_Empresa());
+        if (!listaEmpresa.isEmpty()){
+            filtros.setId_Empresa(listaEmpresa.get(0).getId_Empresa());
+        }
+
+        model.addAttribute("filtros", filtros);
         model.addAttribute("listaempresa", listaEmpresa);
-        model.addAttribute("lista", centroCustoDao.selectAll_paginado(empresa.getId_Empresa() , pageable));
-        model.addAttribute("pagina", new Pagina(pageable, centroCustoDao.count(empresa.getId_Empresa())));
+        model.addAttribute("lista", centroCustoDao.selectAll_paginado(filtros.getId_Empresa() , pageable));
+        model.addAttribute("pagina", new Pagina(pageable, centroCustoDao.count(filtros.getId_Empresa())));
         return "centrocusto_lista";
     }
 
@@ -100,22 +104,14 @@ public class CentroCustoController {
 
     //Insert
     @RequestMapping(value = "/centrocusto_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute CentroCusto centroCusto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute CentroCusto centroCusto) {
         try{
             centroCustoService.insert(centroCusto);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", centroCustoDao.selectAll_paginado(centroCusto.getId_Empresa(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, centroCustoDao.count(centroCusto.getId_Empresa())));
-        mav.setViewName("redirect:/centrocusto_filtro/"+centroCusto.getId_Empresa());
-        return mav;
+        return "redirect:/centrocusto_lista";
     }
 
     //Editar
@@ -131,22 +127,25 @@ public class CentroCustoController {
     }
 
     //Update
-    @RequestMapping(value = "/centrocusto_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute CentroCusto centroCusto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/centrocusto_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute CentroCusto centroCusto) {
         try{
             centroCustoService.update(centroCusto);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
+        return "redirect:/centrocusto_lista";
+    }
+
+    @RequestMapping(value = "/centrocusto_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", centroCustoDao.selectAll_paginado(centroCusto.getId_Empresa() ,pageable));
-        mav.addObject("pagina", new Pagina(pageable, centroCustoDao.count(centroCusto.getId_Empresa())));
-        mav.setViewName("redirect:/centrocusto_filtro/"+centroCusto.getId_Empresa());
-        return mav;
+        model.addAttribute("listaempresa", listaEmpresa);
+        CentroCusto centroCusto = centroCustoDao.selectById(id);
+        model.addAttribute("centrocusto", centroCusto);
+        return "centrocusto_detalhes";
     }
 }

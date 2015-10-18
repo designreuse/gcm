@@ -118,12 +118,12 @@ public class LancamentoEstoqueController {
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
-        CFOP filtrosCFOP = new CFOP();
-        filtrosCFOP.setTipo(tipoEntSai);
-        filtrosCFOP.setAjuste(Boolean.TRUE);
+        CFOP filtros = new CFOP();
+        filtros.setTipo(tipoEntSai);
+        filtros.setAjuste(Boolean.TRUE);
 
         LancamentoEstoque lancamentoEstoque = new LancamentoEstoque();
-        model.addAttribute("listacfop", cfopDao.selectAll_Filtros(filtrosCFOP));
+        model.addAttribute("listacfop", cfopDao.selectAll(filtros));
         model.addAttribute("listaempresa", listaEmpresa);
         model.addAttribute("lancamentoestoque", lancamentoEstoque);
         return "lancamentoestoque_novo";
@@ -155,14 +155,14 @@ public class LancamentoEstoqueController {
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
-        CFOP filtrosCFOP = new CFOP();
-        filtrosCFOP.setTipo(tipoEntSai);
-        filtrosCFOP.setAjuste(Boolean.TRUE);
+        CFOP filtros = new CFOP();
+        filtros.setTipo(tipoEntSai);
+        filtros.setAjuste(Boolean.TRUE);
 
         LancamentoEstoque lancamentoEstoque = lancamentoEstoqueDao.selectById(id);
 
         model.addAttribute("id_lancamentoestoque", id);
-        model.addAttribute("listacfop", cfopDao.selectAll_Filtros(filtrosCFOP));
+        model.addAttribute("listacfop", cfopDao.selectAll(filtros));
         model.addAttribute("listaempresa", listaEmpresa);
         model.addAttribute("listaitens", lancamentoEstoqueItemDao.selectAll(id));
         model.addAttribute("lancamentoestoque", lancamentoEstoque);

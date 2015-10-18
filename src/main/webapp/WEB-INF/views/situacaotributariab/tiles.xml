@@ -3,17 +3,21 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="stb_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/situacaotributariab/situacaotributariab_lista.jsp" />
+    <definition name="stb_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/situacaotributariab/situacaotributariab_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="stb_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/situacaotributariab/situacaotributariab_novo.jsp" />
+    <definition name="stb_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/situacaotributariab/situacaotributariab_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="stb_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/situacaotributariab/situacaotributariab_editar.jsp" />
+    <definition name="stb_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/situacaotributariab/situacaotributariab_editar_lte.jsp" />
+    </definition>
+
+    <definition name="stb_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/situacaotributariab/situacaotributariab_detalhes_lte.jsp" />
     </definition>
 </tiles-definitions>

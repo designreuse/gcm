@@ -3,17 +3,21 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="situacaotributariapiscofins_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/situacaotributariapiscofins/situacaotributariapiscofins_lista.jsp" />
+    <definition name="stpiscofins_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/situacaotributariapiscofins/situacaotributariapiscofins_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="situacaotributariapiscofins_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/situacaotributariapiscofins/situacaotributariapiscofins_novo.jsp" />
+    <definition name="stpiscofins_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/situacaotributariapiscofins/situacaotributariapiscofins_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="situacaotributariapiscofins_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/situacaotributariapiscofins/situacaotributariapiscofins_editar.jsp" />
+    <definition name="stpiscofins_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/situacaotributariapiscofins/situacaotributariapiscofins_editar_lte.jsp" />
+    </definition>
+
+    <definition name="stpiscofins_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/situacaotributariapiscofins/situacaotributariapiscofins_detalhes_lte.jsp" />
     </definition>
 </tiles-definitions>

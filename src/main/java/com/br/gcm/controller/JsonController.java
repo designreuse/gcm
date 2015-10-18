@@ -146,25 +146,9 @@ public class JsonController {
     @RequestMapping(value="/lista_pessoa/{tipo}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     List<Pessoa> lista_pessoa(@PathVariable("tipo") String tipo) {
-        List<Pessoa> lista = pessoaDao.selectAll(tipo);
+        Pessoa filtros = new Pessoa();
+        List<Pessoa> lista = pessoaDao.selectAll(tipo, filtros);
         return lista;
-    }
-
-    @RequestMapping(value="/pessoabyfiltros/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    List<Pessoa> pessoabyfiltros(@PathVariable String[] campos) {
-        Filtro_Pessoa filtro_pessoa = new Filtro_Pessoa();
-        filtro_pessoa.setFiltro(campos[1]);
-        List<Pessoa> lista = pessoaDao.selectAll_byFiltros(campos[0], filtro_pessoa);
-        return lista;
-    }
-
-    @RequestMapping(value="/pessoabytipoid/{tipo}/{id}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    Pessoa pessoatipoid(@PathVariable("tipo") String tipo, @PathVariable("id") int id) {
-
-        Pessoa pessoa = pessoaDao.selectByTipoId(tipo, id);
-        return pessoa;
     }
 
     @RequestMapping(value="/lista_centrocusto/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -191,14 +175,12 @@ public class JsonController {
     @RequestMapping(value="/lista_planocontas/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     List<PlanoContas> lista_planocontas(@PathVariable String[] campos) {
-        List<PlanoContas> lista = planoContasDao.selectAllbyFiltros(Integer.parseInt(campos[0]), campos[1], campos[2]);
-        return lista;
-    }
+        PlanoContas filtros = new PlanoContas();
+        filtros.setId_Empresa(Integer.parseInt(campos[0]));
+        filtros.setTipoConta(campos[1]);
+        filtros.setCodigoConta(campos[2]);
 
-    @RequestMapping(value="/planocontasbyconta/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    PlanoContas planocontasbycodigoconta(@PathVariable String[] campos) {
-        PlanoContas lista = planoContasDao.selectAllbyCodigoConta(Integer.parseInt(campos[0]),campos[1],campos[2]);
+        List<PlanoContas> lista = planoContasDao.selectAll(filtros);
         return lista;
     }
 

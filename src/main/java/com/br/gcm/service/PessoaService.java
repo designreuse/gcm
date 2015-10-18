@@ -37,4 +37,9 @@ public class PessoaService {
     public void inativar(int id) {
         pessoaDao.InativarById(id);
     }
+
+    @Transactional
+    public void ativar(int id) {
+        pessoaDao.AtivarById(id);
+    }
 }

@@ -41,15 +41,15 @@ public class SituacaoTributariaPISCOFINSController {
     }
 
     //Listar
-    @RequestMapping(value = "/situacaotributariapiscofins_lista")
+    @RequestMapping(value = "/stpiscofins_lista")
     public String lista(@PageableDefault(size = 8) Pageable pageable, Model model) {
         model.addAttribute("lista", situacaoTributariaPISCOFINSDao.selectAll_paginado(pageable));
         model.addAttribute("pagina", new Pagina(pageable, situacaoTributariaPISCOFINSDao.count()));
-        return "situacaotributariapiscofins_lista";
+        return "stpiscofins_lista";
     }
 
     //Deletar
-    @RequestMapping(value = "/situacaotributariapiscofins_deleta/{id}")
+    @RequestMapping(value = "/stpiscofins_deleta/{id}")
     public String deletar(@PathVariable("id") Integer id) {
         try{
             situacaoTributariaPISCOFINSService.delete(id);
@@ -57,54 +57,53 @@ public class SituacaoTributariaPISCOFINSController {
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        return "redirect:/situacaotributariapiscofins_lista";
+        return "redirect:/stpiscofins_lista";
     }
 
     //Nova
-    @RequestMapping(value = "/situacaotributariapiscofins_novo", method = RequestMethod.GET)
+    @RequestMapping(value = "/stpiscofins_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
         SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS = new SituacaoTributariaPISCOFINS();
-        model.addAttribute("stPISCOFINS", situacaoTributariaPISCOFINS);
-        return "situacaotributariapiscofins_novo";
+        model.addAttribute("stpiscofins", situacaoTributariaPISCOFINS);
+        return "stpiscofins_novo";
     }
 
     //Insert
-    @RequestMapping(value = "/situacaotributariapiscofins_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/stpiscofins_insert", method = RequestMethod.POST)
+    public String insert(@ModelAttribute SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
         try{
             situacaoTributariaPISCOFINSService.insert(situacaoTributariaPISCOFINS);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", situacaoTributariaPISCOFINSDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, situacaoTributariaPISCOFINSDao.count()));
-        mav.setViewName("redirect:/situacaotributariapiscofins_lista");
-        return mav;
+        return "redirect:/stpiscofins_lista";
     }
 
     //Editar
-    @RequestMapping(value = "/situacaotributariapiscofins_editar/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/stpiscofins_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
         SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS = situacaoTributariaPISCOFINSDao.selectById(id);
-        model.addAttribute("stPISCOFINS", situacaoTributariaPISCOFINS);
-        return "situacaotributariapiscofins_editar";
+        model.addAttribute("stpiscofins", situacaoTributariaPISCOFINS);
+        return "stpiscofins_editar";
     }
 
     //Update
-    @RequestMapping(value = "/situacaotributariapiscofins_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/stpiscofins_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
         try{
             situacaoTributariaPISCOFINSService.update(situacaoTributariaPISCOFINS);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", situacaoTributariaPISCOFINSDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, situacaoTributariaPISCOFINSDao.count()));
-        mav.setViewName("redirect:/situacaotributariapiscofins_lista");
-        return mav;
+        return "redirect:/stpiscofins_lista";
+    }
+
+    @RequestMapping(value = "/stpiscofins_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS = situacaoTributariaPISCOFINSDao.selectById(id);
+        model.addAttribute("stpiscofins", situacaoTributariaPISCOFINS);
+        return "stpiscofins_detalhes";
     }
 }

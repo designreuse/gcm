@@ -50,33 +50,44 @@ public class PessoaController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 
     @RequestMapping(value = "/pessoa_lista/{tipo}")
-    public String lista(@PathVariable("tipo") String tipo, @PageableDefault(size = 8) Pageable pageable, Model model) {
-        Filtro_Pessoa filtro_pessoa = new Filtro_Pessoa();
-        model.addAttribute("filtros",filtro_pessoa);
-        model.addAttribute("lista", pessoaDao.selectAll_paginado(tipo, pageable));
-        model.addAttribute("pagina", new Pagina(pageable, pessoaDao.count(tipo)));
+    public String lista(@PathVariable("tipo") String tipo, @PageableDefault(size = 10) Pageable pageable, Model model) {
+        Pessoa filtros = new Pessoa();
+        model.addAttribute("filtros",filtros);
+        model.addAttribute("lista", pessoaDao.selectAll(tipo, filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, pessoaDao.count(tipo, filtros)));
         return "pessoa_lista";
     }
 
-    @RequestMapping(value = "/pessoa_listafiltros/{tipo}", method = RequestMethod.POST)
-    public String listafiltros(@PathVariable("tipo") String tipo, @PageableDefault(size = 8) Pageable pageable, @ModelAttribute Filtro_Pessoa filtro_pessoa, Model model) {
-        model.addAttribute("filtros",filtro_pessoa);
-        model.addAttribute("lista", pessoaDao.selectAll_FiltrosPaginado(tipo, filtro_pessoa, pageable));
-        model.addAttribute("pagina", new Pagina(pageable, pessoaDao.count(tipo)));
+    @RequestMapping(value = "/pessoa_lista/{tipo}", method = RequestMethod.POST)
+    public String filtros(@PathVariable("tipo") String tipo, @PageableDefault(size = 10) Pageable pageable, @ModelAttribute Pessoa filtros, Model model) {
+        model.addAttribute("filtros",filtros);
+        model.addAttribute("lista", pessoaDao.selectAll(tipo, filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, pessoaDao.count(tipo, filtros)));
         return "pessoa_lista";
     }
 
     //Inativar
     @RequestMapping(value = "/pessoa_inativar/{tipo}/{id_pessoa}")
-    public String deletar(@PathVariable("tipo") String tipo, @PathVariable("id_pessoa") Integer id_pessoa) {
+    public String inativar(@PathVariable("tipo") String tipo, @PathVariable("id_pessoa") Integer id_pessoa) {
         try{
             pessoaService.inativar(id_pessoa);
+        }catch(Exception e){
+            JOptionPane JOptinPane = new JOptionPane();
+            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+        }
+        return "redirect:/pessoa_lista/"+tipo;
+    }
+
+    @RequestMapping(value = "/pessoa_ativar/{tipo}/{id_pessoa}")
+    public String ativar(@PathVariable("tipo") String tipo, @PathVariable("id_pessoa") Integer id_pessoa) {
+        try{
+            pessoaService.ativar(id_pessoa);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
@@ -94,20 +105,16 @@ public class PessoaController {
         return "pessoa_novo";
     }
 
-    //Insert
+    //Insert                                                                          b
     @RequestMapping(value = "/pessoa_insert/{tipo}", method = RequestMethod.POST)
-    public ModelAndView insert(@PathVariable("tipo") String tipo, @ModelAttribute Pessoa pessoa, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    public String insert(@PathVariable("tipo") String tipo, @ModelAttribute Pessoa pessoa, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
         try{
             pessoaService.insert(pessoa);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", pessoaDao.selectAll_paginado(tipo, pageable));
-        mav.addObject("pagina", new Pagina(pageable, pessoaDao.count(tipo)));
-        mav.setViewName("redirect:/pessoa_lista/"+tipo);
-        return mav;
+        return "redirect:/pessoa_lista/"+tipo;
     }
 
     //Editar
@@ -121,18 +128,23 @@ public class PessoaController {
     }
 
     //Update
-    @RequestMapping(value = "/pessoa_update/{tipo}", method = RequestMethod.PUT)
-    public ModelAndView update(@PathVariable("tipo") String tipo, @ModelAttribute Pessoa pessoa, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/pessoa_update/{tipo}", method = RequestMethod.POST)
+    public String update(@PathVariable("tipo") String tipo, @ModelAttribute Pessoa pessoa, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
         try{
             pessoaService.update(pessoa);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", pessoaDao.selectAll_paginado(tipo, pageable));
-        mav.addObject("pagina", new Pagina(pageable, pessoaDao.count(tipo)));
-        mav.setViewName("redirect:/pessoa_lista/"+tipo);
-        return mav;
+        return "redirect:/pessoa_lista/"+tipo;
+    }
+
+    @RequestMapping(value = "/pessoa_detalhes/{tipo}/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("tipo") String tipo, @PathVariable("id") Integer id, Model model) {
+        Pessoa pessoa = pessoaDao.selectById(id);
+        model.addAttribute("pessoa", pessoa);
+        model.addAttribute("tipo", tipo);
+        model.addAttribute("lista_pais", paisDao.Pais_lista());
+        return "pessoa_detalhes";
     }
 }

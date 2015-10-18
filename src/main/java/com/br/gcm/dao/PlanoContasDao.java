@@ -53,6 +53,19 @@ public class PlanoContasDao {
         return db.queryForObject("SELECT COUNT(*) FROM PlanoContas Where id_Empresa=?", Long.class, id_Empresa);
     }
 
+    public Long count(PlanoContas filtros) {
+        List arr = new ArrayList<>();
+        String sql = "Select COUNT(*) from PlanoContas Where 1=1 ";
+
+
+        if (filtros.getId_Empresa() > 0){sql = sql + " And id_Empresa=?"; arr.add(filtros.getId_Empresa());}
+        if (filtros.getTipoConta() != "" && filtros.getTipoConta() != null) {sql = sql + " And TipoConta = ? "; arr.add(filtros.getTipoConta());}
+        if (filtros.getCodigoConta() != "" && filtros.getCodigoConta() != null) {sql = sql + " And CodigoConta like ? "; arr.add("%"+filtros.getCodigoConta()+"%");}
+        if (filtros.getDescricao() != "" && filtros.getDescricao() != null) {sql = sql + " And Descricao like ? "; arr.add("%"+filtros.getDescricao()+"%");}
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
+    }
+
     public PlanoContas selectById(Integer id) {
         return db.queryForObject("Select * from PlanoContas Where id_PlanoContas=?", listaPlanoContas, id);
     }
@@ -61,30 +74,36 @@ public class PlanoContasDao {
         return db.query("Select * from PlanoContas Where id_Empresa=? Order By CodigoConta", listaPlanoContas, id_Empresa);
     }
 
-    public List<PlanoContas> selectAllbyFiltros(int id_Empresa, String tipoconta, String filtros) {
+    public List<PlanoContas> selectAll(PlanoContas filtros) {
         List arr = new ArrayList<>();
         String sql = "Select * from PlanoContas Where 1=1 ";
-        if (id_Empresa > 0){sql = sql + " And id_Empresa=?"; arr.add(id_Empresa);}
-        if (tipoconta != "" && tipoconta != null) {sql = sql + " And TipoConta = ? "; arr.add(tipoconta);}
-        if (filtros != "" && filtros != null) {sql = sql + " And (CodigoConta like ? or Descricao like ?) "; arr.add("%"+filtros+"%"); arr.add("%"+filtros+"%");}
+
+
+        if (filtros.getId_Empresa() > 0){sql = sql + " And id_Empresa=?"; arr.add(filtros.getId_Empresa());}
+        if (filtros.getTipoConta() != "" && filtros.getTipoConta() != null) {sql = sql + " And TipoConta = ? "; arr.add(filtros.getTipoConta());}
+        if (filtros.getCodigoConta() != "" && filtros.getCodigoConta() != null) {sql = sql + " And CodigoConta like ? "; arr.add("%"+filtros.getCodigoConta()+"%");}
+        if (filtros.getDescricao() != "" && filtros.getDescricao() != null) {sql = sql + " And Descricao like ? "; arr.add("%"+filtros.getDescricao()+"%");}
+
         sql = sql + " Order By CodigoConta ";
 
         return db.query(sql, listaPlanoContas, arr.toArray());
     }
 
-    public PlanoContas selectAllbyCodigoConta(int id_Empresa, String tipoconta, String codigo) {
-        return db.queryForObject("Select * from PlanoContas Where id_Empresa=? And TipoConta = ? " +
-                " And replace(CodigoConta,'.','')=? And Agrupamento='A' " +
-                " Order By CodigoConta", listaPlanoContas, id_Empresa, tipoconta, codigo);
-    }
+    public List<PlanoContas> selectAll(PlanoContas filtros, Pageable p) {
+        List arr = new ArrayList<>();
+        String sql = "Select * from PlanoContas Where 1=1 ";
 
-    public List<PlanoContas> selectAll_paginado(int id_Empresa, Pageable p) {
-        return db.query("Select * from PlanoContas Where id_Empresa=? Order By CodigoConta " +
-                "LIMIT ? OFFSET ? ",
-                listaPlanoContas,
-                id_Empresa,
-                p.getPageSize(),
-                p.getOffset());
+
+        if (filtros.getId_Empresa() > 0){sql = sql + " And id_Empresa=?"; arr.add(filtros.getId_Empresa());}
+        if (filtros.getTipoConta() != "" && filtros.getTipoConta() != null) {sql = sql + " And TipoConta = ? "; arr.add(filtros.getTipoConta());}
+        if (filtros.getCodigoConta() != "" && filtros.getCodigoConta() != null) {sql = sql + " And CodigoConta like ? "; arr.add("%"+filtros.getCodigoConta()+"%");}
+        if (filtros.getDescricao() != "" && filtros.getDescricao() != null) {sql = sql + " And Descricao like ? "; arr.add("%"+filtros.getDescricao()+"%");}
+
+        sql = sql + " Order By CodigoConta LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql, listaPlanoContas, arr.toArray());
     }
 
     private RowMapper<PlanoContas> listaPlanoContas = new RowMapper<PlanoContas>() {

@@ -3,22 +3,27 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="cfop_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_lista.jsp" />
+    <definition name="cfop_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="cfop_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_novo.jsp" />
+    <definition name="cfop_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="cfop_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_editar.jsp" />
+    <definition name="cfop_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_editar_lte.jsp" />
+    </definition>
+
+    <!-- editar-->
+    <definition name="cfop_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_detalhes_lte.jsp" />
     </definition>
 
     <!-- relacaocfop_lista-->
-    <definition name="relacaocfop_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/cfop/relacaocfop_lista.jsp" />
+    <definition name="relacaocfop_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/cfop/cfop_relacao_lte.jsp" />
     </definition>
 </tiles-definitions>

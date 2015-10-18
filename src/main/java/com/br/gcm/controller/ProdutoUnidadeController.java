@@ -81,7 +81,7 @@ public class ProdutoUnidadeController {
 
     //Insert
     @RequestMapping(value = "/produtounidade_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute ProdutoUnidade produtoUnidade, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute ProdutoUnidade produtoUnidade) {
         produtoUnidade.setUnidadePrincipal(false);
         try{
             produtoUnidadeService.insert(produtoUnidade);
@@ -89,11 +89,8 @@ public class ProdutoUnidadeController {
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", produtoUnidadeDao.selectAll_paginado(produtoUnidade.getId_Produto() ,pageable));
-        mav.addObject("pagina", new Pagina(pageable, produtoUnidadeDao.count(produtoUnidade.getId_Produto())));
-        mav.setViewName("redirect:/produtounidade_lista/"+produtoUnidade.getId_Produto());
-        return mav;
+
+        return "redirect:/produtounidade_lista/"+produtoUnidade.getId_Produto();
     }
 
     //Editar
@@ -101,14 +98,14 @@ public class ProdutoUnidadeController {
     public String editar(@PathVariable("id") Integer id, Model model) {
         ProdutoUnidade produtoUnidade = produtoUnidadeDao.selectById(id);
         model.addAttribute("produto", produtoDao.selectById(produtoUnidade.getId_Produto()));
-        model.addAttribute("unidade", unidadeDao.selectById(produtoUnidade.getId_Unidade()));
+        model.addAttribute("lista_unidade", unidadeDao.selectAll());
         model.addAttribute("produtounidade", produtoUnidade);
         return "produtounidade_editar";
     }
 
     //Update
-    @RequestMapping(value = "/produtounidade_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute ProdutoUnidade produtoUnidade, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/produtounidade_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute ProdutoUnidade produtoUnidade, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
         try{
             produtoUnidadeService.update(produtoUnidade);
         }catch(Exception e){
@@ -116,10 +113,15 @@ public class ProdutoUnidadeController {
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", produtoUnidadeDao.selectAll_paginado(produtoUnidade.getId_Produto(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, produtoUnidadeDao.count(produtoUnidade.getId_Produto())));
-        mav.setViewName("redirect:/produtounidade_lista/"+produtoUnidade.getId_Produto());
-        return mav;
+        return "redirect:/produtounidade_lista/"+produtoUnidade.getId_Produto();
+    }
+
+    @RequestMapping(value = "/produtounidade_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        ProdutoUnidade produtoUnidade = produtoUnidadeDao.selectById(id);
+        model.addAttribute("produto", produtoDao.selectById(produtoUnidade.getId_Produto()));
+        model.addAttribute("unidade", unidadeDao.selectById(produtoUnidade.getId_Unidade()));
+        model.addAttribute("produtounidade", produtoUnidade);
+        return "produtounidade_detalhes";
     }
 }

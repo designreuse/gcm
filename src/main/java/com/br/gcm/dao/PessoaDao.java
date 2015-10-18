@@ -197,10 +197,41 @@ public class PessoaDao {
         db.update("Update Pessoa Set Ativo=False Where id_Pessoa=?",id);
     }
 
+    public void AtivarById(Integer id) {
+        db.update("Update Pessoa Set Ativo=True Where id_Pessoa=?",id);
+    }
+
     public Long count(String tipo) {
         return db.queryForObject("SELECT COUNT(*) FROM Pessoa " +
                 "Inner Join PessoaTipo on Pessoa.id_Pessoa = PessoaTipo.id_Pessoa " +
                 "Where PessoaTipo.TipoPessoa=? ", Long.class, tipo);
+    }
+
+    public Long count(String tipo, Pessoa filtros) {
+        List arr = new ArrayList<>();
+        String sql = "SELECT COUNT(*) FROM Pessoa " +
+                "Inner Join PessoaTipo on Pessoa.id_Pessoa = PessoaTipo.id_Pessoa " +
+                "Where PessoaTipo.TipoPessoa=? ";
+        arr.add(tipo);
+
+        if (filtros.getId_Pessoa() > 0){
+            sql = sql + " And Pessoa.id_Pessoa = ?";
+            arr.add(filtros.getId_Pessoa());
+        };
+        if (filtros.getCpfCnpj() != "" && filtros.getCpfCnpj() != null){
+            sql = sql + " And Pessoa.CpfCnpj = ?";
+            arr.add(filtros.getCpfCnpj());
+        };
+        if (filtros.getRazaoSocial() != "" && filtros.getRazaoSocial() != null){
+            sql = sql + " And Pessoa.RazaoSocial like ?";
+            arr.add("%"+filtros.getRazaoSocial()+"%");
+        };
+        if (filtros.getAtivo() != null){
+            sql = sql + " And Pessoa.Ativo = ?";
+            arr.add(filtros.getAtivo());
+        };
+
+        return db.queryForObject(sql, Long.class, arr.toArray());
     }
 
     public Pessoa selectById(Integer id) {
@@ -281,65 +312,7 @@ public class PessoaDao {
                 " where Pessoa.cpfcnpj=? ", ListaPessoa, cpfcnpj);
     }
 
-    public Pessoa selectByTipoId(String tipo, int id) {
-        String sql = "Select Pessoa.*, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CLI' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoCliente, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='FOR' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoFornecedor, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='VEN' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoVendedor, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='FUN' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoFuncionario, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='TRA' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoTransportador, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CON' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoConvenio, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='HOS' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoHospital, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='MED' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoMedico, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='ENF' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoEnfermeiro, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='PAC' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoPaciente " +
-                " from Pessoa " +
-                " Inner Join PessoaTipo on Pessoa.id_Pessoa = PessoaTipo.id_Pessoa " +
-                " Where PessoaTipo.TipoPessoa=? And Pessoa.Ativo = true "+
-                " And Pessoa.id_Pessoa=? ";
-
-        return db.queryForObject(sql, ListaPessoa, tipo, id);
-    }
-
-    public List<Pessoa> selectAll(String tipo) {
-        return db.query("Select Pessoa.*, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CLI' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoCliente, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='FOR' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoFornecedor, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='VEN' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoVendedor, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='FUN' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoFuncionario, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='TRA' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoTransportador, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CON' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoConvenio, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='HOS' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoHospital, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='MED' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoMedico, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='ENF' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoEnfermeiro, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='PAC' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoPaciente " +
-                " from Pessoa " +
-                " Inner Join PessoaTipo on Pessoa.id_Pessoa = PessoaTipo.id_Pessoa " +
-                " Where PessoaTipo.TipoPessoa=? And Pessoa.Ativo = true "+
-                " Order By RazaoSocial ", ListaPessoa, tipo);
-    }
-
-    public List<Pessoa> selectAll_byFiltros(String tipo, Filtro_Pessoa filtro_pessoa) {
+    public List<Pessoa> selectAll(String tipo, Pessoa filtros) {
         List arr = new ArrayList<>();
         String sql = "Select Pessoa.*, " +
                 " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CLI' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
@@ -367,51 +340,30 @@ public class PessoaDao {
                 " Where PessoaTipo.TipoPessoa=? And Pessoa.Ativo = true ";
 
         arr.add(tipo);
-        if (filtro_pessoa.getFiltro().trim().length() > 0){
-            sql = sql + " And (CpfCnpj=? OR RazaoSocial like ?)";
-            arr.add(filtro_pessoa.getFiltro());
-            arr.add('%'+filtro_pessoa.getFiltro()+'%');
-        }
 
+        if (filtros.getId_Pessoa() > 0){
+            sql = sql + " And Pessoa.id_Pessoa = ?";
+            arr.add(filtros.getId_Pessoa());
+        };
+        if (filtros.getCpfCnpj() != "" && filtros.getCpfCnpj() != null){
+            sql = sql + " And Pessoa.CpfCnpj = ?";
+            arr.add(filtros.getCpfCnpj());
+        };
+        if (filtros.getRazaoSocial() != "" && filtros.getRazaoSocial() != null){
+            sql = sql + " And Pessoa.RazaoSocial like ?";
+            arr.add("%"+filtros.getRazaoSocial()+"%");
+        };
+        if (filtros.getAtivo() != null){
+            sql = sql + " And Pessoa.Ativo = ?";
+            arr.add(filtros.getAtivo());
+        };
         sql = sql + " Order By RazaoSocial ";
 
         return db.query(sql, ListaPessoa, arr.toArray());
     }
 
-    public List<Pessoa> selectAll_paginado(String tipo, Pageable p) {
-        return db.query(" Select Pessoa.*, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CLI' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoCliente, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='FOR' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoFornecedor, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='VEN' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoVendedor, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='FUN' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoFuncionario, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='TRA' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoTransportador, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CON' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoConvenio, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='HOS' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoHospital, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='MED' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoMedico, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='ENF' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoEnfermeiro, " +
-                " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='PAC' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
-                " end as TipoPaciente " +
-                " from Pessoa " +
-                " Inner Join PessoaTipo on Pessoa.id_Pessoa = PessoaTipo.id_Pessoa " +
-                " Where PessoaTipo.TipoPessoa=? " +
-                " Order By RazaoSocial "+
-                "LIMIT ? OFFSET ? ",
-                ListaPessoa,
-                tipo,
-                p.getPageSize(),
-                p.getOffset());
-    }
-
-    public List<Pessoa> selectAll_FiltrosPaginado(String tipo, Filtro_Pessoa filtro_pessoa, Pageable p) {
+    public List<Pessoa> selectAll(String tipo, Pessoa filtros, Pageable p) {
+        List arr = new ArrayList<>();
         String sql = " Select Pessoa.*, " +
                 " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CLI' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
                 " end as TipoCliente, " +
@@ -436,17 +388,31 @@ public class PessoaDao {
                 " from Pessoa " +
                 " Inner Join PessoaTipo on Pessoa.id_Pessoa = PessoaTipo.id_Pessoa " +
                 " Where PessoaTipo.TipoPessoa=? ";
-        if ((filtro_pessoa.getFiltro() != null) && (filtro_pessoa.getFiltro() != "")){
-            sql = sql + " And (CpfCnpj like '"+filtro_pessoa.getFiltro()+"%' OR RazaoSocial like '"+filtro_pessoa.getFiltro()+"%') ";
-        }
-        sql = sql + " Order By RazaoSocial "+
-                " LIMIT ? OFFSET ? ";
 
-        return db.query(sql,
-                ListaPessoa,
-                tipo,
-                p.getPageSize(),
-                p.getOffset());
+        arr.add(tipo);
+
+        if (filtros.getId_Pessoa() > 0){
+            sql = sql + " And Pessoa.id_Pessoa = ?";
+            arr.add(filtros.getId_Pessoa());
+        };
+        if (filtros.getCpfCnpj() != "" && filtros.getCpfCnpj() != null){
+            sql = sql + " And Pessoa.CpfCnpj = ?";
+            arr.add(filtros.getCpfCnpj());
+        };
+        if (filtros.getRazaoSocial() != "" && filtros.getRazaoSocial() != null){
+            sql = sql + " And Pessoa.RazaoSocial like ?";
+            arr.add("%"+filtros.getRazaoSocial()+"%");
+        };
+        if (filtros.getAtivo() != null){
+            sql = sql + " And Pessoa.Ativo = ?";
+            arr.add(filtros.getAtivo());
+        };
+
+        sql = sql + " Order By RazaoSocial LIMIT ? OFFSET ? ";
+        arr.add(p.getPageSize());
+        arr.add(p.getOffset());
+
+        return db.query(sql,ListaPessoa,arr.toArray());
     }
 
     //mappers
@@ -526,6 +492,10 @@ public class PessoaDao {
             pessoa.setTipoMedico(rs.getBoolean("TipoMedico"));
             pessoa.setTipoEnfermeiro(rs.getBoolean("TipoEnfermeiro"));
             pessoa.setTipoPaciente(rs.getBoolean("TipoPaciente"));
+
+            if (pessoa.getId_Municipio() > 0){
+                pessoa.setMunicipio(municipioDao.selectById(pessoa.getId_Municipio()));
+            }
 
             return pessoa;
         }

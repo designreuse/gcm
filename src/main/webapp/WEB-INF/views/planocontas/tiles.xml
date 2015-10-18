@@ -3,17 +3,21 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="planocontas_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_lista.jsp" />
+    <definition name="planocontas_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="planocontas_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_novo.jsp" />
+    <definition name="planocontas_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="planocontas_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_editar.jsp" />
+    <definition name="planocontas_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_editar_lte.jsp" />
+    </definition>
+
+    <definition name="planocontas_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/planocontas/planocontas_detalhes_lte.jsp" />
     </definition>
 </tiles-definitions>

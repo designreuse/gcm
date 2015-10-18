@@ -49,16 +49,15 @@ public class PlanoContasController {
     }
 
     //Filtros
-    @RequestMapping(value = "/planocontas_filtro/{id_empresa}")
-    public String lista(@PathVariable("id_empresa") Integer id_empresa, @PageableDefault(size = 10) Pageable pageable, Model model) {
-
+    @RequestMapping(value = "/planocontas_lista", method = RequestMethod.POST)
+    public String filtros(@ModelAttribute PlanoContas filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
-        model.addAttribute("filtro", id_empresa);
+        model.addAttribute("filtros", filtros);
         model.addAttribute("listaempresa", listaEmpresa);
-        model.addAttribute("lista", planoContasDao.selectAll_paginado(id_empresa , pageable));
-        model.addAttribute("pagina", new Pagina(pageable, planoContasDao.count(id_empresa)));
+        model.addAttribute("lista", planoContasDao.selectAll(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, planoContasDao.count(filtros)));
         return "planocontas_lista";
     }
 
@@ -68,12 +67,16 @@ public class PlanoContasController {
 
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-        Empresa empresa = listaEmpresa.get(0);
+        PlanoContas filtros = new PlanoContas();
 
-        model.addAttribute("filtro", empresa.getId_Empresa());
+        if (!listaEmpresa.isEmpty()){
+            filtros.setId_Empresa(listaEmpresa.get(0).getId_Empresa());
+        }
+
+        model.addAttribute("filtros", filtros);
         model.addAttribute("listaempresa", listaEmpresa);
-        model.addAttribute("lista", planoContasDao.selectAll_paginado(empresa.getId_Empresa() , pageable));
-        model.addAttribute("pagina", new Pagina(pageable, planoContasDao.count(empresa.getId_Empresa())));
+        model.addAttribute("lista", planoContasDao.selectAll(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, planoContasDao.count(filtros)));
         return "planocontas_lista";
     }
 
@@ -93,39 +96,29 @@ public class PlanoContasController {
     @RequestMapping(value = "/planocontas_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
         Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
         PlanoContas planoContas = new PlanoContas();
-        model.addAttribute("listaempresa", listaEmpresa);
+        model.addAttribute("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
         model.addAttribute("planocontas", planoContas);
         return "planocontas_novo";
     }
 
     //Insert
     @RequestMapping(value = "/planocontas_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute PlanoContas planoContas, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute PlanoContas planoContas) {
         try{
             planoContasService.insert(planoContas);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", planoContasDao.selectAll_paginado(planoContas.getId_Empresa(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, planoContasDao.count(planoContas.getId_Empresa())));
-        mav.setViewName("redirect:/planocontas_filtro/"+planoContas.getId_Empresa());
-        return mav;
+        return "redirect:/planocontas_lista";
     }
 
     //Editar
     @RequestMapping(value = "/planocontas_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
-        //List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
         model.addAttribute("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
         model.addAttribute("planocontas", planoContasDao.selectById(id));
@@ -133,22 +126,23 @@ public class PlanoContasController {
     }
 
     //Update
-    @RequestMapping(value = "/planocontas_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute PlanoContas planoContas, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/planocontas_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute PlanoContas planoContas) {
         try{
             planoContasService.update(planoContas);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
+        return "redirect:/planocontas_lista";
+    }
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", planoContasDao.selectAll_paginado(planoContas.getId_Empresa() ,pageable));
-        mav.addObject("pagina", new Pagina(pageable, planoContasDao.count(planoContas.getId_Empresa())));
-        mav.setViewName("redirect:/planocontas_filtro/"+planoContas.getId_Empresa());
-        return mav;
+    @RequestMapping(value = "/planocontas_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+
+        model.addAttribute("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
+        model.addAttribute("planocontas", planoContasDao.selectById(id));
+        return "planocontas_detalhes";
     }
 }

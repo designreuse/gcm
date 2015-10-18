@@ -3,17 +3,21 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="centrocusto_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/centrocusto/centrocusto_lista.jsp" />
+    <definition name="centrocusto_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/centrocusto/centrocusto_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="centrocusto_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/centrocusto/centrocusto_novo.jsp" />
+    <definition name="centrocusto_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/centrocusto/centrocusto_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="centrocusto_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/centrocusto/centrocusto_editar.jsp" />
+    <definition name="centrocusto_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/centrocusto/centrocusto_editar_lte.jsp" />
+    </definition>
+
+    <definition name="centrocusto_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/centrocusto/centrocusto_detalhes_lte.jsp" />
     </definition>
 </tiles-definitions>

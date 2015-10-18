@@ -3,17 +3,21 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="produtolote_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_lista.jsp" />
+    <definition name="produtolote_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="produtolote_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_novo.jsp" />
+    <definition name="produtolote_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="produtolote_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_editar.jsp" />
+    <definition name="produtolote_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_editar_lte.jsp" />
+    </definition>
+
+    <definition name="produtolote_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/produtolote/produtolote_detalhes_lte.jsp" />
     </definition>
 </tiles-definitions>

@@ -3,17 +3,21 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="pessoa_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/pessoa/pessoa_lista.jsp" />
+    <definition name="pessoa_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pessoa/pessoa_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="pessoa_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/pessoa/pessoa_novo.jsp" />
+    <definition name="pessoa_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pessoa/pessoa_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="pessoa_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/pessoa/pessoa_editar.jsp" />
+    <definition name="pessoa_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pessoa/pessoa_editar_lte.jsp" />
+    </definition>
+
+    <definition name="pessoa_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/pessoa/pessoa_detalhes_lte.jsp" />
     </definition>
 </tiles-definitions>

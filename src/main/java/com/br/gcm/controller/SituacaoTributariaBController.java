@@ -67,18 +67,14 @@ public class SituacaoTributariaBController {
 
     //Insert
     @RequestMapping(value = "/stb_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute SituacaoTributariaB situacaoTributariaB, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute SituacaoTributariaB situacaoTributariaB) {
         try{
             situacaoTributariaBService.insert(situacaoTributariaB);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", situacaoTributariaBDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, situacaoTributariaBDao.count()));
-        mav.setViewName("redirect:/stb_lista");
-        return mav;
+        return "redirect:/stb_lista";
     }
 
     //Editar
@@ -90,18 +86,21 @@ public class SituacaoTributariaBController {
     }
 
     //Update
-    @RequestMapping(value = "/stb_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute SituacaoTributariaB situacaoTributariaB, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/stb_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute SituacaoTributariaB situacaoTributariaB, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             situacaoTributariaBService.update(situacaoTributariaB);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", situacaoTributariaBDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, situacaoTributariaBDao.count()));
-        mav.setViewName("redirect:/stb_lista");
-        return mav;
+        return "redirect:/stb_lista";
+    }
+
+    @RequestMapping(value = "/stb_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        SituacaoTributariaB situacaoTributariaB = situacaoTributariaBDao.selectById(id);
+        model.addAttribute("stb", situacaoTributariaB);
+        return "stb_detalhes";
     }
 }

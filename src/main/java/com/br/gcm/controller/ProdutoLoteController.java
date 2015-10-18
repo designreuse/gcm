@@ -48,7 +48,7 @@ public class ProdutoLoteController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
@@ -85,18 +85,14 @@ public class ProdutoLoteController {
 
     //Insert
     @RequestMapping(value = "/produtolote_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute ProdutoLote produtoLote, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute ProdutoLote produtoLote) {
         try{
             produtoLoteService.insert(produtoLote);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", produtoLoteDao.selectAll_paginado(produtoLote.getId_Produto() ,pageable));
-        mav.addObject("pagina", new Pagina(pageable, produtoLoteDao.count(produtoLote.getId_Produto())));
-        mav.setViewName("redirect:/produtolote_lista/"+produtoLote.getId_Produto());
-        return mav;
+        return "redirect:/produtolote_lista/"+produtoLote.getId_Produto();
     }
 
     //Editar
@@ -109,19 +105,22 @@ public class ProdutoLoteController {
     }
 
     //Update
-    @RequestMapping(value = "/produtolote_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute ProdutoLote produtoLote, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/produtolote_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute ProdutoLote produtoLote) {
         try{
             produtoLoteService.update(produtoLote);
         }catch(Exception e){
             JOptionPane JOptinPane = new JOptionPane();
             JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
         }
+        return "redirect:/produtolote_lista/"+produtoLote.getId_Produto();
+    }
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", produtoLoteDao.selectAll_paginado(produtoLote.getId_Produto(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, produtoLoteDao.count(produtoLote.getId_Produto())));
-        mav.setViewName("redirect:/produtolote_lista/"+produtoLote.getId_Produto());
-        return mav;
+    @RequestMapping(value = "/produtolote_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        ProdutoLote produtoLote = produtoLoteDao.selectById(id);
+        model.addAttribute("produto", produtoDao.selectById(produtoLote.getId_Produto()));
+        model.addAttribute("produtolote", produtoLote);
+        return "produtolote_detalhes";
     }
 }
