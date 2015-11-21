@@ -4,12 +4,10 @@ import com.br.gcm.dao.GrupoUsuarioDao;
 import com.br.gcm.dao.UsuariodoGrupoDao;
 import com.br.gcm.dao.GrupoTransacaoDao;
 import com.br.gcm.dao.EmpresaGrupoDao;
-import com.br.gcm.model.GrupoUsuario;
-import com.br.gcm.model.UsuariodoGrupo;
-import com.br.gcm.model.GrupoTransacao;
-import com.br.gcm.model.EmpresaGrupo;
+import com.br.gcm.model.*;
 import com.br.gcm.service.GrupoUsuarioService;
 import com.br.gcm.tag.Pagina;
+import com.br.gcm.util.Rotinas;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -42,10 +40,33 @@ public class GrupoUsuarioController {
     @Inject private UsuariodoGrupoDao usuariodoGrupoDao;
     @Inject private GrupoTransacaoDao grupoTransacaoDao;
     @Inject private EmpresaGrupoDao empresaGrupoDao;
+    @Inject private Rotinas rotinas;
 
     //Listar
     @RequestMapping(value = "/grupousuario_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "8103");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810301");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810302");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810303");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810304");
+        Boolean usuarios = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810305");
+        Boolean transacoes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810306");
+        Boolean empresas = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810307");
+
+
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
+        model.addAttribute("usuarios", usuarios);
+        model.addAttribute("transacoes", transacoes);
+        model.addAttribute("empresas", empresas);
         model.addAttribute("grupousuario_lista", grupoUsuarioDao.selectAll_paginado(pageable));
         model.addAttribute("pagina", new Pagina(pageable, grupoUsuarioDao.count()));
         return "grupousuario_lista";
@@ -53,12 +74,19 @@ public class GrupoUsuarioController {
 
     //Deletar
     @RequestMapping(value = "/grupousuario_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810303");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             grupoUsuarioService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/grupousuario_lista";
     }
@@ -73,23 +101,33 @@ public class GrupoUsuarioController {
 
     //Insert
     @RequestMapping(value = "/grupousuario_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute GrupoUsuario grupoUsuario, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute GrupoUsuario grupoUsuario, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810301");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             grupoUsuarioService.insert(grupoUsuario);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", grupoUsuarioDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, grupoUsuarioDao.count()));
-        mav.setViewName("redirect:/grupousuario_lista");
-        return mav;
+        return "redirect:/grupousuario_lista";
     }
 
     //Editar
     @RequestMapping(value = "/grupousuario_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810302");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         GrupoUsuario grupoUsuario = grupoUsuarioDao.selectById(id);
         model.addAttribute("grupousuario", grupoUsuario);
         return "grupousuario_editar";
@@ -97,22 +135,25 @@ public class GrupoUsuarioController {
 
     //Update
     @RequestMapping(value = "/grupousuario_update", method = RequestMethod.POST)
-    public ModelAndView update(@ModelAttribute GrupoUsuario grupoUsuario, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute GrupoUsuario grupoUsuario, Model model) {
         try{
             grupoUsuarioService.update(grupoUsuario);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", grupoUsuarioDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, grupoUsuarioDao.count()));
-        mav.setViewName("redirect:/grupousuario_lista");
-        return mav;
+        return "redirect:/grupousuario_lista";
     }
 
     @RequestMapping(value = "/grupousuario_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810304");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         GrupoUsuario grupoUsuario = grupoUsuarioDao.selectById(id);
         model.addAttribute("grupousuario", grupoUsuario);
         return "grupousuario_detalhes";
@@ -121,6 +162,13 @@ public class GrupoUsuarioController {
     //Novo Usuario do Grupo
     @RequestMapping(value = "/usuariodogrupo_novo/{id}", method = RequestMethod.GET)
     public String novo_usuariodogrupo(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean listatransacao = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810305");
+        if (listatransacao != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         List<UsuariodoGrupo> lista = usuariodoGrupoDao.selectAll(id);
         GrupoUsuario grupoUsuario = grupoUsuarioDao.selectById(id);
         model.addAttribute("lista", lista);
@@ -131,6 +179,13 @@ public class GrupoUsuarioController {
     //Novo Transacao do Grupo
     @RequestMapping(value = "/grupotransacao_novo/{id}", method = RequestMethod.GET)
     public String novo_grupotransacao(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean listatransacao = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810306");
+        if (listatransacao != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         List<GrupoTransacao> lista = grupoTransacaoDao.selectAll(id);
         GrupoUsuario grupoUsuario = grupoUsuarioDao.selectById(id);
         model.addAttribute("lista", lista);
@@ -141,6 +196,12 @@ public class GrupoUsuarioController {
     //Novo Empresa do Grupo
     @RequestMapping(value = "/empresagrupo_novo/{id}", method = RequestMethod.GET)
     public String novo_empresagrupo(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean listatransacao = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "810307");
+        if (listatransacao != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
         List<EmpresaGrupo> lista = empresaGrupoDao.selectAll(id);
         GrupoUsuario grupoUsuario = grupoUsuarioDao.selectById(id);
         model.addAttribute("lista", lista);
