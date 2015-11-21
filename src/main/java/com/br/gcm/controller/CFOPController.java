@@ -4,8 +4,10 @@ import com.br.gcm.dao.CFOPDao;
 import com.br.gcm.dao.RelacaoCFOPDao;
 import com.br.gcm.model.CFOP;
 import com.br.gcm.model.MensagemTransacao;
+import com.br.gcm.model.Usuario;
 import com.br.gcm.service.CFOPService;
 import com.br.gcm.tag.Pagina;
+import com.br.gcm.util.Rotinas;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -34,43 +36,56 @@ public class CFOPController {
     @Inject private CFOPDao cfopDao;
     @Inject private CFOPService cfopService;
     @Inject private RelacaoCFOPDao relacaoCFOPDao;
-
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
+    @Inject private Rotinas rotinas;
 
     //Listar
     @RequestMapping(value = "/cfop_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-        model.addAttribute("mensagem", mensagemTransacao);
-
         CFOP filtros = new CFOP();
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1403");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140301");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140302");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140303");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140304");
+
+
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
 
         model.addAttribute("filtros", filtros);
         model.addAttribute("lista", cfopDao.selectAll(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, cfopDao.count(filtros)));
-        limparmensagem();
         return "cfop_lista";
     }
 
     @RequestMapping(value = "/cfop_lista", method = RequestMethod.POST)
     public String filtros(@ModelAttribute CFOP filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-        model.addAttribute("mensagem", mensagemTransacao);
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1403");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140301");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140302");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140303");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140304");
+
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
 
         model.addAttribute("filtros", filtros);
         model.addAttribute("lista", cfopDao.selectAll(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, cfopDao.count(filtros)));
-        limparmensagem();
         return "cfop_lista";
     }
 
@@ -84,12 +99,19 @@ public class CFOPController {
 
     //Deletar
     @RequestMapping(value = "/cfop_deletar/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140303");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             cfopService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/cfop_lista";
     }
@@ -97,6 +119,13 @@ public class CFOPController {
     //Nova
     @RequestMapping(value = "/cfop_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140301");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         CFOP cfop = new CFOP();
         model.addAttribute("cfop", cfop);
         return "cfop_novo";
@@ -104,12 +133,12 @@ public class CFOPController {
 
     //Insert
     @RequestMapping(value = "/cfop_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute CFOP cfop) {
+    public String insert(@ModelAttribute CFOP cfop, Model model) {
         try{
             cfopService.insert(cfop);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/cfop_lista";
     }
@@ -117,6 +146,12 @@ public class CFOPController {
     //Editar
     @RequestMapping(value = "/cfop_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140302");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
         CFOP cfop = cfopDao.selectById(id);
         model.addAttribute("cfop", cfop);
         return "cfop_editar";
@@ -124,18 +159,24 @@ public class CFOPController {
 
     //Update
     @RequestMapping(value = "/cfop_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute CFOP cfop) {
+    public String update(@ModelAttribute CFOP cfop, Model model) {
         try{
             cfopService.update(cfop);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/cfop_lista";
     }
 
     @RequestMapping(value = "/cfop_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "140304");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
         CFOP cfop = cfopDao.selectById(id);
         model.addAttribute("cfop", cfop);
         return "cfop_detalhes";
