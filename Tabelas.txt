@@ -613,6 +613,7 @@
 		id_CentroCusto int not null,
 		id_PlanoContas int not null,
 		id_ContaCorrente int null,
+		DocumentoOrigem numeric(17,0) null,
 		StatusMovimento varchar(1) not null,
 		TipoMovimento varchar(1) not null,
 		DataPrevisao timestamp null,
@@ -630,7 +631,8 @@
 		ValorDescontos numeric(17,4) not null default 0,
 		ValorMulta numeric(17,4) not null default 0,
 		AliquotaJuros numeric(9,2) not null default 0,
-		Observacoes text null
+		Observacoes text null,
+		MotivoCancelamento text null
 	);
 	Alter Table MovimentoFinanceiro add CONSTRAINT Pk_MovimentoFinanceiro primary key (id_MovimentoFinanceiro);
 	Alter Table MovimentoFinanceiro add Constraint Fk_MovimentoFinanceiro_Empresa Foreign Key (id_Empresa) references Empresa (id_Empresa) MATCH FULL;
