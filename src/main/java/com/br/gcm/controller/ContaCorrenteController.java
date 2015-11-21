@@ -42,51 +42,85 @@ public class ContaCorrenteController {
     @Inject private EmpresaDao empresaDao;
     @Inject private BancoDao bancoDao;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
-    //Filtros
-    @RequestMapping(value = "/contacorrente_filtro/{id_empresa}")
-    public String filtros(@PathVariable("id_empresa") Integer id_empresa, @PageableDefault(size = 10) Pageable pageable, Model model) {
-
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-
-        model.addAttribute("filtro", id_empresa);
-        model.addAttribute("listaempresa", listaEmpresa);
-        model.addAttribute("lista", contaCorrenteDao.selectAll_paginado(id_empresa , pageable));
-        model.addAttribute("pagina", new Pagina(pageable, contaCorrenteDao.count(id_empresa)));
-        return "contacorrente_lista";
-    }
-
     //Listar
     @RequestMapping(value = "/contacorrente_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-
         Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-        Empresa empresa = listaEmpresa.get(0);
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1504");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
 
-        model.addAttribute("filtro", empresa.getId_Empresa());
+        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
+
+        ContaCorrente filtros = new ContaCorrente();
+        if (!listaEmpresa.isEmpty()){
+            filtros.setId_Empresa(listaEmpresa.get(0).getId_Empresa());
+        };
+
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150401");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150402");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150403");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150404");
+
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
+        model.addAttribute("filtros", filtros);
         model.addAttribute("listaempresa", listaEmpresa);
-        model.addAttribute("lista", contaCorrenteDao.selectAll_paginado(empresa.getId_Empresa() , pageable));
-        model.addAttribute("pagina", new Pagina(pageable, contaCorrenteDao.count(empresa.getId_Empresa())));
+        model.addAttribute("lista", contaCorrenteDao.selectAll(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, contaCorrenteDao.count(filtros)));
         return "contacorrente_lista";
+    }
+
+    //Filtros
+    @RequestMapping(value = "/contacorrente_lista", method = RequestMethod.POST)
+    public ModelAndView filtros(@ModelAttribute ContaCorrente filtros, @PageableDefault(size = 10) Pageable pageable) {
+        ModelAndView mav = new ModelAndView();
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1504");
+        if (lista != true) {
+            mav.addObject("mensagem", "AVISO: Transação não permitida.");
+            mav.setViewName("mensagemerro");
+            return mav;
+        }
+
+        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
+
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150401");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150402");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150403");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150404");
+
+        mav.addObject("novo", novo);
+        mav.addObject("editar", editar);
+        mav.addObject("deletar", deletar);
+        mav.addObject("detalhes", detalhes);
+        mav.addObject("filtros", filtros);
+        mav.addObject("listaempresa", listaEmpresa);
+        mav.addObject("lista", contaCorrenteDao.selectAll(filtros, pageable));
+        mav.addObject("pagina", new Pagina(pageable, contaCorrenteDao.count(filtros)));
+        mav.setViewName("contacorrente_lista");
+        return mav;
     }
 
     //Deletar
     @RequestMapping(value = "/contacorrente_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150403");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             contaCorrenteService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/contacorrente_lista";
     }
@@ -95,6 +129,11 @@ public class ContaCorrenteController {
     @RequestMapping(value = "/contacorrente_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150401");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
 
         ContaCorrente contaCorrente = new ContaCorrente();
         model.addAttribute("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
@@ -105,29 +144,26 @@ public class ContaCorrenteController {
 
     //Insert
     @RequestMapping(value = "/contacorrente_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute ContaCorrente contaCorrente, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute ContaCorrente contaCorrente, Model model) {
         try{
+            contaCorrente.setSaldoConta(0);
             contaCorrenteService.insert(contaCorrente);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("listabanco", bancoDao.selectAll());
-        mav.addObject("lista", contaCorrenteDao.selectAll_paginado(contaCorrente.getId_Empresa(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, contaCorrenteDao.count(contaCorrente.getId_Empresa())));
-        mav.setViewName("redirect:/contacorrente_filtro/"+contaCorrente.getId_Empresa());
-        return mav;
+        return "redirect:/contacorrente_lista";
     }
 
     //Editar
     @RequestMapping(value = "/contacorrente_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150402");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
 
         model.addAttribute("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
         model.addAttribute("listabanco", bancoDao.selectAll());
@@ -136,22 +172,29 @@ public class ContaCorrenteController {
     }
 
     //Update
-    @RequestMapping(value = "/contacorrente_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute ContaCorrente contaCorrente, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/contacorrente_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute ContaCorrente contaCorrente, Model model) {
         try{
             contaCorrenteService.update(contaCorrente);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        Usuario usuario = rotinas.usuarioLogado();
+        return "redirect:/contacorrente_lista";
+    }
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
-        mav.addObject("listabanco", bancoDao.selectAll());
-        mav.addObject("lista", contaCorrenteDao.selectAll_paginado(contaCorrente.getId_Empresa() ,pageable));
-        mav.addObject("pagina", new Pagina(pageable, contaCorrenteDao.count(contaCorrente.getId_Empresa())));
-        mav.setViewName("redirect:/contacorrente_filtro/"+contaCorrente.getId_Empresa());
-        return mav;
+    @RequestMapping(value = "/contacorrente_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150404");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
+        model.addAttribute("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
+        model.addAttribute("listabanco", bancoDao.selectAll());
+        model.addAttribute("contacorrente", contaCorrenteDao.selectById(id));
+        return "contacorrente_detalhes";
     }
 }
