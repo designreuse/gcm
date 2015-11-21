@@ -3,8 +3,10 @@ package com.br.gcm.controller;
 import com.br.gcm.dao.MarcaProdutoDao;
 import com.br.gcm.model.MarcaProduto;
 import com.br.gcm.model.MensagemTransacao;
+import com.br.gcm.model.Usuario;
 import com.br.gcm.service.MarcaProdutoService;
 import com.br.gcm.tag.Pagina;
+import com.br.gcm.util.Rotinas;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -34,11 +36,28 @@ import java.util.List;
 public class MarcaProdutoController {
     @Inject private MarcaProdutoDao marcaProdutoDao;
     @Inject private MarcaProdutoService marcaProdutoService;
+    @Inject private Rotinas rotinas;
 
     //Listar
     @RequestMapping(value = "/marcaproduto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         MarcaProduto filtros = new MarcaProduto();
+
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1103");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110301");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110302");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110303");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110304");
+
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
 
         model.addAttribute("filtros", filtros);
         model.addAttribute("marcaproduto_lista",  marcaProdutoDao.selectAll_paginado(pageable));
@@ -50,6 +69,22 @@ public class MarcaProdutoController {
     public ModelAndView filtros(@ModelAttribute MarcaProduto filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
 
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1103");
+        if (lista != true) {
+            mav.addObject("mensagem", "AVISO: Transação não permitida.");
+            mav.setViewName("mensagemerro");
+            return mav;
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110301");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110302");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110303");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110304");
+
+        mav.addObject("novo", novo);
+        mav.addObject("editar", editar);
+        mav.addObject("deletar", deletar);
+        mav.addObject("detalhes", detalhes);
         mav.addObject("filtros", filtros);
         mav.addObject("marcaproduto_lista",  marcaProdutoDao.selectAll_paginado(pageable));
         mav.addObject("pagina", new Pagina(pageable, marcaProdutoDao.count()));
@@ -61,6 +96,13 @@ public class MarcaProdutoController {
     //Deletar
     @RequestMapping(value = "/marcaproduto_deleta/{id}")
     public String deletar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110303");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             marcaProdutoService.delete(id);
         }catch(Exception e){
@@ -73,6 +115,13 @@ public class MarcaProdutoController {
     //Nova
     @RequestMapping(value = "/marcaproduto_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110301");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         MarcaProduto marcaProduto = new MarcaProduto();
         model.addAttribute("marcaproduto", marcaProduto);
         return "marcaproduto_novo";
@@ -93,6 +142,13 @@ public class MarcaProdutoController {
     //Editar
     @RequestMapping(value = "/marcaproduto_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110302");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         MarcaProduto marcaProduto = marcaProdutoDao.selectById(id);
         model.addAttribute("marcaproduto", marcaProduto);
         return "marcaproduto_editar";
@@ -112,6 +168,13 @@ public class MarcaProdutoController {
 
     @RequestMapping(value = "/marcaproduto_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1104");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         MarcaProduto marcaProduto = marcaProdutoDao.selectById(id);
         model.addAttribute("marcaproduto", marcaProduto);
         return "marcaproduto_detalhes";
