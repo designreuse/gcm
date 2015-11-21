@@ -33,4 +33,14 @@ public class MovimentoFinanceiroService {
     public void update(MovimentoFinanceiro mov) {
         movimentoFinanceiroDao.update(mov);
     }
+
+    @Transactional
+    public void liquidar(MovimentoFinanceiro mov) {
+        movimentoFinanceiroDao.liquidar(mov);
+    }
+
+    @Transactional
+    public void estornar(MovimentoFinanceiro mov) {
+        movimentoFinanceiroDao.estornar(mov);
+    }
 }

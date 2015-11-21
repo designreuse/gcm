@@ -77,7 +77,7 @@ public class GrupoTransacaoDao {
             grupoTransacao.setId_GrupoUsuario(rs.getInt("Id_GrupoUsuario"));
             grupoTransacao.setId_Transacao(rs.getInt("Id_Transacao"));
             grupoTransacao.setDescricaoGrupo(rs.getString("DescricaoGrupo"));
-            grupoTransacao.setCodigoTransacao(rs.getInt("CodigoTransacao"));
+            grupoTransacao.setCodigoTransacao(rs.getString("CodigoTransacao"));
             grupoTransacao.setDescricaoTransacao(rs.getString("DescricaoTransacao"));
             grupoTransacao.setPertence(rs.getBoolean("Pertence"));
 

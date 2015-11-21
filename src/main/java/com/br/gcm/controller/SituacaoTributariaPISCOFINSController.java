@@ -32,14 +32,6 @@ public class SituacaoTributariaPISCOFINSController {
     @Inject private SituacaoTributariaPISCOFINSDao situacaoTributariaPISCOFINSDao;
     @Inject private SituacaoTributariaPISCOFINSService situacaoTributariaPISCOFINSService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Listar
     @RequestMapping(value = "/stpiscofins_lista")
     public String lista(@PageableDefault(size = 8) Pageable pageable, Model model) {
@@ -50,12 +42,12 @@ public class SituacaoTributariaPISCOFINSController {
 
     //Deletar
     @RequestMapping(value = "/stpiscofins_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             situacaoTributariaPISCOFINSService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/stpiscofins_lista";
     }
@@ -70,12 +62,12 @@ public class SituacaoTributariaPISCOFINSController {
 
     //Insert
     @RequestMapping(value = "/stpiscofins_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS, Model model) {
         try{
             situacaoTributariaPISCOFINSService.insert(situacaoTributariaPISCOFINS);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/stpiscofins_lista";
     }
@@ -90,12 +82,12 @@ public class SituacaoTributariaPISCOFINSController {
 
     //Update
     @RequestMapping(value = "/stpiscofins_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute SituacaoTributariaPISCOFINS situacaoTributariaPISCOFINS, Model model) {
         try{
             situacaoTributariaPISCOFINSService.update(situacaoTributariaPISCOFINS);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/stpiscofins_lista";
     }

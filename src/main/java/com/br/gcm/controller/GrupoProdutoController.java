@@ -33,40 +33,24 @@ public class GrupoProdutoController {
     @Inject private GrupoProdutoDao grupoProdutoDao;
     @Inject private GrupoProdutoService grupoProdutoService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
-    //Listar
+     //Listar
     @RequestMapping(value = "/grupoproduto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("grupoproduto_lista", grupoProdutoDao.selectAll_paginado(pageable));
         model.addAttribute("pagina", new Pagina(pageable, grupoProdutoDao.count()));
 
-        limparmensagem();
         return "grupoproduto_lista";
     }
 
     //Deletar
     @RequestMapping(value = "/grupoproduto_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             grupoProdutoService.delete(id);
-            tipo = 0;
-            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/grupoproduto_lista";
     }
@@ -81,20 +65,15 @@ public class GrupoProdutoController {
 
     //Insert
     @RequestMapping(value = "/grupoproduto_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute GrupoProduto grupoProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute GrupoProduto grupoProduto, Model model) {
         try{
             grupoProdutoService.insert(grupoProduto);
-            tipo = 0;
-            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", grupoProdutoDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, grupoProdutoDao.count()));
-        mav.setViewName("redirect:/grupoproduto_lista");
-        return mav;
+
+        return "redirect:/grupoproduto_lista";
     }
 
     //Editar
@@ -107,20 +86,15 @@ public class GrupoProdutoController {
 
     //Update
     @RequestMapping(value = "/grupoproduto_update", method = RequestMethod.POST)
-    public ModelAndView update(@ModelAttribute GrupoProduto grupoProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute GrupoProduto grupoProduto, Model model) {
         try{
             grupoProdutoService.update(grupoProduto);
-            tipo = 0;
-            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", grupoProdutoDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, grupoProdutoDao.count()));
-        mav.setViewName("redirect:/grupoproduto_lista");
-        return mav;
+
+        return "redirect:/grupoproduto_lista";
     }
 
     @RequestMapping(value = "/grupoproduto_detalhes/{id}", method = RequestMethod.GET)

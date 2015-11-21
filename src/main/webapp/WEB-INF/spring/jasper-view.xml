@@ -8,4 +8,24 @@
           class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView"
           p:url="/WEB-INF/reports/pais.jasper"
           p:reportDataKey="datasource"/>
+
+    <bean id="movimentofinanceiro_programacao_report"
+          class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView"
+          p:url="/WEB-INF/reports/MovimentoFinanceiro.jasper"
+          p:reportDataKey="datasource"/>
+
+    <bean id="movimentofinanceiro_programacao_vencimento_report"
+          class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView"
+          p:url="/WEB-INF/reports/movimentofinanceiro_programacao_vencimento.jasper"
+          p:reportDataKey="datasource"/>
+
+    <bean id="movimentofinanceiro_programacao_pessoa_report"
+          class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView"
+          p:url="/WEB-INF/reports/movimentofinanceiro_programacao_pessoa.jasper"
+          p:reportDataKey="datasource"/>
+
+    <bean id="movimentofinanceiro_programacao_conta_report"
+          class="org.springframework.web.servlet.view.jasperreports.JasperReportsMultiFormatView"
+          p:url="/WEB-INF/reports/MovimentoFinanceiro_programacao_conta.jasper"
+          p:reportDataKey="datasource"/>
 </beans>

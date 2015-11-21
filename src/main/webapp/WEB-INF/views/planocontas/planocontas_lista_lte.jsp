@@ -12,9 +12,12 @@
 <div class="content body">
     <div class="row">
         <div class="col-sm-12">
-            <div class="box box-primary">
+            <div class="box box-primary collapsed-box">
                 <div class="box-header with-border">
                     <h3 class="box-title">Filtros</h3>
+                    <div class="box-tools pull-right">
+                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                    </div>
                 </div>
                 <div class="box-body">
                     <form class="form-horizontal" action="/planocontas_lista" method="post">
@@ -43,7 +46,7 @@
                                 <div class="form-group">
                                     <label class="col-md-1 control-label" for="codigoConta">Código</label>
                                     <div class="col-md-2">
-                                        <input type="text" maxlength="15"
+                                        <input type="text" maxlength="15" value="${filtros.codigoConta}"
                                                class="form-control" placeholder="Código" name="codigoConta" id="codigoConta"/>
                                     </div>
 
@@ -61,7 +64,7 @@
                                 <div class="form-group">
                                     <label class="col-md-1 control-label" for="descricao">Descrição</label>
                                     <div class="col-md-7">
-                                        <input type="text" maxlength="50"
+                                        <input type="text" maxlength="50" value="${filtros.descricao}"
                                                class="form-control" placeholder="Descrição" name="descricao" id="descricao"/>
                                     </div>
 

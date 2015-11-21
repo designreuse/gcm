@@ -4,33 +4,37 @@
 <tiles-definitions>
 
     <!-- grupousuario_lista.jsp-->
-    <definition name="grupousuario_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_lista.jsp" />
+    <definition name="grupousuario_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_lista_lte.jsp" />
     </definition>
 
     <!-- grupousuario_novo.jsp-->
-    <definition name="grupousuario_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_novo.jsp" />
+    <definition name="grupousuario_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_novo_lte.jsp" />
     </definition>
 
     <!-- grupousuario_editar.jsp-->
-    <definition name="grupousuario_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_editar.jsp" />
+    <definition name="grupousuario_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_editar_lte.jsp" />
     </definition>
 
-    <!-- usuariodogrupo_novo.jsp-->
-    <definition name="usuariodogrupo_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/grupousuario/usuariodogrupo_novo.jsp" />
+    <definition name="grupousuario_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupousuario_detalhes_lte.jsp" />
     </definition>
 
-    <!-- grupotransacao_novo.jsp-->
-    <definition name="grupotransacao_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupotransacao_novo.jsp" />
+
+
+
+    <definition name="usuariodogrupo_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/usuariodogrupo_novo_lte.jsp" />
     </definition>
 
-    <!-- empresagrupo_novo.jsp-->
-    <definition name="empresagrupo_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/grupousuario/empresagrupo_novo.jsp" />
+    <definition name="grupotransacao_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/grupotransacao_novo_lte.jsp" />
+    </definition>
+
+    <definition name="empresagrupo_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/grupousuario/empresagrupo_novo_lte.jsp" />
     </definition>
 
 </tiles-definitions>

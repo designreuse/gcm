@@ -36,29 +36,15 @@ public class NCMController {
     @Inject private NCMService ncmService;
     @Inject private SituacaoTributariaPISCOFINSDao situacaoTributariaPISCOFINSDao;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Listar
     @RequestMapping(value = "/ncm_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         NCM filtros = new NCM();
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("filtros", filtros);
         model.addAttribute("ncm_lista", ncmDao.selectAll_paginado(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, ncmDao.count(filtros)));
 
-        limparmensagem();
         return "ncm_lista";
     }
 
@@ -66,30 +52,22 @@ public class NCMController {
     public ModelAndView filtros(@ModelAttribute NCM filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        mav.addObject("mensagem", mensagemTransacao);
         mav.addObject("ncm_lista", ncmDao.selectAll_paginado(filtros, pageable));
         mav.addObject("pagina", new Pagina(pageable, ncmDao.count(filtros)));
         mav.addObject("filtros", filtros);
         mav.setViewName("ncm_lista");
 
-        limparmensagem();
         return mav;
     }
 
     //Deletar
     @RequestMapping(value = "/ncm_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             ncmService.delete(id);
-            tipo = 0;
-            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/ncm_lista";
     }
@@ -105,14 +83,12 @@ public class NCMController {
 
     //Insert
     @RequestMapping(value = "/ncm_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute NCM ncm, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute NCM ncm, Model model) {
         try{
             ncmService.insert(ncm);
-            tipo = 0;
-            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/ncm_lista";
     }
@@ -128,14 +104,12 @@ public class NCMController {
 
     //Update
     @RequestMapping(value = "/ncm_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute NCM ncm, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute NCM ncm, Model model) {
         try{
             ncmService.update(ncm);
-            tipo = 0;
-            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/ncm_lista";
     }

@@ -48,28 +48,20 @@ public class UsuarioController {
     @Inject private JavaMailSender mailSender;
     @Inject private Rotinas rotinas;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     @RequestMapping(value = "/usuario_lista")
-    public String lista(@PageableDefault(size = 20) Pageable pageable, Model model) {
+    public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         model.addAttribute("lista", usuarioDao.all(pageable));
         model.addAttribute("pagina", new Pagina(pageable, usuarioDao.count()));
         return "usuario_lista";
     }
 
     @RequestMapping(value = "/usuario_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             usuarioService.deleteUsuario(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/usuario_lista";
     }
@@ -116,25 +108,22 @@ public class UsuarioController {
     }
 
     @RequestMapping(value = "/usuario_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute Usuario usuario) {
+    public String insert(@ModelAttribute Usuario usuario, Model model) {
 
         try{
             usuarioService.insertUsuario(usuario);
+
+            try {
+                EmailnovoUsuario(usuario);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
-        }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", usuarioDao.all());
-        mav.setViewName("redirect:/usuario_lista");
-
-        try {
-            EmailnovoUsuario(usuario);
-        } catch (IOException e) {
-            e.printStackTrace();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
 
-        return mav;
+        return "redirect:/usuario_lista";
     }
 
     @RequestMapping(value = "/usuario_editar/{id}", method = RequestMethod.GET)
@@ -144,23 +133,19 @@ public class UsuarioController {
         return "usuario_editar";
     }
 
-    @RequestMapping(value = "/usuario_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute Usuario usuario) {
-
+    @RequestMapping(value = "/usuario_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute Usuario usuario, Model model) {
         try{
             usuarioService.updateUsuario(usuario);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", usuarioDao.all());
-        mav.setViewName("redirect:/usuario_lista");
-        return mav;
+        return "redirect:/usuario_lista";
     }
 
     @RequestMapping(value = "/usuario_novasenha/{id}")
-    public String novasenha(@PathVariable("id") Integer id) {
+    public String novasenha(@PathVariable("id") Integer id, Model model) {
         Usuario usuario = usuarioDao.byId(id);
         String novasenha = rotinas.gerarSenhaAleatoria();
         String novasenhaMD5 = rotinas.md5(novasenha, Charset.defaultCharset());
@@ -172,8 +157,6 @@ public class UsuarioController {
         usuario.setSenha(novasenha);
         try {
             EmailAlterarSenhaUsuario(usuario);
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,"Senha encaminhada por E-Mail","Alerta", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -213,5 +196,12 @@ public class UsuarioController {
         }catch (MessagingException e) {
             return;
         }
+    }
+
+    @RequestMapping(value = "/usuario_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = usuarioDao.byId(id);
+        model.addAttribute("usuario", usuario);
+        return "usuario_detalhes";
     }
 }

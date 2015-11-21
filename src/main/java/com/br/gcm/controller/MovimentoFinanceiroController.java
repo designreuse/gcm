@@ -47,42 +47,44 @@ public class MovimentoFinanceiroController {
     @Inject private MovimentoFinanceiroService movimentoFinanceiroService;
     @Inject private BancoDao bancoDao;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 
-    @RequestMapping(value = "/movimentofinanceiro_filtros/{tipomovimento}")
-    public String filtros(@PathVariable("tipomovimento") String tipomovimento,  Model model) {
+    @RequestMapping(value = "/movimentofinanceiro_lista/{tipomovimento}")
+    public String lista(@PathVariable("tipomovimento") String tipomovimento, @PageableDefault(size = 10) Pageable pageable,  Model model) {
 
         Usuario usuario = rotinas.usuarioLogado();
         Filtro_MovimentoFinanceiro filtros = new Filtro_MovimentoFinanceiro();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-        filtros.setId_Empresa(listaEmpresa.get(0).getId_Empresa());
+
+        if (!listaEmpresa.isEmpty()){
+            filtros.setId_Empresa(listaEmpresa.get(0).getId_Empresa());
+        };
+
         filtros.setTipoMovimento(tipomovimento);
 
         model.addAttribute("filtros", filtros);
         model.addAttribute("tipomovimento", tipomovimento);
         model.addAttribute("listaempresa", listaEmpresa);
-        return "movimentofinanceiro_filtros";
+        model.addAttribute("lista", movimentoFinanceiroDao.selectAll(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, movimentoFinanceiroDao.count(filtros, pageable)));
+        return "movimentofinanceiro_lista";
     }
 
-    @RequestMapping(value = "/movimentofinanceiro_lista", method = RequestMethod.POST)
-    public String lista(@ModelAttribute Filtro_MovimentoFinanceiro filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
+    @RequestMapping(value = "/movimentofinanceiro_lista/{tipomovimento}", method = RequestMethod.POST)
+    public String filtros(@PathVariable("tipomovimento") String tipomovimento, @ModelAttribute Filtro_MovimentoFinanceiro filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
-        model.addAttribute("tipomovimento", filtros.getTipoMovimento());
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("tipomovimento", tipomovimento);
+        model.addAttribute("listaempresa", listaEmpresa);
         model.addAttribute("lista", movimentoFinanceiroDao.selectAll(filtros, pageable));
-        model.addAttribute("pagina", new Pagina(pageable, movimentoFinanceiroDao.count(filtros.getId_Empresa())));
+        model.addAttribute("pagina", new Pagina(pageable, movimentoFinanceiroDao.count(filtros, pageable)));
         return "movimentofinanceiro_lista";
     }
 
@@ -102,14 +104,14 @@ public class MovimentoFinanceiroController {
 
         model.addAttribute("listaempresa", listaEmpresa);
         model.addAttribute("listabancos", bancoDao.selectAll());
-        model.addAttribute("movimentofinanceiro", movimentoFinanceiro);
+        model.addAttribute("movfinanceiro", movimentoFinanceiro);
         model.addAttribute("tipomovimento", tipomovimento);
         return "movimentofinanceiro_novo";
     }
 
     //Insert
     @RequestMapping(value = "/movimentofinanceiro_insert", method = RequestMethod.POST)
-    public ModelAndView insert(@ModelAttribute MovimentoFinanceiro movimentoFinanceiro, BindingResult result) {
+    public String insert(@ModelAttribute MovimentoFinanceiro movimentoFinanceiro, Model model) {
 
         if (movimentoFinanceiro.getValorAcrescimos() == null){movimentoFinanceiro.setValorAcrescimos(0);}
         if (movimentoFinanceiro.getValorDescontos() == null){movimentoFinanceiro.setValorDescontos(0);}
@@ -119,20 +121,11 @@ public class MovimentoFinanceiroController {
         try{
             movimentoFinanceiroService.insert(movimentoFinanceiro);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
 
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("listabancos", bancoDao.selectAll());
-        mav.addObject("movimentofinanceiro", movimentoFinanceiro);
-        mav.addObject("tipomovimento", movimentoFinanceiro.getTipoMovimento());
-        mav.setViewName("redirect:/movimentofinanceiro_editar/"+movimentoFinanceiro.getId_MovimentoFinanceiro());
-        return mav;
+        return "redirect:/movimentofinanceiro_editar/"+movimentoFinanceiro.getId_MovimentoFinanceiro();
     }
 
     //Editar
@@ -150,23 +143,46 @@ public class MovimentoFinanceiroController {
     }
 
     //Update
-    @RequestMapping(value = "/movimentofinanceiro_update", method = RequestMethod.PUT)
-    public ModelAndView update(@ModelAttribute MovimentoFinanceiro movimentoFinanceiro, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    @RequestMapping(value = "/movimentofinanceiro_update", method = RequestMethod.POST)
+    public String update(@ModelAttribute MovimentoFinanceiro movimentoFinanceiro, Model model) {
         try{
             movimentoFinanceiroService.update(movimentoFinanceiro);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
+
+        return "redirect:/movimentofinanceiro_editar/"+movimentoFinanceiro.getId_MovimentoFinanceiro();
+    }
+
+    @RequestMapping(value = "/movimentofinanceiro_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
+        MovimentoFinanceiro movimentoFinanceiro = movimentoFinanceiroDao.selectById(id);
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("listabancos", bancoDao.selectAll());
-        mav.addObject("movimentofinanceiro", movimentoFinanceiro);
-        mav.addObject("tipomovimento", movimentoFinanceiro.getTipoMovimento());
-        mav.setViewName("redirect:/movimentofinanceiro_editar/"+movimentoFinanceiro.getId_MovimentoFinanceiro());
-        return mav;
+        model.addAttribute("listaempresa", listaEmpresa);
+        model.addAttribute("listabancos", bancoDao.selectAll());
+        model.addAttribute("movimentofinanceiro", movimentoFinanceiro);
+        model.addAttribute("tipomovimento", movimentoFinanceiro.getTipoMovimento());
+        return "movimentofinanceiro_detalhes";
+    }
+
+    @RequestMapping(value = "/movimentofinanceiro_imprimirprogramacao/{tipomovimento}")
+    public String imprimirprogramacao(@PathVariable("tipomovimento") String tipomovimento, @PageableDefault(size = 10) Pageable pageable,  Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Filtro_MovimentoFinanceiro filtros = new Filtro_MovimentoFinanceiro();
+        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
+
+        if (!listaEmpresa.isEmpty()){
+            filtros.setId_Empresa(listaEmpresa.get(0).getId_Empresa());
+        };
+
+        filtros.setTipoMovimento(tipomovimento);
+
+        model.addAttribute("filtros", filtros);
+        model.addAttribute("tipomovimento", tipomovimento);
+        model.addAttribute("listaempresa", listaEmpresa);
+        return "movimentofinanceiro_imprimirprogramacao";
     }
 }

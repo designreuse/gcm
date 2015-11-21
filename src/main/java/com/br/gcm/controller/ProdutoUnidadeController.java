@@ -40,14 +40,6 @@ public class ProdutoUnidadeController {
     @Inject private UnidadeDao unidadeDao;
     @Inject private ProdutoUnidadeService produtoUnidadeService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Listar
     @RequestMapping(value = "/produtounidade_lista/{id_produto}")
     public String lista(@PathVariable("id_produto") int id_Produto, @PageableDefault(size = 8) Pageable pageable, Model model) {
@@ -59,12 +51,12 @@ public class ProdutoUnidadeController {
 
     //Deletar
     @RequestMapping(value = "/produtounidade_deleta/{id}/{id_produto}")
-    public String deletar(@PathVariable("id") Integer id, @PathVariable("id_produto") int id_Produto) {
+    public String deletar(@PathVariable("id") Integer id, @PathVariable("id_produto") int id_Produto, Model model) {
         try{
             produtoUnidadeService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/produtounidade_lista/"+id_Produto;
     }
@@ -81,13 +73,13 @@ public class ProdutoUnidadeController {
 
     //Insert
     @RequestMapping(value = "/produtounidade_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute ProdutoUnidade produtoUnidade) {
+    public String insert(@ModelAttribute ProdutoUnidade produtoUnidade, Model model) {
         produtoUnidade.setUnidadePrincipal(false);
         try{
             produtoUnidadeService.insert(produtoUnidade);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
 
         return "redirect:/produtounidade_lista/"+produtoUnidade.getId_Produto();
@@ -105,12 +97,12 @@ public class ProdutoUnidadeController {
 
     //Update
     @RequestMapping(value = "/produtounidade_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute ProdutoUnidade produtoUnidade, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute ProdutoUnidade produtoUnidade, Model model) {
         try{
             produtoUnidadeService.update(produtoUnidade);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
 
         return "redirect:/produtounidade_lista/"+produtoUnidade.getId_Produto();

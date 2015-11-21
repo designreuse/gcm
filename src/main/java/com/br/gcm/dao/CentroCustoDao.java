@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,18 +53,37 @@ public class CentroCustoDao {
         return db.queryForObject("Select * from CentroCusto Where id_CentroCusto=?", listaCentroCusto, id);
     }
 
+    public CentroCusto selectbySigla(int id_Empresa, String sigla) {
+        return db.queryForObject("Select * from CentroCusto Where id_Empresa=? and sigla=? ", listaCentroCusto, id_Empresa, sigla.toUpperCase());
+    }
+
     public List<CentroCusto> selectAll(int id_Empresa) {
         return db.query("Select * from CentroCusto Where id_Empresa=?", listaCentroCusto, id_Empresa);
     }
 
-    public List<CentroCusto> selectAllbyFiltros(int id_Empresa, String filtros) {
-        String sql = "Select * from CentroCusto Where id_Empresa=? and (sigla=? or descricao like ?)";
-        return db.query(sql, listaCentroCusto, id_Empresa,filtros.toUpperCase(),"%"+filtros+"%");
+    public List<CentroCusto> selectAll(CentroCusto filtros) {
+        List arr = new ArrayList<>();
+        String sql = "Select * from CentroCusto Where 1=1 ";
+
+        if (filtros.getId_Empresa() > 0){
+            sql = sql + "And id_Empresa = ?";
+            arr.add(filtros.getId_Empresa());
+        }
+
+        if (!filtros.getSigla().equals("") && filtros.getSigla() != null){
+            sql = sql + " And Sigla = ?";
+            arr.add(filtros.getSigla());
+        }
+
+        if (!filtros.getDescricao().equals("") && filtros.getDescricao() != null){
+            sql = sql + " And Descricao like ?";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
+
+        return db.query(sql, listaCentroCusto, arr.toArray());
     }
 
-    public CentroCusto selectbySigla(int id_Empresa, String sigla) {
-        return db.queryForObject("Select * from CentroCusto Where id_Empresa=? and sigla=? ", listaCentroCusto, id_Empresa, sigla.toUpperCase());
-    }
+
 
     public List<CentroCusto> selectAll_paginado(int id_Empresa, Pageable p) {
         return db.query("Select * from CentroCusto Where id_Empresa=? " +

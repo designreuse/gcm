@@ -36,6 +36,24 @@ public class Filtro_MovimentoFinanceiro {
     private Number ValorVencimentoFim;
     private Number ValorLiquidacaoIni;
     private Number ValorLiquidacaoFim;
+    private String TipoReport;
+    private String AgrupamentoReport;
+
+    public String getAgrupamentoReport() {
+        return AgrupamentoReport;
+    }
+
+    public void setAgrupamentoReport(String agrupamentoReport) {
+        AgrupamentoReport = agrupamentoReport;
+    }
+
+    public String getTipoReport() {
+        return TipoReport;
+    }
+
+    public void setTipoReport(String tipoReport) {
+        TipoReport = tipoReport;
+    }
 
     public int getId_MovimentoFinanceiro() {
         return id_MovimentoFinanceiro;

@@ -28,15 +28,27 @@
                         <c:forEach items="${empresa_lista}" var="p">
                             <tr>
                                 <td>
-                                    <a href="/empresa_deleta/${p.id_Empresa}" class="btn btn-default btn-xs" title="Deletar">
-                                        <i class="fa fa-trash-o"></i>
-                                    </a>
-                                    <a href="/empresa_editar/${p.id_Empresa}" class="btn btn-default btn-xs" title="Editar">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a href="/empresa_detalhes/${p.id_Empresa}" class="btn btn-default btn-xs" title="Detalhes">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
+                                    <c:choose>
+                                        <c:when test="${deletar == 'true'}">
+                                            <a href="/empresa_deleta/${p.id_Empresa}" class="btn btn-default btn-xs" title="Deletar">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${editar == 'true'}">
+                                            <a href="/empresa_editar/${p.id_Empresa}" class="btn btn-default btn-xs" title="Editar">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${detalhes == 'true'}">
+                                            <a href="/empresa_detalhes/${p.id_Empresa}" class="btn btn-default btn-xs" title="Detalhes">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
                                 </td>
                                 <td>${p.id_Empresa}</td>
                                 <td>${p.cnpj}</td>
@@ -59,9 +71,13 @@
                         <vls:paginador pagina="${pagina}"/>
                     </div>
                     <div class="col-sm-3" style="margin-top: 15px;">
-                        <a style="width: 80px" href="<c:url value="/empresa_novo"/>" class="btn btn-primary" title="Novo">
-                            <i class="fa fa-plus"></i> Novo
-                        </a>
+                        <c:choose>
+                            <c:when test="${novo == 'true'}">
+                                <a style="width: 80px" href="<c:url value="/empresa_novo"/>" class="btn btn-primary" title="Novo">
+                                    <i class="fa fa-plus"></i> Novo
+                                </a>
+                            </c:when>
+                        </c:choose>
                     </div>
                 </div>
             </div>

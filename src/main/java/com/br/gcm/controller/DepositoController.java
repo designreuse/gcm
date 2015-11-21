@@ -40,18 +40,16 @@ public class DepositoController {
     @Inject private Rotinas rotinas;
     @Inject private EmpresaDao empresaDao;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Listar
     @RequestMapping(value = "/deposito_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1105");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
         Deposito filtros = new Deposito();
 
@@ -59,17 +57,20 @@ public class DepositoController {
             filtros.setId_Empresa(listaEmpresa.get(0).getId_Empresa());
         };
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110501");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110502");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110503");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110504");
 
-        model.addAttribute("mensagem", mensagemTransacao);
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
         model.addAttribute("filtros", filtros);
         model.addAttribute("deposito_lista", depositoDao.selectAll_paginado(filtros, pageable));
         model.addAttribute("lista_empresa", listaEmpresa);
         model.addAttribute("pagina", new Pagina(pageable, depositoDao.count(filtros)));
 
-        limparmensagem();
         return "deposito_lista";
     }
 
@@ -77,18 +78,28 @@ public class DepositoController {
     public ModelAndView filtros(@ModelAttribute Deposito filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1105");
+        if (lista != true) {
+            mav.addObject("mensagem", "AVISO: Transação não permitida.");
+            mav.setViewName("mensagemerro");
+            return mav;
+        }
+
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110501");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110502");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110503");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110504");
 
-        mav.addObject("mensagem", mensagemTransacao);
+        mav.addObject("novo", novo);
+        mav.addObject("editar", editar);
+        mav.addObject("deletar", deletar);
+        mav.addObject("detalhes", detalhes);
         mav.addObject("filtros", filtros);
         mav.addObject("deposito_lista", depositoDao.selectAll_paginado(filtros, pageable));
         mav.addObject("lista_empresa", listaEmpresa);
         mav.addObject("pagina", new Pagina(pageable, depositoDao.count(filtros)));
-        limparmensagem();
 
         mav.setViewName("deposito_lista");
         return mav;
@@ -96,14 +107,19 @@ public class DepositoController {
 
     //Deletar
     @RequestMapping(value = "/deposito_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110503");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             depositoService.delete(id);
-            tipo = 0;
-            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/deposito_lista";
     }
@@ -112,6 +128,11 @@ public class DepositoController {
     @RequestMapping(value = "/deposito_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110501");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
         Deposito deposito = new Deposito();
@@ -122,14 +143,12 @@ public class DepositoController {
 
     //Insert
     @RequestMapping(value = "/deposito_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute Deposito deposito) {
+    public String insert(@ModelAttribute Deposito deposito, Model model) {
         try{
             depositoService.insert(deposito);
-            tipo = 0;
-            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
 
         return "redirect:/deposito_lista";
@@ -139,6 +158,11 @@ public class DepositoController {
     @RequestMapping(value = "/deposito_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110502");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
         model.addAttribute("listaempresa", listaEmpresa);
@@ -148,14 +172,12 @@ public class DepositoController {
 
     //Update
     @RequestMapping(value = "/deposito_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute Deposito deposito) {
+    public String update(@ModelAttribute Deposito deposito, Model model) {
         try{
             depositoService.update(deposito);
-            tipo = 0;
-            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/deposito_lista";
     }
@@ -163,6 +185,11 @@ public class DepositoController {
     @RequestMapping(value = "/deposito_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110504");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
         model.addAttribute("listaempresa", listaEmpresa);

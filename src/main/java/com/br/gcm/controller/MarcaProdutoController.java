@@ -35,28 +35,14 @@ public class MarcaProdutoController {
     @Inject private MarcaProdutoDao marcaProdutoDao;
     @Inject private MarcaProdutoService marcaProdutoService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Listar
     @RequestMapping(value = "/marcaproduto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         MarcaProduto filtros = new MarcaProduto();
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("filtros", filtros);
         model.addAttribute("marcaproduto_lista",  marcaProdutoDao.selectAll_paginado(pageable));
         model.addAttribute("pagina", new Pagina(pageable, marcaProdutoDao.count()));
-        limparmensagem();
         return "marcaproduto_lista";
     }
 
@@ -64,15 +50,9 @@ public class MarcaProdutoController {
     public ModelAndView filtros(@ModelAttribute MarcaProduto filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        mav.addObject("mensagem", mensagemTransacao);
         mav.addObject("filtros", filtros);
         mav.addObject("marcaproduto_lista",  marcaProdutoDao.selectAll_paginado(pageable));
         mav.addObject("pagina", new Pagina(pageable, marcaProdutoDao.count()));
-        limparmensagem();
 
         mav.setViewName("deposito_lista");
         return mav;
@@ -80,14 +60,12 @@ public class MarcaProdutoController {
 
     //Deletar
     @RequestMapping(value = "/marcaproduto_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             marcaProdutoService.delete(id);
-            tipo = 0;
-            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/marcaproduto_lista";
     }
@@ -102,14 +80,12 @@ public class MarcaProdutoController {
 
     //Insert
     @RequestMapping(value = "/marcaproduto_gravar", method = RequestMethod.POST)
-    public String insert(@ModelAttribute MarcaProduto marcaProduto) {
+    public String insert(@ModelAttribute MarcaProduto marcaProduto, Model model) {
         try{
             marcaProdutoService.insert(marcaProduto);
-            tipo = 0;
-            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/marcaproduto_lista";
     }
@@ -124,14 +100,12 @@ public class MarcaProdutoController {
 
     //Update
     @RequestMapping(value = "/marcaproduto_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute MarcaProduto marcaProduto) {
+    public String update(@ModelAttribute MarcaProduto marcaProduto, Model model) {
         try{
             marcaProdutoService.update(marcaProduto);
-            tipo = 0;
-            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/marcaproduto_lista";
     }

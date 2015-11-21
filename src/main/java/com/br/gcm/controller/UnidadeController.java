@@ -33,58 +33,36 @@ public class UnidadeController {
     @Inject private UnidadeDao unidadeDao;
     @Inject private UnidadeService unidadeService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Listar
     @RequestMapping(value = "/unidade_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         Unidade filtros = new Unidade();
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("unidade_lista", unidadeDao.selectAll_paginado(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, unidadeDao.count(filtros)));
         model.addAttribute("filtros", filtros);
 
-        limparmensagem();
         return "unidade_lista";
     }
 
     //Listar
     @RequestMapping(value = "/unidade_lista", method = RequestMethod.POST)
     public String filtros(@ModelAttribute Unidade filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("unidade_lista", unidadeDao.selectAll_paginado(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, unidadeDao.count(filtros)));
         model.addAttribute("filtros", filtros);
 
-        limparmensagem();
         return "unidade_lista";
     }
 
     //Deletar
     @RequestMapping(value = "/unidade_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             unidadeService.delete(id);
-            tipo = 0;
-            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/unidade_lista";
     }
@@ -99,14 +77,12 @@ public class UnidadeController {
 
     //Insert
     @RequestMapping(value = "/unidade_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute Unidade unidade, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute Unidade unidade, Model model) {
         try{
             unidadeService.insert(unidade);
-            tipo = 0;
-            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/unidade_lista";
     }
@@ -121,14 +97,12 @@ public class UnidadeController {
 
     //Update
     @RequestMapping(value = "/unidade_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute Unidade unidade, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute Unidade unidade, Model model) {
         try{
             unidadeService.update(unidade);
-            tipo = 0;
-            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/unidade_lista";
     }

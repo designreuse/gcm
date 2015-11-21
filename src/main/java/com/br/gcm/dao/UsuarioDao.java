@@ -97,6 +97,22 @@ public class UsuarioDao {
         return db.queryForObject("SELECT COUNT(*) FROM usuario ", Long.class);
     }
 
+    @Transactional(readOnly = true)
+    public Boolean transacaousuario(Integer id_usuario, String codigotransacao){
+        List arr = new ArrayList<>();
+        String sql = "Select ";
+        sql = sql + "case when (select count(*) from grupotransacao ";
+        sql = sql + "inner join transacao on grupotransacao.id_transacao = transacao.id_transacao ";
+        sql = sql + "inner join usuariodogrupo on usuariodogrupo.id_grupousuario = grupotransacao.id_grupousuario ";
+        sql = sql + "where replace(transacao.codigotransacao,'.','') = ? ";
+        sql = sql + "and usuariodogrupo.id_Usuario = ?) > 0 then true else false end as permissao ";
+
+        arr.add(codigotransacao.replace(".","").replace(".","").replace(".","").replace(".","").replace(".",""));
+        arr.add(id_usuario);
+
+        return db.queryForObject(sql, Boolean.class, arr.toArray());
+    }
+
     private RowMapper<Usuario> mapperUsuario = new RowMapper<Usuario>() {
         @Override
         public Usuario mapRow(ResultSet rs, int rowNum) throws SQLException {

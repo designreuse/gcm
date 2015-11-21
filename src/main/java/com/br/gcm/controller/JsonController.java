@@ -12,6 +12,9 @@ import com.br.gcm.dao.VWEstoqueProdutoLoteDao;
 import com.br.gcm.dao.GrupoTransacaoDao;
 import com.br.gcm.dao.CentroCustoDao;
 import com.br.gcm.dao.PlanoContasDao;
+import com.br.gcm.dao.MovimentoFinanceiroDao;
+
+import com.br.gcm.model.MovimentoFinanceiro;
 import com.br.gcm.model.GrupoTransacao;
 import com.br.gcm.model.Municipio;
 import com.br.gcm.model.Uf;
@@ -21,7 +24,6 @@ import com.br.gcm.model.Produto;
 import com.br.gcm.model.ProdutoLote;
 import com.br.gcm.model.ProdutoUnidade;
 import com.br.gcm.model.VWEstoqueProdutoLote;
-import com.br.gcm.model.filtros.Filtro_Pessoa;
 import com.br.gcm.model.filtros.Filtro_Produto;
 import com.br.gcm.model.CentroCusto;
 import com.br.gcm.model.PlanoContas;
@@ -34,15 +36,17 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import com.br.gcm.service.MovimentoFinanceiroService;
 
 import javax.inject.Inject;
 import javax.swing.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created with IntelliJ IDEA.
@@ -70,10 +74,12 @@ public class JsonController {
     @Inject private CentroCustoDao centroCustoDao;
     @Inject private PlanoContasDao planoContasDao;
     @Inject private ContaCorrenteDao contaCorrenteDao;
+    @Inject private MovimentoFinanceiroDao movimentoFinanceiroDao;
+    @Inject private MovimentoFinanceiroService movimentoFinanceiroService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
@@ -142,6 +148,13 @@ public class JsonController {
         return pessoa;
     }
 
+    @RequestMapping(value="/pessoabyid/{id}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Pessoa pessoabyid(@PathVariable("id") int id) {
+        Pessoa pessoa = pessoaDao.selectById(id);
+        return pessoa;
+    }
+
     //lista_pessoa
     @RequestMapping(value="/lista_pessoa/{tipo}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
@@ -151,10 +164,26 @@ public class JsonController {
         return lista;
     }
 
+    @RequestMapping(value="/pessoabyfiltros/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    List<Pessoa> pessoabyfiltros(@PathVariable String[] campos) {
+        Pessoa filtros = new Pessoa();
+        String tipo = campos[0];
+        filtros.setCpfCnpj(campos[1]);
+        filtros.setRazaoSocial(campos[2]);
+        List<Pessoa> lista = pessoaDao.selectAll(tipo, filtros);
+        return lista;
+    }
+
     @RequestMapping(value="/lista_centrocusto/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     List<CentroCusto> lista_centrocusto(@PathVariable String[] campos) {
-        List<CentroCusto> lista = centroCustoDao.selectAllbyFiltros(Integer.parseInt(campos[0]), campos[1]);
+        CentroCusto filtros = new CentroCusto();
+        filtros.setId_Empresa(Integer.parseInt(campos[0]));
+        filtros.setSigla(campos[1]);
+        filtros.setDescricao(campos[2]);
+
+        List<CentroCusto> lista = centroCustoDao.selectAll(filtros);
         return lista;
     }
 
@@ -179,6 +208,7 @@ public class JsonController {
         filtros.setId_Empresa(Integer.parseInt(campos[0]));
         filtros.setTipoConta(campos[1]);
         filtros.setCodigoConta(campos[2]);
+        filtros.setDescricao(campos[3]);
 
         List<PlanoContas> lista = planoContasDao.selectAll(filtros);
         return lista;
@@ -188,6 +218,18 @@ public class JsonController {
     public @ResponseBody
     PlanoContas planocontasbyid(@PathVariable("id") int id) {
         PlanoContas lista = planoContasDao.selectById(id);
+        return lista;
+    }
+
+    @RequestMapping(value="/planocontasbycodigo/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    PlanoContas planocontasbycodigo(@PathVariable String[] campos) {
+        PlanoContas filtros = new PlanoContas();
+        filtros.setId_Empresa(Integer.parseInt(campos[0]));
+        filtros.setTipoConta(campos[1]);
+        filtros.setCodigoConta(campos[2]);
+
+        PlanoContas lista = planoContasDao.selectByCodigo(filtros);
         return lista;
     }
 
@@ -278,6 +320,68 @@ public class JsonController {
     @RequestMapping(value="/lista_contacorrente/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     List<ContaCorrente> lista_contacorrente(@PathVariable int[] campos) {
-        return contaCorrenteDao.selectAllByBanco(campos[0], campos[1]);
+        ContaCorrente filtros = new ContaCorrente();
+        filtros.setId_Empresa(campos[0]);
+        filtros.setId_Banco(campos[1]);
+
+        return contaCorrenteDao.selectAll(filtros);
+    }
+
+    @RequestMapping(value="/pesquisa_movimentofinanceiro/{id}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    MovimentoFinanceiro pesquisa_movimentofinanceiro(@PathVariable int id) {
+
+        return movimentoFinanceiroDao.selectById(id);
+    }
+
+    @RequestMapping(value="/cancelar_movimentofinanceiro/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    void cancelar_movimentofinanceiro(@PathVariable String[] campos) {
+
+        MovimentoFinanceiro movimentoFinanceiro = movimentoFinanceiroDao.selectById(Integer.parseInt(campos[0]));
+        movimentoFinanceiro.setMotivoCancelamento(campos[1]);
+        movimentoFinanceiro.setStatusMovimento("C");
+
+        try{
+            movimentoFinanceiroService.update(movimentoFinanceiro);
+        }catch(Exception e){
+            JOptionPane JOptinPane = new JOptionPane();
+            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    @RequestMapping(value="/liquidar_movimentofinanceiro/{campos}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    void liquidar_movimentofinanceiro(@PathVariable String[] campos) {
+
+        MovimentoFinanceiro movimentoFinanceiro = movimentoFinanceiroDao.selectById(Integer.parseInt(campos[0]));
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String data = campos[1];
+        Date date = null;
+        try {
+            date = formatter.parse(data);
+        } catch (ParseException e) {
+            JOptionPane JOptinPane = new JOptionPane();
+            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        movimentoFinanceiro.setDataLiquidacao(date);
+        movimentoFinanceiro.setConciliado(false);
+        if (campos[2].equals("S")){
+            movimentoFinanceiro.setConciliado(true);
+        }
+        String operacao = campos[3];
+
+        try{
+            if (operacao.equals("L")){
+                movimentoFinanceiroService.liquidar(movimentoFinanceiro);
+            } else{
+                movimentoFinanceiroService.estornar(movimentoFinanceiro);
+            }
+        }catch(Exception e){
+            JOptionPane JOptinPane = new JOptionPane();
+            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 }

@@ -58,16 +58,39 @@ public class PlanoContasDao {
         String sql = "Select COUNT(*) from PlanoContas Where 1=1 ";
 
 
-        if (filtros.getId_Empresa() > 0){sql = sql + " And id_Empresa=?"; arr.add(filtros.getId_Empresa());}
-        if (filtros.getTipoConta() != "" && filtros.getTipoConta() != null) {sql = sql + " And TipoConta = ? "; arr.add(filtros.getTipoConta());}
-        if (filtros.getCodigoConta() != "" && filtros.getCodigoConta() != null) {sql = sql + " And CodigoConta like ? "; arr.add("%"+filtros.getCodigoConta()+"%");}
-        if (filtros.getDescricao() != "" && filtros.getDescricao() != null) {sql = sql + " And Descricao like ? "; arr.add("%"+filtros.getDescricao()+"%");}
+        if (filtros.getId_Empresa() > 0){
+            sql = sql + " And id_Empresa=?";
+            arr.add(filtros.getId_Empresa());
+        }
+        if (filtros.getTipoConta() != "" && filtros.getTipoConta() != null) {
+            sql = sql + " And TipoConta = ? ";
+            arr.add(filtros.getTipoConta());
+        }
+        if (filtros.getCodigoConta() != "" && filtros.getCodigoConta() != null) {
+            sql = sql + " And replace(codigoconta,'.','') like ? ";
+            arr.add(filtros.getCodigoConta()+"%");
+        }
+        if (filtros.getDescricao() != "" && filtros.getDescricao() != null) {
+            sql = sql + " And Descricao like ? ";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
 
         return db.queryForObject(sql, Long.class, arr.toArray());
     }
 
     public PlanoContas selectById(Integer id) {
         return db.queryForObject("Select * from PlanoContas Where id_PlanoContas=?", listaPlanoContas, id);
+    }
+
+    public PlanoContas selectByCodigo(PlanoContas filtros) {
+        List arr = new ArrayList<>();
+        String sql = "Select * from PlanoContas Where 1=1 "+
+                " and id_Empresa = ? and TipoConta = ? And replace(codigoconta,'.','') = ?";
+        arr.add(filtros.getId_Empresa());
+        arr.add(filtros.getTipoConta());
+        arr.add(filtros.getCodigoConta());
+
+        return db.queryForObject(sql, listaPlanoContas, arr.toArray());
     }
 
     public List<PlanoContas> selectAll(int id_Empresa) {
@@ -79,10 +102,22 @@ public class PlanoContasDao {
         String sql = "Select * from PlanoContas Where 1=1 ";
 
 
-        if (filtros.getId_Empresa() > 0){sql = sql + " And id_Empresa=?"; arr.add(filtros.getId_Empresa());}
-        if (filtros.getTipoConta() != "" && filtros.getTipoConta() != null) {sql = sql + " And TipoConta = ? "; arr.add(filtros.getTipoConta());}
-        if (filtros.getCodigoConta() != "" && filtros.getCodigoConta() != null) {sql = sql + " And CodigoConta like ? "; arr.add("%"+filtros.getCodigoConta()+"%");}
-        if (filtros.getDescricao() != "" && filtros.getDescricao() != null) {sql = sql + " And Descricao like ? "; arr.add("%"+filtros.getDescricao()+"%");}
+        if (filtros.getId_Empresa() > 0){
+            sql = sql + " And id_Empresa=?";
+            arr.add(filtros.getId_Empresa());
+        }
+        if (filtros.getTipoConta() != "" && filtros.getTipoConta() != null) {
+            sql = sql + " And TipoConta = ? ";
+            arr.add(filtros.getTipoConta());
+        }
+        if (filtros.getCodigoConta() != "" && filtros.getCodigoConta() != null) {
+            sql = sql + " And replace(codigoconta,'.','') like ? ";
+            arr.add(filtros.getCodigoConta().replace(".","").replace(".","").replace(".","")+"%");
+        }
+        if (filtros.getDescricao() != "" && filtros.getDescricao() != null) {
+            sql = sql + " And Descricao like ? ";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
 
         sql = sql + " Order By CodigoConta ";
 
@@ -94,10 +129,22 @@ public class PlanoContasDao {
         String sql = "Select * from PlanoContas Where 1=1 ";
 
 
-        if (filtros.getId_Empresa() > 0){sql = sql + " And id_Empresa=?"; arr.add(filtros.getId_Empresa());}
-        if (filtros.getTipoConta() != "" && filtros.getTipoConta() != null) {sql = sql + " And TipoConta = ? "; arr.add(filtros.getTipoConta());}
-        if (filtros.getCodigoConta() != "" && filtros.getCodigoConta() != null) {sql = sql + " And CodigoConta like ? "; arr.add("%"+filtros.getCodigoConta()+"%");}
-        if (filtros.getDescricao() != "" && filtros.getDescricao() != null) {sql = sql + " And Descricao like ? "; arr.add("%"+filtros.getDescricao()+"%");}
+        if (filtros.getId_Empresa() > 0){
+            sql = sql + " And id_Empresa=?";
+            arr.add(filtros.getId_Empresa());
+        }
+        if (filtros.getTipoConta() != "" && filtros.getTipoConta() != null) {
+            sql = sql + " And TipoConta = ? ";
+            arr.add(filtros.getTipoConta());
+        }
+        if (filtros.getCodigoConta() != "" && filtros.getCodigoConta() != null) {
+            sql = sql + " And replace(codigoconta,'.','') like ? ";
+            arr.add(filtros.getCodigoConta().replace(".","").replace(".","").replace(".","")+"%");
+        }
+        if (filtros.getDescricao() != "" && filtros.getDescricao() != null) {
+            sql = sql + " And Descricao like ? ";
+            arr.add("%"+filtros.getDescricao()+"%");
+        }
 
         sql = sql + " Order By CodigoConta LIMIT ? OFFSET ? ";
         arr.add(p.getPageSize());

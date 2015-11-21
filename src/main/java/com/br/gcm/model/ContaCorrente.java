@@ -17,6 +17,25 @@ public class ContaCorrente {
     private Number SaldoConta;
     private Banco banco;
 
+    private String Descricao;
+    private String NumeroBanco;
+
+    public String getDescricao() {
+        return Descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        Descricao = descricao;
+    }
+
+    public String getNumeroBanco() {
+        return NumeroBanco;
+    }
+
+    public void setNumeroBanco(String numeroBanco) {
+        NumeroBanco = numeroBanco;
+    }
+
     public Banco getBanco() {
         return banco;
     }

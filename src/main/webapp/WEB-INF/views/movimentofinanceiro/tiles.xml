@@ -2,23 +2,26 @@
 <!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 
 <tiles-definitions>
-    <!-- Filtros-->
-    <definition name="movimentofinanceiro_filtros" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/movimentofinanceiro/movimentofinanceiro_filtros.jsp" />
-    </definition>
-
     <!-- lista-->
-    <definition name="movimentofinanceiro_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/movimentofinanceiro/movimentofinanceiro_lista.jsp" />
+    <definition name="movimentofinanceiro_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/movimentofinanceiro/movimentofinanceiro_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="movimentofinanceiro_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/movimentofinanceiro/movimentofinanceiro_novo.jsp" />
+    <definition name="movimentofinanceiro_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/movimentofinanceiro/movimentofinanceiro_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="movimentofinanceiro_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/movimentofinanceiro/movimentofinanceiro_editar.jsp" />
+    <definition name="movimentofinanceiro_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/movimentofinanceiro/movimentofinanceiro_editar_lte.jsp" />
+    </definition>
+
+    <definition name="movimentofinanceiro_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/movimentofinanceiro/movimentofinanceiro_detalhes_lte.jsp" />
+    </definition>
+
+    <definition name="movimentofinanceiro_imprimirprogramacao" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/movimentofinanceiro/movimentofinanceiro_imprimirprogramacao_lte.jsp" />
     </definition>
 </tiles-definitions>

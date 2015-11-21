@@ -18,12 +18,12 @@
     <definition name="login-layout" template="/WEB-INF/templates/login/layout.jsp" />
 
     <!-- PESQ -->
-    <definition name="pesq-layout" template="/WEB-INF/templates/main/layout_pesq.jsp">
-        <put-attribute name="title" value="GCM" />
-        <put-attribute name="header" value="/WEB-INF/templates/main/header_pesq.jsp" />
-        <put-attribute name="menu" value="/WEB-INF/templates/main/menu.jsp" />
-        <put-attribute name="body" value="www.gcm.com.br" />
-        <put-attribute name="footer" value="/WEB-INF/templates/main/footer_pesq.jsp"/>
+    <definition name="pesq-layout" template="/WEB-INF/templates/lte/layout-pesq-lte.jsp">
+        <put-attribute name="header" value="/WEB-INF/templates/lte/header.jsp"/>
+        <!--put-attribute name="menu" value="/WEB-INF/templates/lte/menu.jsp" / -->
+        <put-attribute name="footer" value="/WEB-INF/templates/lte/footer.jsp"/>
+        <put-attribute name="control-side" value="/WEB-INF/templates/lte/control-sidebar.jsp"/>
+        <put-attribute name="mensagens" value="/WEB-INF/templates/lte/mensagens-lte.jsp"/>
     </definition>
 
     <!-- LTE LAYOUT -->
@@ -33,7 +33,6 @@
         <put-attribute name="footer" value="/WEB-INF/templates/lte/footer.jsp"/>
         <put-attribute name="control-side" value="/WEB-INF/templates/lte/control-sidebar.jsp"/>
         <put-attribute name="mensagens" value="/WEB-INF/templates/lte/mensagens-lte.jsp"/>
-
     </definition>
 
 

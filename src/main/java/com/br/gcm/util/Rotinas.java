@@ -501,4 +501,8 @@ public class Rotinas {
 
         return senha;
     }
+
+    public Boolean validaTransacaoUsuario(int id_Usuario, String codigoTransacao){
+        return usuarioDao.transacaousuario(id_Usuario, codigoTransacao);
+    }
 }

@@ -29,14 +29,6 @@ public class SituacaoTributariaBController {
     @Inject private SituacaoTributariaBDao situacaoTributariaBDao;
     @Inject private SituacaoTributariaBService situacaoTributariaBService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Listar
     @RequestMapping(value = "/stb_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
@@ -47,12 +39,12 @@ public class SituacaoTributariaBController {
 
     //Deletar
     @RequestMapping(value = "/stb_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             situacaoTributariaBService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/stb_lista";
     }
@@ -67,12 +59,12 @@ public class SituacaoTributariaBController {
 
     //Insert
     @RequestMapping(value = "/stb_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute SituacaoTributariaB situacaoTributariaB) {
+    public String insert(@ModelAttribute SituacaoTributariaB situacaoTributariaB, Model model) {
         try{
             situacaoTributariaBService.insert(situacaoTributariaB);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/stb_lista";
     }
@@ -87,12 +79,12 @@ public class SituacaoTributariaBController {
 
     //Update
     @RequestMapping(value = "/stb_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute SituacaoTributariaB situacaoTributariaB, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute SituacaoTributariaB situacaoTributariaB, Model model) {
         try{
             situacaoTributariaBService.update(situacaoTributariaB);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/stb_lista";
     }

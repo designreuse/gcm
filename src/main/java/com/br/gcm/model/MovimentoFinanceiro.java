@@ -35,11 +35,93 @@ public class MovimentoFinanceiro {
     private int QtdDias;
     private Number ValorDescontos;
     private Number ValorLiquido;
+    private Number DocumentoOrigem;
+    private String MotivoCancelamento;
 
     private CentroCusto centroCusto;
     private PlanoContas planoContas;
     private ContaCorrente contaCorrente;
     private Pessoa pessoa;
+    private String RazaoSocial;
+    private String RazaoSocialEmpresa;
+    private Boolean Conciliado;
+    private String CodigoConta;
+    private String DescricaoConta;
+
+    private String Periodicidade; //A-Anual M-Mensal
+    private int QtdLancamentos;
+
+    public String getCodigoConta() {
+        return CodigoConta;
+    }
+
+    public void setCodigoConta(String codigoConta) {
+        CodigoConta = codigoConta;
+    }
+
+    public String getDescricaoConta() {
+        return DescricaoConta;
+    }
+
+    public void setDescricaoConta(String descricaoConta) {
+        DescricaoConta = descricaoConta;
+    }
+
+    public Boolean getConciliado() {
+        return Conciliado;
+    }
+
+    public void setConciliado(Boolean conciliado) {
+        Conciliado = conciliado;
+    }
+
+    public String getRazaoSocialEmpresa() {
+        return RazaoSocialEmpresa;
+    }
+
+    public void setRazaoSocialEmpresa(String razaoSocialEmpresa) {
+        RazaoSocialEmpresa = razaoSocialEmpresa;
+    }
+
+    public String getMotivoCancelamento() {
+        return MotivoCancelamento;
+    }
+
+    public void setMotivoCancelamento(String motivoCancelamento) {
+        MotivoCancelamento = motivoCancelamento;
+    }
+
+    public Number getDocumentoOrigem() {
+        return DocumentoOrigem;
+    }
+
+    public void setDocumentoOrigem(Number documentoOrigem) {
+        DocumentoOrigem = documentoOrigem;
+    }
+
+    public String getPeriodicidade() {
+        return Periodicidade;
+    }
+
+    public void setPeriodicidade(String periodicidade) {
+        Periodicidade = periodicidade;
+    }
+
+    public int getQtdLancamentos() {
+        return QtdLancamentos;
+    }
+
+    public void setQtdLancamentos(int qtdLancamentos) {
+        QtdLancamentos = qtdLancamentos;
+    }
+
+    public String getRazaoSocial() {
+        return RazaoSocial;
+    }
+
+    public void setRazaoSocial(String razaoSocial) {
+        RazaoSocial = razaoSocial;
+    }
 
     public Number getValorLiquido() {
         return ValorLiquido;

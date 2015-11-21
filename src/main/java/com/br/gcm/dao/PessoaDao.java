@@ -314,7 +314,7 @@ public class PessoaDao {
 
     public List<Pessoa> selectAll(String tipo, Pessoa filtros) {
         List arr = new ArrayList<>();
-        String sql = "Select Pessoa.*, " +
+        String sql = "Select distinct Pessoa.*, " +
                 " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CLI' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
                 " end as TipoCliente, " +
                 " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='FOR' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
@@ -345,11 +345,11 @@ public class PessoaDao {
             sql = sql + " And Pessoa.id_Pessoa = ?";
             arr.add(filtros.getId_Pessoa());
         };
-        if (filtros.getCpfCnpj() != "" && filtros.getCpfCnpj() != null){
+        if (!filtros.getCpfCnpj().trim().equals("") && filtros.getCpfCnpj() != null){
             sql = sql + " And Pessoa.CpfCnpj = ?";
             arr.add(filtros.getCpfCnpj());
         };
-        if (filtros.getRazaoSocial() != "" && filtros.getRazaoSocial() != null){
+        if (!filtros.getRazaoSocial().trim().equals("") && filtros.getRazaoSocial() != null){
             sql = sql + " And Pessoa.RazaoSocial like ?";
             arr.add("%"+filtros.getRazaoSocial()+"%");
         };
@@ -364,7 +364,7 @@ public class PessoaDao {
 
     public List<Pessoa> selectAll(String tipo, Pessoa filtros, Pageable p) {
         List arr = new ArrayList<>();
-        String sql = " Select Pessoa.*, " +
+        String sql = " Select distinct Pessoa.*, " +
                 " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='CLI' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +
                 " end as TipoCliente, " +
                 " case when (select count(*) from pessoatipo where pessoatipo.tipopessoa='FOR' and pessoa.id_pessoa = pessoatipo.id_pessoa)>0 then true else false " +

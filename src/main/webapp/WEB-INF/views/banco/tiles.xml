@@ -3,17 +3,21 @@
 
 <tiles-definitions>
     <!-- lista-->
-    <definition name="banco_lista" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/banco/banco_lista.jsp" />
+    <definition name="banco_lista" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/banco/banco_lista_lte.jsp" />
     </definition>
 
     <!-- novo-->
-    <definition name="banco_novo" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/banco/banco_novo.jsp" />
+    <definition name="banco_novo" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/banco/banco_novo_lte.jsp" />
     </definition>
 
     <!-- editar-->
-    <definition name="banco_editar" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/banco/banco_editar.jsp" />
+    <definition name="banco_editar" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/banco/banco_editar_lte.jsp" />
+    </definition>
+
+    <definition name="banco_detalhes" extends="lte-layout">
+        <put-attribute name="body" value="/WEB-INF/views/banco/banco_detalhes_lte.jsp" />
     </definition>
 </tiles-definitions>

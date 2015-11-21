@@ -27,28 +27,14 @@ public class PaisController {
     @Inject private PaisDao paisDao;
     @Inject private PaisService paisService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     @RequestMapping(value = "/pais_lista")
     public String pais_lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         Filtro_Pais filtros = new Filtro_Pais();
-
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-        model.addAttribute("mensagem", mensagemTransacao);
 
         model.addAttribute("pais_lista", paisDao.Pais_Paginado(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, paisDao.count(filtros)));
         model.addAttribute("filtros", filtros);
 
-        limparmensagem();
         return "pais_lista";
     }
 
@@ -57,30 +43,22 @@ public class PaisController {
     public ModelAndView filtros(@ModelAttribute Filtro_Pais filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        mav.addObject("mensagem", mensagemTransacao);
         mav.addObject("pais_lista", paisDao.Pais_Paginado(filtros, pageable));
         mav.addObject("pagina", new Pagina(pageable, paisDao.count(filtros)));
         mav.addObject("filtros", filtros);
         mav.setViewName("pais_lista");
 
-        limparmensagem();
         return mav;
     }
 
     //Deleta Pais
     @RequestMapping(value = "/pais_deleta/{id_pais}")
-    public String deletar(@PathVariable("id_pais") Integer id_pais) throws ServletException {
+    public String deletar(@PathVariable("id_pais") Integer id_pais, Model model) throws ServletException {
         try{
             paisService.delete(id_pais);
-            tipo = 0;
-            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/pais_lista";
     }
@@ -95,14 +73,12 @@ public class PaisController {
 
     //Gravar
     @RequestMapping(value = "/pais_gravar", method = RequestMethod.POST)
-    public String insert(@ModelAttribute Pais pais, @PageableDefault(size = 10) Pageable pageable, BindingResult resultt) {
+    public String insert(@ModelAttribute Pais pais, Model model) {
         try{
             paisService.insert(pais);
-            tipo = 0;
-            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/pais_lista";
     }
@@ -115,14 +91,12 @@ public class PaisController {
     }
 
     @RequestMapping(value = "/alterar_pais", method = RequestMethod.POST)
-    public String update(@ModelAttribute Pais pais, BindingResult result) {
+    public String update(@ModelAttribute Pais pais, Model model) {
         try{
             paisService.update(pais);
-            tipo = 0;
-            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/pais_lista";
     }

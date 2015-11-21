@@ -3,12 +3,6 @@
 
 <tiles-definitions>
 
-
-    <!-- PÁGINAS -->
-    <!-- definition name="index" extends="main-layout">
-        <put-attribute name="body" value="/WEB-INF/views/index/index.jsp" />
-    </definition -->
-
     <definition name="index" extends="lte-layout">
         <put-attribute name="body" value="/WEB-INF/views/index/index.jsp" />
     </definition>

@@ -43,14 +43,6 @@ public class GrupoUsuarioController {
     @Inject private GrupoTransacaoDao grupoTransacaoDao;
     @Inject private EmpresaGrupoDao empresaGrupoDao;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Listar
     @RequestMapping(value = "/grupousuario_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
@@ -104,7 +96,7 @@ public class GrupoUsuarioController {
     }
 
     //Update
-    @RequestMapping(value = "/grupousuario_update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/grupousuario_update", method = RequestMethod.POST)
     public ModelAndView update(@ModelAttribute GrupoUsuario grupoUsuario, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
         try{
             grupoUsuarioService.update(grupoUsuario);
@@ -119,35 +111,30 @@ public class GrupoUsuarioController {
         return mav;
     }
 
+    @RequestMapping(value = "/grupousuario_detalhes/{id}", method = RequestMethod.GET)
+    public String detalhes(@PathVariable("id") Integer id, Model model) {
+        GrupoUsuario grupoUsuario = grupoUsuarioDao.selectById(id);
+        model.addAttribute("grupousuario", grupoUsuario);
+        return "grupousuario_detalhes";
+    }
+
     //Novo Usuario do Grupo
     @RequestMapping(value = "/usuariodogrupo_novo/{id}", method = RequestMethod.GET)
     public String novo_usuariodogrupo(@PathVariable("id") Integer id, Model model) {
         List<UsuariodoGrupo> lista = usuariodoGrupoDao.selectAll(id);
+        GrupoUsuario grupoUsuario = grupoUsuarioDao.selectById(id);
         model.addAttribute("lista", lista);
+        model.addAttribute("grupousuario", grupoUsuario);
         return "usuariodogrupo_novo";
-    }
-
-    //Insert Usuario do grupo
-    @RequestMapping(value = "/usuariodogrupo_insert", method = RequestMethod.PUT)
-    public ModelAndView insert_usuariodogrupo(@ModelAttribute List<UsuariodoGrupo> lista, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
-        try{
-            grupoUsuarioService.insert_usuariodogrupo(lista);
-        }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
-        }
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("lista", grupoUsuarioDao.selectAll_paginado(pageable));
-        mav.addObject("pagina", new Pagina(pageable, grupoUsuarioDao.count()));
-        mav.setViewName("redirect:/grupousuario_lista");
-        return mav;
     }
 
     //Novo Transacao do Grupo
     @RequestMapping(value = "/grupotransacao_novo/{id}", method = RequestMethod.GET)
     public String novo_grupotransacao(@PathVariable("id") Integer id, Model model) {
         List<GrupoTransacao> lista = grupoTransacaoDao.selectAll(id);
+        GrupoUsuario grupoUsuario = grupoUsuarioDao.selectById(id);
         model.addAttribute("lista", lista);
+        model.addAttribute("grupousuario", grupoUsuario);
         return "grupotransacao_novo";
     }
 
@@ -155,7 +142,9 @@ public class GrupoUsuarioController {
     @RequestMapping(value = "/empresagrupo_novo/{id}", method = RequestMethod.GET)
     public String novo_empresagrupo(@PathVariable("id") Integer id, Model model) {
         List<EmpresaGrupo> lista = empresaGrupoDao.selectAll(id);
+        GrupoUsuario grupoUsuario = grupoUsuarioDao.selectById(id);
         model.addAttribute("lista", lista);
+        model.addAttribute("grupousuario", grupoUsuario);
         return "empresagrupo_novo";
     }
 }

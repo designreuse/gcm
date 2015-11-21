@@ -37,30 +37,16 @@ public class SubGrupoProdutoController {
     @Inject private GrupoProdutoDao grupoProdutoDao;
     @Inject private SubGrupoProdutoService subGrupoProdutoService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Listar
     @RequestMapping(value = "/subgrupoproduto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         SubGrupoProduto filtros = new SubGrupoProduto();
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        model.addAttribute("mensagem", mensagemTransacao);
         model.addAttribute("lista_grupoproduto", grupoProdutoDao.selectAll());
         model.addAttribute("filtros", filtros);
         model.addAttribute("subgrupoproduto_lista", subGrupoProdutoDao.selectAll_paginado(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, subGrupoProdutoDao.count(filtros)));
 
-        limparmensagem();
         return "subgrupoproduto_lista";
     }
 
@@ -68,31 +54,23 @@ public class SubGrupoProdutoController {
     public ModelAndView filtros(@ModelAttribute SubGrupoProduto filtros, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView();
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-
-        mav.addObject("mensagem", mensagemTransacao);
         mav.addObject("lista_grupoproduto", grupoProdutoDao.selectAll());
         mav.addObject("subgrupoproduto_lista", subGrupoProdutoDao.selectAll_paginado(filtros, pageable));
         mav.addObject("pagina", new Pagina(pageable, subGrupoProdutoDao.count(filtros)));
         mav.addObject("filtros", filtros);
         mav.setViewName("subgrupoproduto_lista");
 
-        limparmensagem();
         return mav;
     }
 
     //Deletar
     @RequestMapping(value = "/subgrupoproduto_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             subGrupoProdutoService.delete(id);
-            tipo = 0;
-            mensagem = "Registro deletado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/subgrupoproduto_lista";
     }
@@ -108,14 +86,12 @@ public class SubGrupoProdutoController {
 
     //Insert
     @RequestMapping(value = "/subgrupoproduto_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute SubGrupoProduto subGrupoProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@ModelAttribute SubGrupoProduto subGrupoProduto, Model model) {
         try{
             subGrupoProdutoService.insert(subGrupoProduto);
-            tipo = 0;
-            mensagem = "Registro Inserido com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/subgrupoproduto_lista";
     }
@@ -131,14 +107,12 @@ public class SubGrupoProdutoController {
 
     //Update
     @RequestMapping(value = "/subgrupoproduto_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute SubGrupoProduto subGrupoProduto, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@ModelAttribute SubGrupoProduto subGrupoProduto, Model model) {
         try{
             subGrupoProdutoService.update(subGrupoProduto);
-            tipo = 0;
-            mensagem = "Registro Alterado com sucesso.";
         }catch(Exception e){
-            tipo = 1;
-            mensagem = e.getCause().toString();
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/subgrupoproduto_lista";
     }

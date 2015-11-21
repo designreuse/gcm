@@ -29,15 +29,7 @@ public class SituacaoTributariaAController {
     @Inject private SituacaoTributariaADao situacaoTributariaADao;
     @Inject private SituacaoTributariaAService situacaoTributariaAService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
-    //Listar
+   //Listar
     @RequestMapping(value = "/sta_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         model.addAttribute("sta_lista", situacaoTributariaADao.selectAll_paginado(pageable));
@@ -47,12 +39,12 @@ public class SituacaoTributariaAController {
 
     //Deletar
     @RequestMapping(value = "/sta_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             situacaoTributariaAService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/sta_lista";
     }
@@ -67,12 +59,12 @@ public class SituacaoTributariaAController {
 
     //Insert
     @RequestMapping(value = "/sta_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute SituacaoTributariaA situacaoTributariaA) {
+    public String insert(@ModelAttribute SituacaoTributariaA situacaoTributariaA, Model model) {
         try{
             situacaoTributariaAService.insert(situacaoTributariaA);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/sta_lista";
     }
@@ -87,12 +79,12 @@ public class SituacaoTributariaAController {
 
     //Update
     @RequestMapping(value = "/sta_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute SituacaoTributariaA situacaoTributariaA) {
+    public String update(@ModelAttribute SituacaoTributariaA situacaoTributariaA, Model model) {
         try{
             situacaoTributariaAService.update(situacaoTributariaA);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/sta_lista";
     }

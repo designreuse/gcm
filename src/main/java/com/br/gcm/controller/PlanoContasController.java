@@ -40,14 +40,6 @@ public class PlanoContasController {
     @Inject private Rotinas rotinas;
     @Inject private EmpresaDao empresaDao;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     //Filtros
     @RequestMapping(value = "/planocontas_lista", method = RequestMethod.POST)
     public String filtros(@ModelAttribute PlanoContas filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
@@ -63,7 +55,7 @@ public class PlanoContasController {
 
     //Listar
     @RequestMapping(value = "/planocontas_lista")
-    public String lista(@PageableDefault(size = 8) Pageable pageable, Model model) {
+    public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
 
         Usuario usuario = rotinas.usuarioLogado();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
@@ -82,12 +74,12 @@ public class PlanoContasController {
 
     //Deletar
     @RequestMapping(value = "/planocontas_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             planoContasService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/planocontas_lista";
     }
@@ -105,12 +97,12 @@ public class PlanoContasController {
 
     //Insert
     @RequestMapping(value = "/planocontas_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute PlanoContas planoContas) {
+    public String insert(@ModelAttribute PlanoContas planoContas, Model model) {
         try{
             planoContasService.insert(planoContas);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/planocontas_lista";
     }
@@ -127,12 +119,12 @@ public class PlanoContasController {
 
     //Update
     @RequestMapping(value = "/planocontas_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute PlanoContas planoContas) {
+    public String update(@ModelAttribute PlanoContas planoContas, Model model) {
         try{
             planoContasService.update(planoContas);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/planocontas_lista";
     }

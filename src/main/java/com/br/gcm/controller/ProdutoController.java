@@ -51,14 +51,6 @@ public class ProdutoController {
     @Inject private MarcaProdutoDao marcaProdutoDao;
     @Inject private UnidadeDao unidadeDao;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -71,41 +63,29 @@ public class ProdutoController {
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
         Produto filtros = new Produto();
 
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-        model.addAttribute("mensagem", mensagemTransacao);
-
         model.addAttribute("filtros", filtros);
         model.addAttribute("produto_lista", produtoDao.selectAll(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, produtoDao.count(filtros)));
-        limparmensagem();
         return "produto_lista";
     }
 
     //Filtros
     @RequestMapping(value = "/produto_lista", method = RequestMethod.POST)
     public String filtros(@ModelAttribute Produto filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
-        MensagemTransacao mensagemTransacao = new MensagemTransacao();
-        mensagemTransacao.setTipo(tipo);
-        mensagemTransacao.setMensagem(mensagem);
-        model.addAttribute("mensagem", mensagemTransacao);
-
         model.addAttribute("filtros", filtros);
         model.addAttribute("produto_lista", produtoDao.selectAll(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, produtoDao.count(filtros)));
-        limparmensagem();
         return "produto_lista";
     }
 
         //Deletar
     @RequestMapping(value = "/produto_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             produtoService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/produto_lista";
     }
@@ -126,12 +106,12 @@ public class ProdutoController {
 
     //Insert
     @RequestMapping(value = "/produto_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute Produto produto) {
+    public String insert(@ModelAttribute Produto produto, Model model) {
         try{
             produtoService.insert(produto);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
 
         return "redirect:/produto_lista";
@@ -153,12 +133,12 @@ public class ProdutoController {
 
     //Update
     @RequestMapping(value = "/produto_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute Produto produto) {
+    public String update(@ModelAttribute Produto produto, Model model) {
         try{
             produtoService.update(produto);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/produto_lista";
     }

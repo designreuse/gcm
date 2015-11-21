@@ -15,6 +15,9 @@
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">Filtros</h3>
+                    <div class="box-tools pull-right">
+                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                    </div>
                 </div>
                 <div class="box-body">
                     <form class="form-horizontal" action="/cfop_lista" method="post">
@@ -59,15 +62,27 @@
                         <c:forEach items="${lista}" var="p">
                             <tr>
                                 <td>
-                                    <a href="/cfop_deletar/${p.id_CFOP}" class="btn btn-default btn-xs" title="Deletar">
-                                        <i class="fa fa-trash-o"></i>
-                                    </a>
-                                    <a href="/cfop_editar/${p.id_CFOP}" class="btn btn-default btn-xs" title="Editar">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a href="/cfop_detalhes/${p.id_CFOP}" class="btn btn-default btn-xs" title="Detalhes">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
+                                    <c:choose>
+                                        <c:when test="${deletar == 'true'}">
+                                            <a href="/cfop_deletar/${p.id_CFOP}" class="btn btn-default btn-xs" title="Deletar">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${editar == 'true'}">
+                                            <a href="/cfop_editar/${p.id_CFOP}" class="btn btn-default btn-xs" title="Editar">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${detalhes == 'true'}">
+                                            <a href="/cfop_detalhes/${p.id_CFOP}" class="btn btn-default btn-xs" title="Detalhes">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
                                 </td>
                                 <td>${p.codigoCFOP}</td>
                                 <td>${p.descricao}</td>
@@ -94,9 +109,13 @@
                         <vls:paginador pagina="${pagina}"/>
                     </div>
                     <div class="col-sm-3" style="margin-top: 15px;">
-                        <a style="width: 80px" href="<c:url value="/cfop_novo"/>" class="btn btn-primary" title="Novo">
-                            <i class="fa fa-plus"></i> Novo
-                        </a>
+                        <c:choose>
+                            <c:when test="${novo == 'true'}">
+                                <a style="width: 80px" href="<c:url value="/cfop_novo"/>" class="btn btn-primary" title="Novo">
+                                    <i class="fa fa-plus"></i> Novo
+                                </a>
+                            </c:when>
+                        </c:choose>
                     </div>
                 </div>
             </div>

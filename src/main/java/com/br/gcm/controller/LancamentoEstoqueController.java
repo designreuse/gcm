@@ -56,13 +56,6 @@ public class LancamentoEstoqueController {
     @Inject private ProdutoLoteDao produtoLoteDao;
     @Inject private DepositoDao depositoDao;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -102,12 +95,12 @@ public class LancamentoEstoqueController {
 
     //Deletar
     @RequestMapping(value = "/lancamentoestoque_deleta/{id}")
-    public String deletar(@PathVariable("id") Integer id) {
+    public String deletar(@PathVariable("id") Integer id, Model model) {
         try{
             lancamentoEstoqueService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/lancamentoestoque_lista";
     }
@@ -131,22 +124,14 @@ public class LancamentoEstoqueController {
 
     //Insert
     @RequestMapping(value = "/lancamentoestoque_insert/{TipoEntSai}", method = RequestMethod.POST)
-    public ModelAndView insert(@PathVariable("TipoEntSai") String tipoEntSai, @ModelAttribute LancamentoEstoque lancamentoEstoque, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insert(@PathVariable("TipoEntSai") String tipoEntSai, @ModelAttribute LancamentoEstoque lancamentoEstoque, Model model) {
         try{
             lancamentoEstoqueService.insert(lancamentoEstoque);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", lancamentoEstoqueDao.selectAll_paginado(tipoEntSai, lancamentoEstoque.getId_Empresa(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, lancamentoEstoqueDao.count(tipoEntSai, lancamentoEstoque.getId_Empresa())));
-        mav.setViewName("redirect:/lancamentoestoque_editar/"+tipoEntSai+"/"+lancamentoEstoque.getId_LancamentoEstoque());
-        return mav;
+        return "redirect:/lancamentoestoque_editar/"+tipoEntSai+"/"+lancamentoEstoque.getId_LancamentoEstoque();
     }
 
     //Editar
@@ -171,22 +156,14 @@ public class LancamentoEstoqueController {
 
     //Update
     @RequestMapping(value = "/lancamentoestoque_update/{TipoEntSai}", method = RequestMethod.PUT)
-    public ModelAndView update(@PathVariable("TipoEntSai") String tipoEntSai, @ModelAttribute LancamentoEstoque lancamentoEstoque, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String update(@PathVariable("TipoEntSai") String tipoEntSai, @ModelAttribute LancamentoEstoque lancamentoEstoque, Model model) {
         try{
             lancamentoEstoqueService.update(lancamentoEstoque);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", lancamentoEstoqueDao.selectAll_paginado(tipoEntSai, lancamentoEstoque.getId_Empresa() ,pageable));
-        mav.addObject("pagina", new Pagina(pageable, lancamentoEstoqueDao.count(tipoEntSai, lancamentoEstoque.getId_Empresa())));
-        mav.setViewName("redirect:/lancamentoestoque_lista/"+tipoEntSai);
-        return mav;
+        return "redirect:/lancamentoestoque_lista/"+tipoEntSai;
     }
 
     //Novo Item
@@ -216,44 +193,14 @@ public class LancamentoEstoqueController {
 
     //INSERT ITEM
     @RequestMapping(value = "/lancamentoestoqueitem_insert/{TipoEntSai}", method = RequestMethod.POST)
-    public ModelAndView insertitem(@PathVariable("TipoEntSai") String tipoEntSai, @ModelAttribute LancamentoEstoqueItem lancamentoEstoqueItem, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String insertitem(@PathVariable("TipoEntSai") String tipoEntSai, @ModelAttribute LancamentoEstoqueItem lancamentoEstoqueItem, Model model) {
         try{
             lancamentoEstoqueService.insertitem(lancamentoEstoqueItem);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-        LancamentoEstoque lancamentoEstoque = lancamentoEstoqueDao.selectById(lancamentoEstoqueItem.getId_LancamentoEstoque());
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", lancamentoEstoqueDao.selectAll_paginado(tipoEntSai, lancamentoEstoque.getId_Empresa(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, lancamentoEstoqueDao.count(tipoEntSai, lancamentoEstoque.getId_Empresa())));
-        mav.setViewName("redirect:/lancamentoestoque_editar/"+tipoEntSai+"/"+lancamentoEstoque.getId_LancamentoEstoque());
-        return mav;
-    }
-
-    @RequestMapping(value = "/lancamentoestoqueitem_delete/{TipoEntSai}/{id_lancamento}/{id_item}")
-    public ModelAndView deleteitem(@PathVariable("TipoEntSai") String tipoEntSai, @PathVariable("id_lancamento") int id_lancamento, @PathVariable("id_item") int id_item, @PageableDefault(size = 10) Pageable pageable) {
-        try{
-            lancamentoEstoqueService.deleteitem(id_item);
-        }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
-        }
-
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-        LancamentoEstoque lancamentoEstoque = lancamentoEstoqueDao.selectById(id_lancamento);
-
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", lancamentoEstoqueDao.selectAll_paginado(tipoEntSai, lancamentoEstoque.getId_Empresa(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, lancamentoEstoqueDao.count(tipoEntSai, lancamentoEstoque.getId_Empresa())));
-        mav.setViewName("redirect:/lancamentoestoque_editar/"+tipoEntSai+"/"+lancamentoEstoque.getId_LancamentoEstoque());
-        return mav;
+        return "redirect:/lancamentoestoque_editar/"+tipoEntSai+"/"+lancamentoEstoqueItem.getId_LancamentoEstoque();
     }
 
     //Editar Item
@@ -282,22 +229,14 @@ public class LancamentoEstoqueController {
     }
 
     @RequestMapping(value = "/lancamentoestoqueitem_update/{TipoEntSai}", method = RequestMethod.PUT)
-    public ModelAndView updateitem(@PathVariable("TipoEntSai") String tipoEntSai, @ModelAttribute LancamentoEstoqueItem lancamentoEstoqueItem, @PageableDefault(size = 10) Pageable pageable, BindingResult result) {
+    public String updateitem(@PathVariable("TipoEntSai") String tipoEntSai, @ModelAttribute LancamentoEstoqueItem lancamentoEstoqueItem, Model model) {
         try{
             lancamentoEstoqueService.updateitem(lancamentoEstoqueItem);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
-        LancamentoEstoque lancamentoEstoque = lancamentoEstoqueDao.selectById(lancamentoEstoqueItem.getId_LancamentoEstoque());
 
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("listaempresa", listaEmpresa);
-        mav.addObject("lista", lancamentoEstoqueDao.selectAll_paginado(tipoEntSai, lancamentoEstoque.getId_Empresa(), pageable));
-        mav.addObject("pagina", new Pagina(pageable, lancamentoEstoqueDao.count(tipoEntSai, lancamentoEstoque.getId_Empresa())));
-        mav.setViewName("redirect:/lancamentoestoque_editar/"+tipoEntSai+"/"+lancamentoEstoque.getId_LancamentoEstoque());
-        return mav;
+        return "redirect:/lancamentoestoque_editar/"+tipoEntSai+"/"+lancamentoEstoqueItem.getId_LancamentoEstoque();
     }
 }

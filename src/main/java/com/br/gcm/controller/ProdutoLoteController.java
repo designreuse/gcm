@@ -38,14 +38,6 @@ public class ProdutoLoteController {
     @Inject private ProdutoDao produtoDao;
     @Inject private ProdutoLoteService produtoLoteService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -64,12 +56,12 @@ public class ProdutoLoteController {
 
     //Deletar
     @RequestMapping(value = "/produtolote_deleta/{id}/{id_produto}")
-    public String deletar(@PathVariable("id") Integer id, @PathVariable("id_produto") int id_Produto) {
+    public String deletar(@PathVariable("id") Integer id, @PathVariable("id_produto") int id_Produto, Model model) {
         try{
             produtoLoteService.delete(id);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/produtolote_lista/"+id_Produto;
     }
@@ -85,12 +77,12 @@ public class ProdutoLoteController {
 
     //Insert
     @RequestMapping(value = "/produtolote_insert", method = RequestMethod.POST)
-    public String insert(@ModelAttribute ProdutoLote produtoLote) {
+    public String insert(@ModelAttribute ProdutoLote produtoLote, Model model) {
         try{
             produtoLoteService.insert(produtoLote);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/produtolote_lista/"+produtoLote.getId_Produto();
     }
@@ -106,12 +98,12 @@ public class ProdutoLoteController {
 
     //Update
     @RequestMapping(value = "/produtolote_update", method = RequestMethod.POST)
-    public String update(@ModelAttribute ProdutoLote produtoLote) {
+    public String update(@ModelAttribute ProdutoLote produtoLote, Model model) {
         try{
             produtoLoteService.update(produtoLote);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/produtolote_lista/"+produtoLote.getId_Produto();
     }

@@ -40,14 +40,6 @@ public class PessoaController {
     @Inject private UfDao ufDao;
     @Inject private PessoaService pessoaService;
 
-    private String mensagem = "";
-    private int tipo = 9;
-
-    private  void limparmensagem(){
-        mensagem = "";
-        tipo = 9;
-    }
-
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -74,23 +66,23 @@ public class PessoaController {
 
     //Inativar
     @RequestMapping(value = "/pessoa_inativar/{tipo}/{id_pessoa}")
-    public String inativar(@PathVariable("tipo") String tipo, @PathVariable("id_pessoa") Integer id_pessoa) {
+    public String inativar(@PathVariable("tipo") String tipo, @PathVariable("id_pessoa") Integer id_pessoa, Model model) {
         try{
             pessoaService.inativar(id_pessoa);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/pessoa_lista/"+tipo;
     }
 
     @RequestMapping(value = "/pessoa_ativar/{tipo}/{id_pessoa}")
-    public String ativar(@PathVariable("tipo") String tipo, @PathVariable("id_pessoa") Integer id_pessoa) {
+    public String ativar(@PathVariable("tipo") String tipo, @PathVariable("id_pessoa") Integer id_pessoa, Model model) {
         try{
             pessoaService.ativar(id_pessoa);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/pessoa_lista/"+tipo;
     }
@@ -105,14 +97,14 @@ public class PessoaController {
         return "pessoa_novo";
     }
 
-    //Insert                                                                          b
+    //Insert
     @RequestMapping(value = "/pessoa_insert/{tipo}", method = RequestMethod.POST)
-    public String insert(@PathVariable("tipo") String tipo, @ModelAttribute Pessoa pessoa, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    public String insert(@PathVariable("tipo") String tipo, @ModelAttribute Pessoa pessoa, Model model) {
         try{
             pessoaService.insert(pessoa);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/pessoa_lista/"+tipo;
     }
@@ -129,12 +121,12 @@ public class PessoaController {
 
     //Update
     @RequestMapping(value = "/pessoa_update/{tipo}", method = RequestMethod.POST)
-    public String update(@PathVariable("tipo") String tipo, @ModelAttribute Pessoa pessoa, @PageableDefault(size = 8) Pageable pageable, BindingResult result) {
+    public String update(@PathVariable("tipo") String tipo, @ModelAttribute Pessoa pessoa, Model model) {
         try{
             pessoaService.update(pessoa);
         }catch(Exception e){
-            JOptionPane JOptinPane = new JOptionPane();
-            JOptinPane.showMessageDialog(null,e.getCause().toString(),"Alerta", JOptionPane.INFORMATION_MESSAGE);
+            model.addAttribute("mensagem", e.getCause().getMessage().toString());
+            return "mensagemerro";
         }
         return "redirect:/pessoa_lista/"+tipo;
     }
@@ -146,5 +138,13 @@ public class PessoaController {
         model.addAttribute("tipo", tipo);
         model.addAttribute("lista_pais", paisDao.Pais_lista());
         return "pessoa_detalhes";
+    }
+
+    @RequestMapping(value = "/pessoa_pesquisa/{tipo}", method = RequestMethod.GET)
+    public String pesquisa(@PathVariable("tipo") String tipo, Model model) {
+        Pessoa pessoa = new Pessoa();
+        model.addAttribute("filtros", pessoa);
+        model.addAttribute("tipo", tipo);
+        return "pessoa_pesquisa";
     }
 }

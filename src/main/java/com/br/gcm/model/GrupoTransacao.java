@@ -11,7 +11,7 @@ public class GrupoTransacao {
     private int id_GrupoTransacao;
     private int id_GrupoUsuario;
     private int id_Transacao;
-    private int CodigoTransacao;
+    private String CodigoTransacao;
     private String DescricaoTransacao;
     private String DescricaoGrupo;
     private boolean Pertence;
@@ -40,11 +40,11 @@ public class GrupoTransacao {
         this.id_Transacao = id_Transacao;
     }
 
-    public int getCodigoTransacao() {
+    public String getCodigoTransacao() {
         return CodigoTransacao;
     }
 
-    public void setCodigoTransacao(int codigoTransacao) {
+    public void setCodigoTransacao(String codigoTransacao) {
         CodigoTransacao = codigoTransacao;
     }
 
