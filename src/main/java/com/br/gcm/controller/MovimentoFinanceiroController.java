@@ -56,8 +56,20 @@ public class MovimentoFinanceiroController {
 
     @RequestMapping(value = "/movimentofinanceiro_lista/{tipomovimento}")
     public String lista(@PathVariable("tipomovimento") String tipomovimento, @PageableDefault(size = 10) Pageable pageable,  Model model) {
+        String codtransacaopai = "";
+        if (tipomovimento.equals("C")){
+            codtransacaopai = "5201";
+        } else {
+            codtransacaopai = "5101";
+        }
 
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean listajsp = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai);
+        if (listajsp != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         Filtro_MovimentoFinanceiro filtros = new Filtro_MovimentoFinanceiro();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
@@ -66,6 +78,20 @@ public class MovimentoFinanceiroController {
         };
 
         filtros.setTipoMovimento(tipomovimento);
+
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"01");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"02");
+        Boolean cancelar = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"03");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"04");
+        Boolean liquidar = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"05");
+        Boolean estornar = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"06");
+
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("cancelar", cancelar);
+        model.addAttribute("detalhes", detalhes);
+        model.addAttribute("liquidar", liquidar);
+        model.addAttribute("estornar", estornar);
 
         model.addAttribute("filtros", filtros);
         model.addAttribute("tipomovimento", tipomovimento);
@@ -77,8 +103,35 @@ public class MovimentoFinanceiroController {
 
     @RequestMapping(value = "/movimentofinanceiro_lista/{tipomovimento}", method = RequestMethod.POST)
     public String filtros(@PathVariable("tipomovimento") String tipomovimento, @ModelAttribute Filtro_MovimentoFinanceiro filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
+        String codtransacaopai = "";
+        if (tipomovimento.equals("C")){
+            codtransacaopai = "5201";
+        } else {
+            codtransacaopai = "5101";
+        }
+
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean listajsp = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai);
+        if (listajsp != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
+
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"01");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"02");
+        Boolean cancelar = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"03");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"04");
+        Boolean liquidar = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"05");
+        Boolean estornar = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai+"06");
+
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("cancelar", cancelar);
+        model.addAttribute("detalhes", detalhes);
+        model.addAttribute("liquidar", liquidar);
+        model.addAttribute("estornar", estornar);
 
         model.addAttribute("filtros", filtros);
         model.addAttribute("tipomovimento", tipomovimento);
@@ -91,7 +144,20 @@ public class MovimentoFinanceiroController {
     //Nova
     @RequestMapping(value = "/movimentofinanceiro_novo/{tipomovimento}", method = RequestMethod.GET)
     public String novo(@PathVariable("tipomovimento") String tipomovimento, ModelMap model) {
-         Usuario usuario = rotinas.usuarioLogado();
+        String codtransacaopai = "";
+        if (tipomovimento.equals("C")){
+            codtransacaopai = "5201";
+        } else {
+            codtransacaopai = "5101";
+        }
+
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean listajsp = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai);
+        if (listajsp != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
         Date d = new Date();
@@ -131,9 +197,23 @@ public class MovimentoFinanceiroController {
     //Editar
     @RequestMapping(value = "/movimentofinanceiro_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
         MovimentoFinanceiro movimentoFinanceiro = movimentoFinanceiroDao.selectById(id);
+
+        String codtransacaopai = "";
+        if (movimentoFinanceiro.getTipoMovimento().equals("C")){
+            codtransacaopai = "5201";
+        } else {
+            codtransacaopai = "5101";
+        }
+
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean listajsp = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai);
+        if (listajsp != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
+        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
         model.addAttribute("listaempresa", listaEmpresa);
         model.addAttribute("listabancos", bancoDao.selectAll());
@@ -157,9 +237,22 @@ public class MovimentoFinanceiroController {
 
     @RequestMapping(value = "/movimentofinanceiro_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
-        Usuario usuario = rotinas.usuarioLogado();
-        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
         MovimentoFinanceiro movimentoFinanceiro = movimentoFinanceiroDao.selectById(id);
+
+        String codtransacaopai = "";
+        if (movimentoFinanceiro.getTipoMovimento().equals("C")){
+            codtransacaopai = "5201";
+        } else {
+            codtransacaopai = "5101";
+        }
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean listajsp = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai);
+        if (listajsp != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
+        List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
         model.addAttribute("listaempresa", listaEmpresa);
         model.addAttribute("listabancos", bancoDao.selectAll());
@@ -169,8 +262,21 @@ public class MovimentoFinanceiroController {
     }
 
     @RequestMapping(value = "/movimentofinanceiro_imprimirprogramacao/{tipomovimento}")
-    public String imprimirprogramacao(@PathVariable("tipomovimento") String tipomovimento, @PageableDefault(size = 10) Pageable pageable,  Model model) {
+    public String imprimirprogramacao(@PathVariable("tipomovimento") String tipomovimento, Model model) {
+        String codtransacaopai = "";
+        if (tipomovimento.equals("C")){
+            codtransacaopai = "710101";
+        } else {
+            codtransacaopai = "710201";
+        }
+
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean listajsp = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codtransacaopai);
+        if (listajsp != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         Filtro_MovimentoFinanceiro filtros = new Filtro_MovimentoFinanceiro();
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
