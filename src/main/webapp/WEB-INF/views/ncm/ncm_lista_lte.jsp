@@ -63,15 +63,27 @@
                         <c:forEach items="${ncm_lista}" var="p">
                             <tr>
                                 <td>
-                                    <a href="/ncm_deleta/${p.id_NCM}" class="btn btn-default btn-xs" title="Deletar">
-                                        <i class="fa fa-trash-o"></i>
-                                    </a>
-                                    <a href="/ncm_editar/${p.id_NCM}" class="btn btn-default btn-xs" title="Editar">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a href="/ncm_detalhes/${p.id_NCM}" class="btn btn-default btn-xs" title="Detalhes">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
+                                    <c:choose>
+                                        <c:when test="${deletar == 'true'}">
+                                            <a href="/ncm_deleta/${p.id_NCM}" class="btn btn-default btn-xs" title="Deletar">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${editar == 'true'}">
+                                            <a href="/ncm_editar/${p.id_NCM}" class="btn btn-default btn-xs" title="Editar">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${detalhes == 'true'}">
+                                            <a href="/ncm_detalhes/${p.id_NCM}" class="btn btn-default btn-xs" title="Detalhes">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
                                 </td>
                                 <td>${p.codigoNCM}</td>
                                 <td>${p.descricao}</td>
@@ -94,9 +106,13 @@
                         <vls:paginador pagina="${pagina}"/>
                     </div>
                     <div class="col-sm-3" style="margin-top: 15px; text-align: right;">
-                        <a style="width: 80px" href="<c:url value="/ncm_novo"/>" class="btn btn-primary" title="Novo">
-                            <i class="fa fa-plus"></i> Novo
-                        </a>
+                        <c:choose>
+                            <c:when test="${novo == 'true'}">
+                                <a style="width: 80px" href="<c:url value="/ncm_novo"/>" class="btn btn-primary" title="Novo">
+                                    <i class="fa fa-plus"></i> Novo
+                                </a>
+                            </c:when>
+                        </c:choose>
                     </div>
                 </div>
             </div>

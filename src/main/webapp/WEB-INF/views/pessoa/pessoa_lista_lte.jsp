@@ -104,24 +104,35 @@
                             <tr>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${p.ativo == 'true'}">
-                                            <a href="/pessoa_inativar/${tipo}/${p.id_Pessoa}" class="btn btn-default btn-xs" title="Inativar">
-                                                <i class="fa fa-ban"></i>
-                                            </a>
+                                        <c:when test="${deletar == 'true'}">
+                                            <c:choose>
+                                                <c:when test="${p.ativo == 'true'}">
+                                                    <a href="/pessoa_inativar/${tipo}/${p.id_Pessoa}" class="btn btn-default btn-xs" title="Inativar">
+                                                        <i class="fa fa-ban"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:when test="${p.ativo != 'true'}">
+                                                    <a href="/pessoa_ativar/${tipo}/${p.id_Pessoa}" class="btn btn-default btn-xs" title="Ativar">
+                                                        <i class="fa fa-thumbs-up"></i>
+                                                    </a>
+                                                </c:when>
+                                            </c:choose>
                                         </c:when>
-                                        <c:when test="${p.ativo != 'true'}">
-                                            <a href="/pessoa_ativar/${tipo}/${p.id_Pessoa}" class="btn btn-default btn-xs" title="Ativar">
-                                                <i class="fa fa-thumbs-up"></i>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${editar == 'true'}">
+                                            <a href="/pessoa_editar/${tipo}/${p.id_Pessoa}" class="btn btn-default btn-xs" title="Editar">
+                                                <i class="fa fa-pencil"></i>
                                             </a>
                                         </c:when>
                                     </c:choose>
-
-                                    <a href="/pessoa_editar/${tipo}/${p.id_Pessoa}" class="btn btn-default btn-xs" title="Editar">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a href="/pessoa_detalhes/${tipo}/${p.id_Pessoa}" class="btn btn-default btn-xs" title="Detalhes">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
+                                    <c:choose>
+                                        <c:when test="${detalhes == 'true'}">
+                                            <a href="/pessoa_detalhes/${tipo}/${p.id_Pessoa}" class="btn btn-default btn-xs" title="Detalhes">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
                                 </td>
                                 <td>${p.id_Pessoa}</td>
                                 <td>${p.cpfCnpj}</td>
@@ -144,9 +155,13 @@
                         <vls:paginador pagina="${pagina}"/>
                     </div>
                     <div class="col-sm-3" style="margin-top: 15px; text-align: right;">
-                        <a style="width: 80px" href="<c:url value="/pessoa_novo/${tipo}"/>" class="btn btn-primary" title="Novo">
-                            <i class="fa fa-plus"></i> Novo
-                        </a>
+                        <c:choose>
+                            <c:when test="${novo == 'true'}">
+                                <a style="width: 80px" href="<c:url value="/pessoa_novo/${tipo}"/>" class="btn btn-primary" title="Novo">
+                                    <i class="fa fa-plus"></i> Novo
+                                </a>
+                            </c:when>
+                        </c:choose>
                     </div>
                 </div>
             </div>

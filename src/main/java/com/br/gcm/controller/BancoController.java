@@ -56,7 +56,6 @@ public class BancoController {
         Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150303");
         Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150304");
 
-
         model.addAttribute("novo", novo);
         model.addAttribute("editar", editar);
         model.addAttribute("deletar", deletar);

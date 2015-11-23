@@ -4,11 +4,9 @@ import com.br.gcm.dao.PaisDao;
 import com.br.gcm.dao.MovimentoFinanceiroDao;
 import com.br.gcm.dao.PessoaDao;
 import com.br.gcm.dao.PlanoContasDao;
-import com.br.gcm.model.Pais;
-import com.br.gcm.model.MovimentoFinanceiro;
+import com.br.gcm.model.*;
 import com.br.gcm.model.filtros.Filtro_MovimentoFinanceiro;
-import com.br.gcm.model.Pessoa;
-import com.br.gcm.model.PlanoContas;
+import com.br.gcm.util.Rotinas;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -36,7 +34,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/report")
 public class ReportController {
-
+    @Inject private Rotinas rotinas;
     @Inject private JavaMailSender mailSender;
     @Inject private PaisDao paisDao;
     @Inject private MovimentoFinanceiroDao movimentoFinanceiroDao;
@@ -50,17 +48,22 @@ public class ReportController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 
-    @RequestMapping(value = "/pais_report/{tipo}")
-    public String paisreport(Model model, @PathVariable("tipo") String tipo) {
-        List<Pais> paises = paisDao.Pais_lista();
-        JRDataSource datasource = new JRBeanCollectionDataSource(paises);
-        model.addAttribute("datasource", datasource);
-        model.addAttribute("format", tipo);
-        return "pais_report";
-    }
-
     @RequestMapping(value = "/movimentofinanceiro_programacao_report/{tipomovimento}", method = RequestMethod.POST)
     public String imprimirprogramacao(@ModelAttribute Filtro_MovimentoFinanceiro filtros, @PathVariable("tipomovimento") String tipo, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+
+        String codigopai = "";
+        if (tipo.equals("C")){
+            codigopai = "710201";
+        } else {
+            codigopai = "710101";
+        }
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), codigopai);
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         List<MovimentoFinanceiro> mov = movimentoFinanceiroDao.selectAll(filtros);
         JRDataSource datasource = new JRBeanCollectionDataSource(mov);
 

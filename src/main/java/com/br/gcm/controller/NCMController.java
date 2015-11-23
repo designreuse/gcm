@@ -4,8 +4,10 @@ import com.br.gcm.dao.NCMDao;
 import com.br.gcm.dao.SituacaoTributariaPISCOFINSDao;
 import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.model.NCM;
+import com.br.gcm.model.Usuario;
 import com.br.gcm.service.NCMService;
 import com.br.gcm.tag.Pagina;
+import com.br.gcm.util.Rotinas;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -35,12 +37,28 @@ public class NCMController {
     @Inject private NCMDao ncmDao;
     @Inject private NCMService ncmService;
     @Inject private SituacaoTributariaPISCOFINSDao situacaoTributariaPISCOFINSDao;
+    @Inject private Rotinas rotinas;
 
     //Listar
     @RequestMapping(value = "/ncm_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1104");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110401");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110402");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110403");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110404");
+
         NCM filtros = new NCM();
 
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
         model.addAttribute("filtros", filtros);
         model.addAttribute("ncm_lista", ncmDao.selectAll_paginado(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, ncmDao.count(filtros)));
@@ -49,20 +67,39 @@ public class NCMController {
     }
 
     @RequestMapping(value = "/ncm_lista", method = RequestMethod.POST)
-    public ModelAndView filtros(@ModelAttribute NCM filtros, @PageableDefault(size = 10) Pageable pageable) {
-        ModelAndView mav = new ModelAndView();
+    public String filtros(@ModelAttribute NCM filtros, Model model, @PageableDefault(size = 10) Pageable pageable) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1104");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110401");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110402");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110403");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110404");
 
-        mav.addObject("ncm_lista", ncmDao.selectAll_paginado(filtros, pageable));
-        mav.addObject("pagina", new Pagina(pageable, ncmDao.count(filtros)));
-        mav.addObject("filtros", filtros);
-        mav.setViewName("ncm_lista");
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
+        model.addAttribute("ncm_lista", ncmDao.selectAll_paginado(filtros, pageable));
+        model.addAttribute("pagina", new Pagina(pageable, ncmDao.count(filtros)));
+        model.addAttribute("filtros", filtros);
 
-        return mav;
+        return "ncm_lista";
     }
 
     //Deletar
     @RequestMapping(value = "/ncm_deleta/{id}")
     public String deletar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110403");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             ncmService.delete(id);
         }catch(Exception e){
@@ -75,6 +112,13 @@ public class NCMController {
     //Nova
     @RequestMapping(value = "/ncm_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110401");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         NCM ncm = new NCM();
         model.addAttribute("ncm", ncm);
         model.addAttribute("lista_cst", situacaoTributariaPISCOFINSDao.selectAll());
@@ -96,6 +140,13 @@ public class NCMController {
     //Editar
     @RequestMapping(value = "/ncm_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110402");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         NCM ncm = ncmDao.selectById(id);
         model.addAttribute("ncm", ncm);
         model.addAttribute("lista_cst", situacaoTributariaPISCOFINSDao.selectAll());
@@ -117,6 +168,13 @@ public class NCMController {
     //Editar
     @RequestMapping(value = "/ncm_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110404");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         NCM ncm = ncmDao.selectById(id);
         model.addAttribute("ncm", ncm);
         model.addAttribute("lista_cst", situacaoTributariaPISCOFINSDao.selectAll());

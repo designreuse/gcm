@@ -44,8 +44,22 @@ public class PlanoContasController {
     @RequestMapping(value = "/planocontas_lista", method = RequestMethod.POST)
     public String filtros(@ModelAttribute PlanoContas filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1502");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150201");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150202");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150203");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150204");
+
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
 
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
         model.addAttribute("filtros", filtros);
         model.addAttribute("listaempresa", listaEmpresa);
         model.addAttribute("lista", planoContasDao.selectAll(filtros, pageable));
@@ -56,8 +70,17 @@ public class PlanoContasController {
     //Listar
     @RequestMapping(value = "/planocontas_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1502");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150201");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150202");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150203");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150204");
+
         List<Empresa> listaEmpresa = empresaDao.selectEmpresasUsuario(usuario.getId_usuario());
         PlanoContas filtros = new PlanoContas();
 
@@ -65,6 +88,10 @@ public class PlanoContasController {
             filtros.setId_Empresa(listaEmpresa.get(0).getId_Empresa());
         }
 
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
         model.addAttribute("filtros", filtros);
         model.addAttribute("listaempresa", listaEmpresa);
         model.addAttribute("lista", planoContasDao.selectAll(filtros, pageable));
@@ -75,6 +102,13 @@ public class PlanoContasController {
     //Deletar
     @RequestMapping(value = "/planocontas_deleta/{id}")
     public String deletar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150203");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             planoContasService.delete(id);
         }catch(Exception e){
@@ -88,6 +122,11 @@ public class PlanoContasController {
     @RequestMapping(value = "/planocontas_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150201");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
 
         PlanoContas planoContas = new PlanoContas();
         model.addAttribute("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
@@ -111,6 +150,11 @@ public class PlanoContasController {
     @RequestMapping(value = "/planocontas_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150202");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
 
         model.addAttribute("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
         model.addAttribute("planocontas", planoContasDao.selectById(id));
@@ -132,6 +176,11 @@ public class PlanoContasController {
     @RequestMapping(value = "/planocontas_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
         Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "150204");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
 
         model.addAttribute("listaempresa", empresaDao.selectEmpresasUsuario(usuario.getId_usuario()));
         model.addAttribute("planocontas", planoContasDao.selectById(id));

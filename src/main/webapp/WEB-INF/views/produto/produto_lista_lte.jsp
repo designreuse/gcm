@@ -74,27 +74,47 @@
                         <c:forEach items="${produto_lista}" var="p">
                             <tr>
                                 <td>
-                                    <a href="/produto_deleta/${p.id_Produto}" class="btn btn-default btn-xs" title="Deletar">
-                                        <i class="fa fa-trash-o"></i>
-                                    </a>
-                                    <a href="/produto_editar/${p.id_Produto}" class="btn btn-default btn-xs" title="Editar">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a href="/produto_detalhes/${p.id_Produto}" class="btn btn-default btn-xs" title="Detalhes">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
+                                    <c:choose>
+                                        <c:when test="${deletar == 'true'}">
+                                            <a href="/produto_deleta/${p.id_Produto}" class="btn btn-default btn-xs" title="Deletar">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${editar == 'true'}">
+                                            <a href="/produto_editar/${p.id_Produto}" class="btn btn-default btn-xs" title="Editar">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${detalhes == 'true'}">
+                                            <a href="/produto_detalhes/${p.id_Produto}" class="btn btn-default btn-xs" title="Detalhes">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
                                 </td>
                                 <td>${p.id_Produto}</td>
                                 <td>${p.referencia}</td>
                                 <td>${p.descricao}</td>
                                 <td>${p.ncm.codigoNCM}</td>
                                 <td>
-                                    <a href="/produtounidade_lista/${p.id_Produto}" class="btn btn-default btn-xs" title="Unidades">
-                                        <i class="fa fa-tint"></i>
-                                    </a>
-                                    <a href="/produtolote_lista/${p.id_Produto}" class="btn btn-default btn-xs" title="Lotes">
-                                        <i class="fa fa-tags"></i>
-                                    </a>
+                                    <c:choose>
+                                        <c:when test="${unidades == 'true'}">
+                                            <a href="/produtounidade_lista/${p.id_Produto}" class="btn btn-default btn-xs" title="Unidades">
+                                                <i class="fa fa-tint"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:choose>
+                                        <c:when test="${lotes == 'true'}">
+                                            <a href="/produtolote_lista/${p.id_Produto}" class="btn btn-default btn-xs" title="Lotes">
+                                                <i class="fa fa-tags"></i>
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -113,9 +133,13 @@
                         <vls:paginador pagina="${pagina}"/>
                     </div>
                     <div class="col-sm-3" style="margin-top: 15px; text-align: right;">
-                        <a style="width: 80px" href="<c:url value="/produto_novo"/>" class="btn btn-primary" title="Novo">
-                            <i class="fa fa-plus"></i> Novo
-                        </a>
+                        <c:choose>
+                            <c:when test="${novo == 'true'}">
+                                <a style="width: 80px" href="<c:url value="/produto_novo"/>" class="btn btn-primary" title="Novo">
+                                    <i class="fa fa-plus"></i> Novo
+                                </a>
+                            </c:when>
+                        </c:choose>
                     </div>
                 </div>
             </div>

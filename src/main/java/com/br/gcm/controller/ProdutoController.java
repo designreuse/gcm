@@ -11,8 +11,10 @@ import com.br.gcm.dao.UnidadeDao;
 import com.br.gcm.model.MensagemTransacao;
 import com.br.gcm.model.Produto;
 import com.br.gcm.model.SubGrupoProduto;
+import com.br.gcm.model.Usuario;
 import com.br.gcm.service.ProdutoService;
 import com.br.gcm.tag.Pagina;
+import com.br.gcm.util.Rotinas;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -50,6 +52,7 @@ public class ProdutoController {
     @Inject private NCMDao ncmDao;
     @Inject private MarcaProdutoDao marcaProdutoDao;
     @Inject private UnidadeDao unidadeDao;
+    @Inject private Rotinas rotinas;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -61,8 +64,26 @@ public class ProdutoController {
     //Listar
     @RequestMapping(value = "/produto_lista")
     public String lista(@PageableDefault(size = 10) Pageable pageable, Model model) {
-        Produto filtros = new Produto();
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1106");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110601");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110602");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110603");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110604");
+        Boolean lotes    = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110605");
+        Boolean unidades = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110606");
 
+        Produto filtros = new Produto();
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
+        model.addAttribute("lotes", lotes);
+        model.addAttribute("unidades", unidades);
         model.addAttribute("filtros", filtros);
         model.addAttribute("produto_lista", produtoDao.selectAll(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, produtoDao.count(filtros)));
@@ -72,6 +93,25 @@ public class ProdutoController {
     //Filtros
     @RequestMapping(value = "/produto_lista", method = RequestMethod.POST)
     public String filtros(@ModelAttribute Produto filtros, @PageableDefault(size = 10) Pageable pageable, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1106");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+        Boolean novo     = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110601");
+        Boolean editar   = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110602");
+        Boolean deletar  = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110603");
+        Boolean detalhes = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110604");
+        Boolean lotes    = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110605");
+        Boolean unidades = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110606");
+
+        model.addAttribute("novo", novo);
+        model.addAttribute("editar", editar);
+        model.addAttribute("deletar", deletar);
+        model.addAttribute("detalhes", detalhes);
+        model.addAttribute("lotes", lotes);
+        model.addAttribute("unidades", unidades);
         model.addAttribute("filtros", filtros);
         model.addAttribute("produto_lista", produtoDao.selectAll(filtros, pageable));
         model.addAttribute("pagina", new Pagina(pageable, produtoDao.count(filtros)));
@@ -81,6 +121,13 @@ public class ProdutoController {
         //Deletar
     @RequestMapping(value = "/produto_deleta/{id}")
     public String deletar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110603");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             produtoService.delete(id);
         }catch(Exception e){
@@ -93,6 +140,13 @@ public class ProdutoController {
     //Nova
     @RequestMapping(value = "/produto_novo", method = RequestMethod.GET)
     public String novo(ModelMap model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110601");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         Produto produto = new Produto();
         model.addAttribute("lista_GrupoProduto", grupoProdutoDao.selectAll());
         model.addAttribute("lista_STA", situacaoTributariaADao.selectAll());
@@ -120,6 +174,13 @@ public class ProdutoController {
     //Editar
     @RequestMapping(value = "/produto_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "1102");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         Produto produto = produtoDao.selectById(id);
         model.addAttribute("lista_GrupoProduto", grupoProdutoDao.selectAll());
         model.addAttribute("lista_STA", situacaoTributariaADao.selectAll());
@@ -146,6 +207,13 @@ public class ProdutoController {
     //Editar
     @RequestMapping(value = "/produto_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110604");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         Produto produto = produtoDao.selectById(id);
         model.addAttribute("lista_GrupoProduto", grupoProdutoDao.selectAll());
         model.addAttribute("lista_STA", situacaoTributariaADao.selectAll());

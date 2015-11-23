@@ -4,8 +4,10 @@ import com.br.gcm.dao.ProdutoUnidadeDao;
 import com.br.gcm.dao.ProdutoDao;
 import com.br.gcm.dao.UnidadeDao;
 import com.br.gcm.model.ProdutoUnidade;
+import com.br.gcm.model.Usuario;
 import com.br.gcm.service.ProdutoUnidadeService;
 import com.br.gcm.tag.Pagina;
+import com.br.gcm.util.Rotinas;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -39,10 +41,18 @@ public class ProdutoUnidadeController {
     @Inject private ProdutoDao produtoDao;
     @Inject private UnidadeDao unidadeDao;
     @Inject private ProdutoUnidadeService produtoUnidadeService;
+    @Inject private Rotinas rotinas;
 
     //Listar
     @RequestMapping(value = "/produtounidade_lista/{id_produto}")
     public String lista(@PathVariable("id_produto") int id_Produto, @PageableDefault(size = 8) Pageable pageable, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110606");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         model.addAttribute("lista", produtoUnidadeDao.selectAll_paginado(id_Produto, pageable));
         model.addAttribute("produto", produtoDao.selectById(id_Produto));
         model.addAttribute("pagina", new Pagina(pageable, produtoUnidadeDao.count(id_Produto)));
@@ -52,6 +62,13 @@ public class ProdutoUnidadeController {
     //Deletar
     @RequestMapping(value = "/produtounidade_deleta/{id}/{id_produto}")
     public String deletar(@PathVariable("id") Integer id, @PathVariable("id_produto") int id_Produto, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110606");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         try{
             produtoUnidadeService.delete(id);
         }catch(Exception e){
@@ -64,6 +81,13 @@ public class ProdutoUnidadeController {
     //Nova
     @RequestMapping(value = "/produtounidade_novo/{id_produto}", method = RequestMethod.GET)
     public String novo(@PathVariable("id_produto") int id_Produto, ModelMap model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110606");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         ProdutoUnidade produtoUnidade = new ProdutoUnidade();
         model.addAttribute("produto", produtoDao.selectById(id_Produto));
         model.addAttribute("lista_unidade", unidadeDao.selectAll());
@@ -88,6 +112,13 @@ public class ProdutoUnidadeController {
     //Editar
     @RequestMapping(value = "/produtounidade_editar/{id}", method = RequestMethod.GET)
     public String editar(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110606");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         ProdutoUnidade produtoUnidade = produtoUnidadeDao.selectById(id);
         model.addAttribute("produto", produtoDao.selectById(produtoUnidade.getId_Produto()));
         model.addAttribute("lista_unidade", unidadeDao.selectAll());
@@ -110,6 +141,13 @@ public class ProdutoUnidadeController {
 
     @RequestMapping(value = "/produtounidade_detalhes/{id}", method = RequestMethod.GET)
     public String detalhes(@PathVariable("id") Integer id, Model model) {
+        Usuario usuario = rotinas.usuarioLogado();
+        Boolean lista = rotinas.validaTransacaoUsuario(usuario.getId_usuario(), "110606");
+        if (lista != true) {
+            model.addAttribute("mensagem", "AVISO: Transação não permitida.");
+            return "mensagemerro";
+        }
+
         ProdutoUnidade produtoUnidade = produtoUnidadeDao.selectById(id);
         model.addAttribute("produto", produtoDao.selectById(produtoUnidade.getId_Produto()));
         model.addAttribute("unidade", unidadeDao.selectById(produtoUnidade.getId_Unidade()));

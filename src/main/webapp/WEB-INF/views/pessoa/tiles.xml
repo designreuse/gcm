@@ -20,8 +20,4 @@
     <definition name="pessoa_detalhes" extends="lte-layout">
         <put-attribute name="body" value="/WEB-INF/views/pessoa/pessoa_detalhes_lte.jsp" />
     </definition>
-
-    <definition name="pessoa_pesquisa" extends="pesq-layout">
-        <put-attribute name="body" value="\WEB-INF\views\pessoa\pessoa_pesquisa_lte.jsp" />
-    </definition>
 </tiles-definitions>
